@@ -1,0 +1,1477 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-14T09:00:00Z"
+ },
+ "title": "Chore Rockets: Full App Flow",
+ "launch": {
+  "view": "canvas"
+ },
+ "pages": [],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Who’s flying? Tap Mia",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Mia’s trip. Tap any open stop",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Stop.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "3 · The stop. Tap I did it!",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Confirm-Who.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Are you Mia? Tap Yes",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Waiting.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Trip. Stop waits for a grown-up",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Notification.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "6 · Grown-up’s phone. ntfy alert",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Open.dc.html": {
+   "x": 0,
+   "y": 1224,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Trip. All stops open. Tap the last one",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Stop-Table.dc.html": {
+   "x": 470,
+   "y": 1224,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Set the table. Tap I did it!",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Confirm-Who-Table.dc.html": {
+   "x": 940,
+   "y": 1224,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Are you Mia? Tap Yes",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Reordered.dc.html": {
+   "x": 1410,
+   "y": 1224,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Trip. It moves to the front",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Bonus.dc.html": {
+   "x": 0,
+   "y": 2448,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Tap the bonus planet",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-AllDone.dc.html": {
+   "x": 470,
+   "y": 2448,
+   "w": 390,
+   "h": 844,
+   "title": "2 · All 5 done. Bonus stars!",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Rewards.dc.html": {
+   "x": 940,
+   "y": 2448,
+   "w": 390,
+   "h": 844,
+   "title": "3 · My rewards",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Empty.dc.html": {
+   "x": 1410,
+   "y": 2448,
+   "w": 390,
+   "h": 844,
+   "title": "4 · A day with no chores",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Child-Rewards2.dc.html": {
+   "x": 0,
+   "y": 3672,
+   "w": 390,
+   "h": 844,
+   "title": "1 · My rewards. Tap Claim",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Claim-Waiting.dc.html": {
+   "x": 470,
+   "y": 3672,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Asked a grown-up",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Notif-Claim.dc.html": {
+   "x": 940,
+   "y": 3672,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Grown-up’s phone. ntfy alert",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-PIN-Claim.dc.html": {
+   "x": 1410,
+   "y": 3672,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Grown-up PIN",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Claim-Parent.dc.html": {
+   "x": 1880,
+   "y": 3672,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Hand out. Tap Yes",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Rewards-Claimed.dc.html": {
+   "x": 2350,
+   "y": 3672,
+   "w": 390,
+   "h": 844,
+   "title": "6 · Rewards. Stars taken",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Rewards-Claimed.dc.html": {
+   "x": 2820,
+   "y": 3672,
+   "w": 390,
+   "h": 844,
+   "title": "7 · Child sees new star total",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Space-Child-Waiting.dc.html": {
+   "x": 0,
+   "y": 4896,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Child taps Undo within a minute",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Stop-Waiting2.dc.html": {
+   "x": 470,
+   "y": 4896,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Check it. Tap Not done yet",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Not-Done.dc.html": {
+   "x": 940,
+   "y": 4896,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Pick a kind message. Tap Send back",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops-SentBack.dc.html": {
+   "x": 1410,
+   "y": 4896,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Chores. Sent back",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Retry.dc.html": {
+   "x": 1880,
+   "y": 4896,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Mia sees the message",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Setup-Welcome.dc.html": {
+   "x": 0,
+   "y": 6120,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Welcome. Tap Continue with Google",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Setup-Children.dc.html": {
+   "x": 470,
+   "y": 6120,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Add children",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Setup-PIN.dc.html": {
+   "x": 940,
+   "y": 6120,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Choose a PIN",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Setup-Email.dc.html": {
+   "x": 1410,
+   "y": 6120,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Recovery email",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Setup-Alerts.dc.html": {
+   "x": 1880,
+   "y": 6120,
+   "w": 390,
+   "h": 844,
+   "title": "5 · ntfy alerts",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Setup-Done.dc.html": {
+   "x": 2350,
+   "y": 6120,
+   "w": 390,
+   "h": 844,
+   "title": "6 · All set",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Tablet-SignIn.dc.html": {
+   "x": 0,
+   "y": 7344,
+   "w": 390,
+   "h": 844,
+   "title": "1 · On the tablet. Tap Continue with Google",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Main-Tablet.dc.html": {
+   "x": 470,
+   "y": 7344,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Who’s flying",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Main-Photo.dc.html": {
+   "x": 0,
+   "y": 8568,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Who’s flying? Tap Leo’s rocket",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "My-Rocket.dc.html": {
+   "x": 470,
+   "y": 8568,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Empty window. Tap Take a photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "My-Rocket-Crop.dc.html": {
+   "x": 940,
+   "y": 8568,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Move and zoom. Tap Looks good!",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "My-Rocket-Done.dc.html": {
+   "x": 1410,
+   "y": 8568,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Face in the window",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Main-Photo.dc.html": {
+   "x": 1880,
+   "y": 8568,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Back to Who’s flying. Leo’s photo shows",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R2-Main.dc.html": {
+   "x": 0,
+   "y": 9792,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Who’s flying? Tap I’m a grown-up",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-PIN.dc.html": {
+   "x": 470,
+   "y": 9792,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Grown-up PIN. Enter PIN",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Home.dc.html": {
+   "x": 940,
+   "y": 9792,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Mission control. Tap 1 stop to check",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Stop-Waiting.dc.html": {
+   "x": 1410,
+   "y": 9792,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Check it. Tap Yes, it’s done!",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops-Done.dc.html": {
+   "x": 1880,
+   "y": 9792,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Chores. Checked",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Done.dc.html": {
+   "x": 2350,
+   "y": 9792,
+   "w": 390,
+   "h": 844,
+   "title": "6 · Mia’s rocket flies on",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops.dc.html": {
+   "x": 0,
+   "y": 11016,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Chores. Tap +",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Add-Stop.dc.html": {
+   "x": 470,
+   "y": 11016,
+   "w": 390,
+   "h": 844,
+   "title": "2 · New chore. Tap Add chore",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops-Added.dc.html": {
+   "x": 940,
+   "y": 11016,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Chores. New one added",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R4-Parent-Stops.dc.html": {
+   "x": 0,
+   "y": 12240,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Chores. Tap Tidy the toy box",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Stop-Parent.dc.html": {
+   "x": 470,
+   "y": 12240,
+   "w": 390,
+   "h": 844,
+   "title": "2 · The chore. Tap Edit chore",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Edit-Stop.dc.html": {
+   "x": 940,
+   "y": 12240,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Edit. Pick Weekly, then days",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Stop-Parent-Saved.dc.html": {
+   "x": 1410,
+   "y": 12240,
+   "w": 390,
+   "h": 844,
+   "title": "4 · The chore. Saved",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R5-Stop-Parent.dc.html": {
+   "x": 0,
+   "y": 13464,
+   "w": 390,
+   "h": 844,
+   "title": "1 · The chore. Tap Skip today or Hide",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops-Skipped.dc.html": {
+   "x": 470,
+   "y": 13464,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Skip today. Back tomorrow",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops-Hidden.dc.html": {
+   "x": 940,
+   "y": 13464,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Hide. Children can’t see it",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Rewards.dc.html": {
+   "x": 0,
+   "y": 14688,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Rewards. Tap +",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Add-Reward.dc.html": {
+   "x": 470,
+   "y": 14688,
+   "w": 390,
+   "h": 844,
+   "title": "2 · New reward. Tap Add reward",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Rewards-Added.dc.html": {
+   "x": 940,
+   "y": 14688,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Rewards. New planet added",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Child-Rewards3.dc.html": {
+   "x": 1410,
+   "y": 14688,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Child sees it under My rewards",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Add-Stop.dc.html": {
+   "x": 0,
+   "y": 15912,
+   "w": 390,
+   "h": 844,
+   "title": "1 · New chore. Tap Use my own photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Photo-Choose.dc.html": {
+   "x": 470,
+   "y": 15912,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Take or pick a photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Photo-Crop.dc.html": {
+   "x": 940,
+   "y": 15912,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Move and zoom. Tap Looks good",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Add-Stop-Photo.dc.html": {
+   "x": 1410,
+   "y": 15912,
+   "w": 390,
+   "h": 844,
+   "title": "4 · New chore with a photo. Tap Add chore",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Add-Reward.dc.html": {
+   "x": 0,
+   "y": 17136,
+   "w": 390,
+   "h": 844,
+   "title": "1 · New reward. Tap Use my own photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Reward-Photo-Choose.dc.html": {
+   "x": 470,
+   "y": 17136,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Take or pick a photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Reward-Photo-Crop.dc.html": {
+   "x": 940,
+   "y": 17136,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Move and zoom. Tap Looks good",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Add-Reward-Photo.dc.html": {
+   "x": 1410,
+   "y": 17136,
+   "w": 390,
+   "h": 844,
+   "title": "4 · New reward with a photo. Tap Add reward",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Rewards-Added-Photo.dc.html": {
+   "x": 1880,
+   "y": 17136,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Rewards. New one has its photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Rewards-Photo.dc.html": {
+   "x": 2350,
+   "y": 17136,
+   "w": 390,
+   "h": 844,
+   "title": "6 · Child sees it under My rewards",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops-Added-Photo.dc.html": {
+   "x": 0,
+   "y": 18360,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Chores list. Tap the new chore",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Stop-Parent-Photo.dc.html": {
+   "x": 470,
+   "y": 18360,
+   "w": 390,
+   "h": 844,
+   "title": "2 · The chore, as a grown-up sees it",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Photo.dc.html": {
+   "x": 940,
+   "y": 18360,
+   "w": 390,
+   "h": 844,
+   "title": "3 · The child’s trip. The stop shows the photo. Tap it",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Stop-Photo.dc.html": {
+   "x": 1410,
+   "y": 18360,
+   "w": 390,
+   "h": 844,
+   "title": "4 · The child’s chore screen",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Claim-Waiting-Photo.dc.html": {
+   "x": 1880,
+   "y": 18360,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Child asks for the reward",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Claim-Parent-Photo.dc.html": {
+   "x": 2350,
+   "y": 18360,
+   "w": 390,
+   "h": 844,
+   "title": "6 · A grown-up hands it out",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Idle.dc.html": {
+   "x": 0,
+   "y": 19584,
+   "w": 390,
+   "h": 844,
+   "title": "1 · No one is touching it. Still there?",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Main-Idle.dc.html": {
+   "x": 470,
+   "y": 19584,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Back to Who’s flying",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Main-Pass.dc.html": {
+   "x": 940,
+   "y": 19584,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Mia has a picture passcode. Tap Mia",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Passcode-Enter.dc.html": {
+   "x": 1410,
+   "y": 19584,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Tap the 3 secret pictures",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Space-Child.dc.html": {
+   "x": 1880,
+   "y": 19584,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Mia’s trip opens",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Stop-Waiting.dc.html": {
+   "x": 0,
+   "y": 20808,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Check it. Tap That wasn’t Mia",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Reassign.dc.html": {
+   "x": 470,
+   "y": 20808,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Who really did it? Tap Leo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops-Moved.dc.html": {
+   "x": 940,
+   "y": 20808,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Moved to Leo’s trip",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Child-Edit.dc.html": {
+   "x": 0,
+   "y": 22032,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Edit Leo. Tap Picture passcode",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Passcode-Setup.dc.html": {
+   "x": 470,
+   "y": 22032,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Pick 3 pictures. Tap Save",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Home-Locking.dc.html": {
+   "x": 0,
+   "y": 23256,
+   "w": 390,
+   "h": 844,
+   "title": "1 · No one has touched it. Locking soon",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Main-Locked.dc.html": {
+   "x": 470,
+   "y": 23256,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Back to Who’s flying, locked",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Settings.dc.html": {
+   "x": 0,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Settings. Tap Children",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Settings-Children.dc.html": {
+   "x": 470,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Children. Tap Leo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Edit.dc.html": {
+   "x": 940,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Edit Leo. Tap Remove Leo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Remove.dc.html": {
+   "x": 1410,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Are you sure? Tap Yes",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Children-Removed.dc.html": {
+   "x": 1880,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Children. Leo removed",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R9-Settings.dc.html": {
+   "x": 0,
+   "y": 25704,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Settings. Tap Notifications",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Notifications.dc.html": {
+   "x": 470,
+   "y": 25704,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Notifications. Tap ntfy",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Ntfy.dc.html": {
+   "x": 940,
+   "y": 25704,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Set up ntfy. Send a test",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R10-Parent-PIN.dc.html": {
+   "x": 0,
+   "y": 26928,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Grown-up PIN. Tap Forgot PIN?",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "PIN-Forgot.dc.html": {
+   "x": 470,
+   "y": 26928,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Forgot PIN. Tap Send code",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Notif-Reset.dc.html": {
+   "x": 940,
+   "y": 26928,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Grown-ups’ phones. ntfy alert",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "PIN-Reset.dc.html": {
+   "x": 1410,
+   "y": 26928,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Set a new PIN. Tap Save PIN",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-PIN-After.dc.html": {
+   "x": 1880,
+   "y": 26928,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Try the new PIN",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R11-Settings.dc.html": {
+   "x": 0,
+   "y": 28152,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Settings. Tap Recovery email",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Recovery.dc.html": {
+   "x": 470,
+   "y": 28152,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Recovery email. Tap Change email",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Recovery-Edit.dc.html": {
+   "x": 940,
+   "y": 28152,
+   "w": 390,
+   "h": 844,
+   "title": "3 · New email and PIN. Tap Send link",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Recovery-Sent.dc.html": {
+   "x": 1410,
+   "y": 28152,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Check your inbox",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Space-Child-Coming.dc.html": {
+   "x": 0,
+   "y": 29376,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Mia’s trip. Tap Coming up",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Coming.dc.html": {
+   "x": 470,
+   "y": 29376,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Chores due on other days",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Stop-Parent2.dc.html": {
+   "x": 0,
+   "y": 30600,
+   "w": 390,
+   "h": 844,
+   "title": "1 · The chore. Tap Skip…",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Skip-Options.dc.html": {
+   "x": 470,
+   "y": 30600,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Skip for how long? Tap 3 days",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops-SkippedLong.dc.html": {
+   "x": 940,
+   "y": 30600,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Skipped until Tuesday",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Parent-Stops-Done.dc.html": {
+   "x": 0,
+   "y": 31824,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Checked. Tap Undo within a minute",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Parent-Stops-Undone.dc.html": {
+   "x": 470,
+   "y": 31824,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Waiting for a check again",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Claim-Parent.dc.html": {
+   "x": 0,
+   "y": 33048,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Hand out? Tap Not now",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Claim-Decline.dc.html": {
+   "x": 470,
+   "y": 33048,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Pick a message. Tap Send message",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Rewards-Declined.dc.html": {
+   "x": 940,
+   "y": 33048,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Rewards. Message sent",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Rewards-Declined.dc.html": {
+   "x": 1410,
+   "y": 33048,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Mia sees the message",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Settings-Grownups.dc.html": {
+   "x": 0,
+   "y": 34272,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Settings. Tap Grown-ups",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Grown-ups.dc.html": {
+   "x": 470,
+   "y": 34272,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Grown-ups. Tap Invite",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Invite.dc.html": {
+   "x": 940,
+   "y": 34272,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Their Google email. Tap Send invite",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Grown-ups-Invited.dc.html": {
+   "x": 1410,
+   "y": 34272,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Invite sent",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Ranks.dc.html": {
+   "x": 0,
+   "y": 35496,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Ranks",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Auto-Lock.dc.html": {
+   "x": 470,
+   "y": 35496,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Auto-lock",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Auto-Return.dc.html": {
+   "x": 940,
+   "y": 35496,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Back to Who’s flying",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Devices.dc.html": {
+   "x": 1410,
+   "y": 35496,
+   "w": 390,
+   "h": 844,
+   "title": "4 · Devices",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Daily-Reset.dc.html": {
+   "x": 1880,
+   "y": 35496,
+   "w": 390,
+   "h": 844,
+   "title": "5 · Daily reset and bonus",
+   "is_interactive": true,
+   "radius": 28
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "Space-Child.dc.html",
+  "Stop.dc.html",
+  "Confirm-Who.dc.html",
+  "Space-Child-Waiting.dc.html",
+  "Parent-Notification.dc.html",
+  "Space-Child-Open.dc.html",
+  "Stop-Table.dc.html",
+  "Confirm-Who-Table.dc.html",
+  "Space-Child-Reordered.dc.html",
+  "Child-Bonus.dc.html",
+  "Space-Child-AllDone.dc.html",
+  "Child-Rewards.dc.html",
+  "Space-Child-Empty.dc.html",
+  "R-Child-Rewards2.dc.html",
+  "Claim-Waiting.dc.html",
+  "Notif-Claim.dc.html",
+  "Parent-PIN-Claim.dc.html",
+  "Claim-Parent.dc.html",
+  "Rewards-Claimed.dc.html",
+  "Child-Rewards-Claimed.dc.html",
+  "R-Space-Child-Waiting.dc.html",
+  "R-Stop-Waiting2.dc.html",
+  "Not-Done.dc.html",
+  "Parent-Stops-SentBack.dc.html",
+  "Space-Child-Retry.dc.html",
+  "Setup-Welcome.dc.html",
+  "Setup-Children.dc.html",
+  "Setup-PIN.dc.html",
+  "Setup-Email.dc.html",
+  "Setup-Alerts.dc.html",
+  "Setup-Done.dc.html",
+  "Tablet-SignIn.dc.html",
+  "R-Main-Tablet.dc.html",
+  "R-Main-Photo.dc.html",
+  "My-Rocket.dc.html",
+  "My-Rocket-Crop.dc.html",
+  "My-Rocket-Done.dc.html",
+  "Main-Photo.dc.html",
+  "R2-Main.dc.html",
+  "Parent-PIN.dc.html",
+  "Parent-Home.dc.html",
+  "Stop-Waiting.dc.html",
+  "Parent-Stops-Done.dc.html",
+  "Space-Child-Done.dc.html",
+  "Parent-Stops.dc.html",
+  "Add-Stop.dc.html",
+  "Parent-Stops-Added.dc.html",
+  "R4-Parent-Stops.dc.html",
+  "Stop-Parent.dc.html",
+  "Edit-Stop.dc.html",
+  "Stop-Parent-Saved.dc.html",
+  "R5-Stop-Parent.dc.html",
+  "Parent-Stops-Skipped.dc.html",
+  "Parent-Stops-Hidden.dc.html",
+  "Rewards.dc.html",
+  "Add-Reward.dc.html",
+  "Rewards-Added.dc.html",
+  "R-Child-Rewards3.dc.html",
+  "R-Add-Stop.dc.html",
+  "Photo-Choose.dc.html",
+  "Photo-Crop.dc.html",
+  "Add-Stop-Photo.dc.html",
+  "R-Add-Reward.dc.html",
+  "Reward-Photo-Choose.dc.html",
+  "Reward-Photo-Crop.dc.html",
+  "Add-Reward-Photo.dc.html",
+  "Rewards-Added-Photo.dc.html",
+  "Child-Rewards-Photo.dc.html",
+  "Parent-Stops-Added-Photo.dc.html",
+  "Stop-Parent-Photo.dc.html",
+  "Space-Child-Photo.dc.html",
+  "Stop-Photo.dc.html",
+  "Claim-Waiting-Photo.dc.html",
+  "Claim-Parent-Photo.dc.html",
+  "Space-Child-Idle.dc.html",
+  "R-Main-Idle.dc.html",
+  "R-Main-Pass.dc.html",
+  "Passcode-Enter.dc.html",
+  "R-Space-Child.dc.html",
+  "R-Stop-Waiting.dc.html",
+  "Reassign.dc.html",
+  "Parent-Stops-Moved.dc.html",
+  "R-Child-Edit.dc.html",
+  "Passcode-Setup.dc.html",
+  "Home-Locking.dc.html",
+  "Main-Locked.dc.html",
+  "Settings.dc.html",
+  "Settings-Children.dc.html",
+  "Child-Edit.dc.html",
+  "Child-Remove.dc.html",
+  "Children-Removed.dc.html",
+  "R9-Settings.dc.html",
+  "Notifications.dc.html",
+  "Ntfy.dc.html",
+  "R10-Parent-PIN.dc.html",
+  "PIN-Forgot.dc.html",
+  "Notif-Reset.dc.html",
+  "PIN-Reset.dc.html",
+  "Parent-PIN-After.dc.html",
+  "R11-Settings.dc.html",
+  "Recovery.dc.html",
+  "Recovery-Edit.dc.html",
+  "Recovery-Sent.dc.html",
+  "R-Space-Child-Coming.dc.html",
+  "Child-Coming.dc.html",
+  "R-Stop-Parent2.dc.html",
+  "Skip-Options.dc.html",
+  "Parent-Stops-SkippedLong.dc.html",
+  "R-Parent-Stops-Done.dc.html",
+  "Parent-Stops-Undone.dc.html",
+  "R-Claim-Parent.dc.html",
+  "Claim-Decline.dc.html",
+  "Rewards-Declined.dc.html",
+  "Child-Rewards-Declined.dc.html",
+  "R-Settings-Grownups.dc.html",
+  "Grown-ups.dc.html",
+  "Invite.dc.html",
+  "Grown-ups-Invited.dc.html",
+  "Ranks.dc.html",
+  "Auto-Lock.dc.html",
+  "Auto-Return.dc.html",
+  "Devices.dc.html",
+  "Daily-Reset.dc.html"
+ ],
+ "notes": {
+  "t0": {
+   "x": 0,
+   "y": -260,
+   "text": "A child finishes a chore",
+   "kind": "title1",
+   "maxW": 2740
+  },
+  "t1": {
+   "x": 0,
+   "y": 964,
+   "text": "A child does chores in any order",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t2": {
+   "x": 0,
+   "y": 2188,
+   "text": "A child finishes the whole trip",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t3": {
+   "x": 0,
+   "y": 3412,
+   "text": "A child claims a reward",
+   "kind": "title1",
+   "maxW": 3210
+  },
+  "t4": {
+   "x": 0,
+   "y": 4636,
+   "text": "A child undoes, or a grown-up sends a chore back",
+   "kind": "title1",
+   "maxW": 2270
+  },
+  "t5": {
+   "x": 0,
+   "y": 5860,
+   "text": "A grown-up sets up the app",
+   "kind": "title1",
+   "maxW": 2740
+  },
+  "t6": {
+   "x": 0,
+   "y": 7084,
+   "text": "A kids’ tablet signs in",
+   "kind": "title1",
+   "maxW": 1250
+  },
+  "t7": {
+   "x": 0,
+   "y": 8308,
+   "text": "A child puts their photo in the rocket",
+   "kind": "title1",
+   "maxW": 2270
+  },
+  "t8": {
+   "x": 0,
+   "y": 9532,
+   "text": "A grown-up checks a chore",
+   "kind": "title1",
+   "maxW": 2740
+  },
+  "t9": {
+   "x": 0,
+   "y": 10756,
+   "text": "A grown-up adds a chore",
+   "kind": "title1",
+   "maxW": 1330
+  },
+  "t10": {
+   "x": 0,
+   "y": 11980,
+   "text": "A grown-up edits a chore and when it repeats",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t11": {
+   "x": 0,
+   "y": 13204,
+   "text": "A grown-up skips or hides a chore",
+   "kind": "title1",
+   "maxW": 1330
+  },
+  "t12": {
+   "x": 0,
+   "y": 14428,
+   "text": "A grown-up adds a reward",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t13": {
+   "x": 0,
+   "y": 15652,
+   "text": "A grown-up uses their own photo for a chore",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t14": {
+   "x": 0,
+   "y": 16876,
+   "text": "A grown-up uses their own photo for a reward",
+   "kind": "title1",
+   "maxW": 2740
+  },
+  "t15": {
+   "x": 0,
+   "y": 18100,
+   "text": "Where a photo shows up",
+   "kind": "title1",
+   "maxW": 2740
+  },
+  "t16": {
+   "x": 0,
+   "y": 19324,
+   "text": "Kids can’t mix up trips",
+   "kind": "title1",
+   "maxW": 2270
+  },
+  "t17": {
+   "x": 0,
+   "y": 20548,
+   "text": "A grown-up fixes the wrong child",
+   "kind": "title1",
+   "maxW": 1330
+  },
+  "t18": {
+   "x": 0,
+   "y": 21772,
+   "text": "A grown-up sets a picture passcode",
+   "kind": "title1",
+   "maxW": 1250
+  },
+  "t19": {
+   "x": 0,
+   "y": 22996,
+   "text": "Grown-up mode locks itself",
+   "kind": "title1",
+   "maxW": 1250
+  },
+  "t20": {
+   "x": 0,
+   "y": 24220,
+   "text": "A grown-up manages children",
+   "kind": "title1",
+   "maxW": 2270
+  },
+  "t21": {
+   "x": 0,
+   "y": 25444,
+   "text": "A grown-up sets up ntfy",
+   "kind": "title1",
+   "maxW": 1330
+  },
+  "t22": {
+   "x": 0,
+   "y": 26668,
+   "text": "A grown-up forgot the PIN",
+   "kind": "title1",
+   "maxW": 2270
+  },
+  "t23": {
+   "x": 0,
+   "y": 27892,
+   "text": "A grown-up changes the recovery email",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t24": {
+   "x": 0,
+   "y": 29116,
+   "text": "A child sees what’s coming up",
+   "kind": "title1",
+   "maxW": 1250
+  },
+  "t25": {
+   "x": 0,
+   "y": 30340,
+   "text": "A grown-up skips a chore for several days",
+   "kind": "title1",
+   "maxW": 1330
+  },
+  "t26": {
+   "x": 0,
+   "y": 31564,
+   "text": "A grown-up undoes an accepted chore",
+   "kind": "title1",
+   "maxW": 1250
+  },
+  "t27": {
+   "x": 0,
+   "y": 32788,
+   "text": "A grown-up declines a reward claim",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t28": {
+   "x": 0,
+   "y": 34012,
+   "text": "A grown-up invites another grown-up",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t29": {
+   "x": 0,
+   "y": 35236,
+   "text": "Other grown-up screens",
+   "kind": "title1",
+   "maxW": 2270
+  },
+  "guide": {
+   "x": 2820,
+   "y": 0,
+   "w": 520,
+   "fill": "gray",
+   "size": "l",
+   "text": "How to read this\n\nEach row is one task. Read it left to right.\n\nThe number is the step; the title says what to tap.\n\nPress Play on any screen to click through."
+  }
+ },
+ "designSystems": []
+}
