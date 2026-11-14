@@ -1,4 +1,4 @@
-# Chore Rockets
+# child-chores-rewards
 
 A kids chores-and-rewards web app (ages 5 to 12) for one family. Children fly a rocket along a trip of chores, a grown-up checks each one, and finished chores earn stars that buy rewards.
 
