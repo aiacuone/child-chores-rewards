@@ -15,3 +15,38 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run verify
+
+  deploy:
+    name: Deploy to the VM
+    # Only a push to main, and only when the test job above passed.
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' 'rocket-rewards.duckdns.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEuGjnv8RR15sEMxm7/yjw6ydggXKu+qe+FIOJQNOm/j' > ~/.ssh/known_hosts
+
+      - name: Sync source and publish
+        run: |
+          set -euo pipefail
+          rsync -az --delete \
+            --exclude '.git/' \
+            --exclude 'node_modules/' \
+            --exclude 'build/' \
+            --exclude '.svelte-kit/' \
+            -e 'ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes' \
+            ./ ubuntu@rocket-rewards.duckdns.org:rocket-rewards-src/
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes ubuntu@rocket-rewards.duckdns.org \
+            'bash ~/rocket-rewards-src/scripts/activate-release.sh'

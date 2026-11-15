@@ -47,3 +47,13 @@ The secrets stay in `/etc/rocket-rewards/`, root only. They are never in git.
 - The script stops at the first problem and says what it was. Fix it and run it again.
 - DuckDNS not answering OK: check the token, `journalctl -u rocket-rewards-duckdns`.
 - No certificate yet: ports 80 and 443 must be open, `journalctl -u caddy -n 50`.
+
+## Deploys
+
+A push to `main` deploys, through the `deploy` job in `.github/workflows/ci.yml`:
+
+- It runs only after the `test` job passes. A failing test stops the deploy.
+- It copies the source to `~/rocket-rewards-src` on the VM over SSH, then runs `scripts/activate-release.sh` there.
+- That script builds the app, swaps it into `/opt/rocket-rewards`, restarts `rocket-rewards.service` and checks that port 3003 answers. If it does not, the previous release is put back.
+- The deploy key is the `DEPLOY_SSH_KEY` secret in GitHub. Its public half is in the deploy user's `~/.ssh/authorized_keys` on the VM. The private half is in `~/.config/rocket-rewards/github-deploy` on the developer's machine.
+- The deploy user needs passwordless `sudo systemctl` for this service. It is the same `ubuntu` login that shtrong deploys with.
