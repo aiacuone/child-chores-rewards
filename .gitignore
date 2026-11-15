@@ -1,6 +1,16 @@
 node_modules/
 .env
 .env.*
+!.env.example
 build/
 dist/
 .DS_Store
+
+# SvelteKit
+/.svelte-kit
+
+# Local database
+/data
+
+# Vite
+vite.config.ts.timestamp-*

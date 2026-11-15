@@ -1,0 +1,38 @@
+@import 'tailwindcss';
+
+/* Design tokens from design/TOKENS.md. Use these names, not raw values. */
+@theme {
+	--font-heading: 'Lilita One', ui-sans-serif, sans-serif;
+	--font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+
+	--color-bg: #0a0f2c;
+	--color-card: #18204a;
+	--color-line: #2e3a78;
+	--color-track: #5d6cc4;
+	--color-ink: #f3f4ff;
+	--color-muted: #b9c0ea;
+	--color-hi: #ff9f5a;
+	--color-ink-on-orange: #2a1400;
+	--color-ok: #5ed6c4;
+	--color-amber: #ffd166;
+	--color-label: #1e2756;
+	--color-bonus-planet: #f2b544;
+
+	--color-mia: #f28aa0;
+	--color-leo: #6ec6f0;
+
+	--radius-board: 28px;
+}
+
+html,
+body {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	font-family: var(--font-sans);
+	font-weight: 700;
+	color: var(--color-ink);
+	background: var(--color-bg);
+}
