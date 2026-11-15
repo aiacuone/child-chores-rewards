@@ -1,4 +1,4 @@
-# Kids Chores & Rewards App: Spec and Decisions
+# Rocket Rewards: Spec and Decisions
 
 The app's display name is **Rocket Rewards**, at https://rocket-rewards.duckdns.org.
 
@@ -114,7 +114,7 @@ Settings is a grown-up-only tab. Rows:
 - Finishing every stop for the day earns a daily bonus (default +20 stars, set by a grown-up). The end of the trip is a bonus planet, not a reward.
 - With no chores due, the child sees "Nothing to do today".
 - Stars only go down when a reward is claimed. There are no penalties.
-- **Ranks** (Cadet 0, Pilot 50, Explorer 100, Captain 250, Commander 500) use the child's current star balance, so a rank can drop after a reward is handed out.
+- **Ranks** (Cadet 0, Pilot 50, Explorer 100, Captain 250, Commander 500) use the child's current star balance, so a rank can drop after a reward is handed out. Rank shows on the child's rocket, which keeps the child's colour: Cadet plain, Pilot wing and hull stripes, Explorer side boosters, Captain gold collar and wing tips, Commander gold star and glow. The rocket upgrades everywhere it appears at 40 px or taller.
 - **Star history (grown-ups only):** on the Ranks tab, each child has a "Star history" link that opens a list of that child's star changes, grouped by day, newest first (chores, daily bonus, rewards handed out). Undo and "That wasn't Mia" correct the history rather than adding rows, so it shows only what stands. Children never see it.
 
 ## Rewards
