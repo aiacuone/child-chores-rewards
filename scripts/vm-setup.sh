@@ -3,8 +3,8 @@
 #
 #   sudo bash vm-setup.sh [SECRETS_DIR]
 #
-# SECRETS_DIR holds the four env files copied from the developer's machine
-# (duckdns.env, google.env, gmail.env, r2.env). It defaults to
+# SECRETS_DIR holds the five env files copied from the developer's machine
+# (duckdns.env, google.env, gmail.env, r2.env, allowed.env). It defaults to
 # ~/rocket-rewards-secrets of the user who ran sudo. Delete it afterwards.
 #
 # It creates only things named after this app:
@@ -47,7 +47,7 @@ command -v caddy >/dev/null || die "caddy is not installed"
 command -v curl >/dev/null || die "curl is not installed"
 [ -f "$CADDYFILE" ] || die "$CADDYFILE not found"
 [ -d "$SECRETS_DIR" ] || die "secrets folder $SECRETS_DIR not found. Copy the env files there first (see docs/vm-setup.md)"
-for f in duckdns.env google.env gmail.env r2.env; do
+for f in duckdns.env google.env gmail.env r2.env allowed.env; do
   [ -f "$SECRETS_DIR/$f" ] || die "missing $SECRETS_DIR/$f"
 done
 
@@ -85,6 +85,8 @@ umask 077
   cat "$SECRETS_DIR/google.env"
   echo
   cat "$SECRETS_DIR/gmail.env"
+  echo
+  cat "$SECRETS_DIR/allowed.env"
 } | grep -v '^$' > "$ETC_DIR/app.env"
 install -m 600 -o root -g root "$SECRETS_DIR/duckdns.env" "$ETC_DIR/duckdns.env"
 install -m 600 -o root -g root "$SECRETS_DIR/r2.env" "$ETC_DIR/r2.env"

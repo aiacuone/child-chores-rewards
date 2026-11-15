@@ -16,4 +16,7 @@ export function openDatabase(file: string) {
 	return { db, sqlite };
 }
 
+export type Db = ReturnType<typeof openDatabase>['db'];
+
+
 export { schema };

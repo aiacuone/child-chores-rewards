@@ -102,8 +102,10 @@ Settings is a grown-up-only tab. Rows:
 - A grown-up signs in with Google. There are no passwords and no installs. The first person to finish setup creates the family and is its owner.
 - Each new device opens the web address and signs in with the same Google account once. Every device starts on Who's flying after sign-in. Grown-up screens always need the PIN, on any device.
 - Grown-up setup has 4 steps: children, PIN, recovery email, alerts. A kids' tablet shows a one-time "Add to Home Screen" tip on Who's flying.
-- More than one grown-up can sign in, each with their own Google account. All grown-ups share one PIN. They join through an emailed invite (an invite is how the app knows which Google accounts belong to the family). An account that is not invited can only start its own separate, empty family.
+- More than one grown-up can sign in, each with their own Google account. All grown-ups share one PIN. They join through an emailed invite (an invite is how the app knows which Google accounts belong to the family). Only Google accounts on the allowed list (the server's ALLOWED_EMAILS setting) can sign in. The first allowed account to sign in creates the family and owns it. Any other account sees "That Google account is not on the list." and cannot start a family. Invites will replace the list when they are built.
 - Settings > Sign-in and devices has no list of devices; it has the two sign-out buttons for a lost tablet.
+- The sign-in page shows the Setup-Welcome screen until the first family exists, and the Tablet-SignIn screen after that.
+- If Google sign-in fails, the sign-in page shows one short line above the button: "Sign-in was cancelled. Try again when you are ready.", "Google sign-in did not work. Try again.", "That Google account is not on the list." or, after 10 failed tries in 15 minutes, "Too many tries. Try again in 15 minutes."
 - The recovery email is separate from the Google account. It only receives PIN reset codes and can be any email.
 
 ## Trip, stars and bonus

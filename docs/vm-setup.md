@@ -17,12 +17,12 @@ It does not touch shtrong, price-tracker or umami.
 
 ## Running it
 
-1. Copy the script and the four secret files to the VM, from the developer's machine:
+1. Copy the script and the five secret files to the VM, from the developer's machine:
 
    ```
    scp scripts/vm-setup.sh ubuntu@shtrong.duckdns.org:
    ssh ubuntu@shtrong.duckdns.org 'mkdir -p -m 700 rocket-rewards-secrets'
-   scp ~/.config/rocket-rewards/{duckdns,google,gmail,r2}.env ubuntu@shtrong.duckdns.org:rocket-rewards-secrets/
+   scp ~/.config/rocket-rewards/{duckdns,google,gmail,r2,allowed}.env ubuntu@shtrong.duckdns.org:rocket-rewards-secrets/
    ```
 
 2. Run it on the VM:
