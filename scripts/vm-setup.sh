@@ -80,6 +80,10 @@ umask 077
   echo "HOST=127.0.0.1"
   echo "PORT=$PORT"
   echo "ORIGIN=https://$DOMAIN"
+  # Caddy is the only thing in front of the app. Take the visitor's address from
+  # the header it sets, so the sign-in rate limit counts each visitor separately.
+  echo "ADDRESS_HEADER=X-Forwarded-For"
+  echo "XFF_DEPTH=1"
   echo "DATABASE_FILE=$DATA_DIR/$APP.db"
   cat "$SECRETS_DIR/google.env"
   echo
