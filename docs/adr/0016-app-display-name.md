@@ -14,7 +14,7 @@ The app needs a name that children and grown-ups see. It appears in:
 - the Google sign-in consent screen ([ADR 0005](0005-google-sign-in-and-sessions.md)),
 - the web address ([ADR 0004](0004-hosting-and-deploy.md)).
 
-The designs use "Chore Rockets". The spec's heading is a description ("Kids Chores & Rewards App"), not a name. The repo stays `child-chores-rewards`.
+The designs use "Chore Rockets". The spec's heading is a description ("Kids Chores & Rewards App"), not a name. The repo was first called `child-chores-rewards` and is now `rocket-rewards`.
 
 ## Options considered
 

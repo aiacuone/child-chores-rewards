@@ -75,5 +75,5 @@ The strongest alternative was Option 2, Next.js, for React's larger ecosystem.
 ## Consequences
 
 - Fewer ready-made components than React. The photo cropper and accessible widgets (date picker, switches, dialogs, tabs) come from smaller Svelte libraries such as Bits UI and svelte-easy-crop, framework-agnostic ones such as Cropper.js, or native inputs.
-- The app needs a running Node server, which shapes [Decision 4: Hosting and deploy](https://github.com/aiacuone/child-chores-rewards/issues/1). It rules out purely static hosting.
+- The app needs a running Node server, which shapes [Decision 4: Hosting and deploy](https://github.com/aiacuone/rocket-rewards/issues/1). It rules out purely static hosting.
 - Live updates between devices have to be built (for example with server-sent events). They don't come for free as they would with Firebase.
