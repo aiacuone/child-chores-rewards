@@ -1,5 +1,7 @@
 # Kids Chores & Rewards App: Spec and Decisions
 
+The app's display name is **Rocket Rewards**, at https://rocket-rewards.duckdns.org.
+
 A family app where children finish chores, grown-ups approve them, and approved chores earn stars and rewards. This document records the rules behind the screens so the build does not depend on chat history. The screens are in `design/screens/` and the flows are listed in `design/FLOWS.md`.
 
 ## Overview
@@ -43,6 +45,7 @@ Each chore has its own schedule, chosen on the Edit chore screen. Every chore re
 
 - **Not due today:** a chore that is not due does not appear on the child's trip. Children see a "Coming up" section for chores due on later days.
 - **Daily reset:** at the reset time, Completed and Skipped chores that are due again return to Pending. Set in Settings under "Daily reset and bonus".
+- **Time zone:** all times, including the reset time, are Melbourne time (Australia/Melbourne), whatever the server's clock or the device's settings.
 
 ## Grown-up mode and PIN
 
@@ -54,7 +57,9 @@ Grown-up mode is protected by a PIN and locks itself, so a child cannot be left 
 - **App closed:** closing the app always locks grown-up mode.
 - **Recovery email:** set in advance in Settings while in grown-up mode. Any address works, not only the sign-in email. A new address is verified by a link, and changing it needs the current PIN. The old address stays in use until the new one is confirmed.
 - **Forgot PIN:** the screen shows the recovery email partly hidden (for example j•••@example.com). It emails a one-time 6-digit code, never the PIN itself, and only to that address. The code leads to a "Set a new PIN" screen.
-- **Safety alerts:** every grown-up gets an ntfy notification when a reset code is sent and when the recovery email is changed.
+- **Wrong PIN:** a wrong PIN shows "Wrong PIN, try again." After 5 wrong tries in a row the PIN pad locks with a countdown ("Try again in 0:30"): 30 seconds, then 1 minute, then 5 minutes, then 15 minutes for every further wrong try. The count is per family, not per device, and the right PIN resets it. "Forgot PIN?" still works while the pad is locked.
+- **Wrong reset code:** each emailed code allows 5 wrong tries. After that it is cancelled and a new code has to be sent.
+- **Safety alerts:** every grown-up gets an ntfy notification when a reset code is sent, when the recovery email is changed, and when the PIN pad first locks after wrong tries (once per run of wrong tries).
 
 ## Notifications with ntfy
 
@@ -66,10 +71,12 @@ Grown-ups get push alerts through ntfy, which has apps for iOS, Android and desk
 | Reward claimed | Every grown-up | Yes |
 | PIN reset code sent | Every grown-up | No, always on (locked switch) |
 | Recovery email changed | Every grown-up | No, always on (locked switch) |
+| PIN pad locked after wrong tries | Every grown-up | No, always on (locked switch) |
 
 - **Topic name is a secret:** topics on the public ntfy.sh server can be read and published to by anyone who knows the name. The app generates a long random topic name and shows it only in grown-up mode. There is no extra password or own server.
 - **Setup flow:** Settings > Notifications > ntfy shows the topic, a Send test button and a Subscribe step.
 - **Tapping an alert:** opens the app at the PIN screen, and then directly at that chore's (or reward's) check screen.
+- **No names or details in alerts:** alerts pass through the public ntfy.sh server, so they say only what kind of thing happened: "A chore is waiting for you to check", "A reward was claimed", "PIN reset code sent. If this wasn't you, open the app and change the PIN." No child names, chore or reward names, or email addresses. Tapping the alert shows the details after the PIN. Messages are sent with ntfy caching turned off (`Cache: no`).
 
 ## Settings
 
@@ -107,6 +114,8 @@ Settings is a grown-up-only tab. Rows:
 - Finishing every stop for the day earns a daily bonus (default +20 stars, set by a grown-up). The end of the trip is a bonus planet, not a reward.
 - With no chores due, the child sees "Nothing to do today".
 - Stars only go down when a reward is claimed. There are no penalties.
+- **Ranks** (Cadet 0, Pilot 50, Explorer 100, Captain 250, Commander 500) use the child's current star balance, so a rank can drop after a reward is handed out.
+- **Star history (grown-ups only):** on the Ranks tab, each child has a "Star history" link that opens a list of that child's star changes, grouped by day, newest first (chores, daily bonus, rewards handed out). Undo and "That wasn't Mia" correct the history rather than adding rows, so it shows only what stands. Children never see it.
 
 ## Rewards
 

@@ -149,6 +149,12 @@ Each flow is one row on the design canvas, read left to right. Board files are i
 - `Home-Locking.dc.html`: 1 · No one has touched it. Locking soon
 - `Main-Locked.dc.html`: 2 · Back to Who’s flying, locked
 
+## A grown-up looks at a child’s star history
+
+- `R-Ranks.dc.html`: 1 · Ranks. Tap Star history
+- `Star-History.dc.html`: 2 · Star history. Newest first, scrolls
+- `Star-History-Empty.dc.html`: 3 · A child with no stars yet
+
 ## A grown-up manages children
 
 - `Settings.dc.html`: 1 · Settings. Tap Children

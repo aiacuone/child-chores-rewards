@@ -4,7 +4,7 @@
   "v": 1,
   "at": "2026-11-14T09:00:00Z"
  },
- "title": "Chore Rockets: Full App Flow",
+ "title": "Rocket Rewards: Full App Flow",
  "launch": {
   "view": "canvas"
  },
@@ -793,9 +793,36 @@
    "is_interactive": true,
    "radius": 28
   },
-  "Settings.dc.html": {
+  "R-Ranks.dc.html": {
    "x": 0,
    "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Ranks. Tap Star history",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Star-History.dc.html": {
+   "x": 470,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Star history. Newest first, scrolls",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Star-History-Empty.dc.html": {
+   "x": 940,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "3 · A child with no stars yet",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Settings.dc.html": {
+   "x": 0,
+   "y": 25704,
    "w": 390,
    "h": 844,
    "title": "1 · Settings. Tap Children",
@@ -804,7 +831,7 @@
   },
   "Settings-Children.dc.html": {
    "x": 470,
-   "y": 24480,
+   "y": 25704,
    "w": 390,
    "h": 844,
    "title": "2 · Children. Tap Leo",
@@ -813,7 +840,7 @@
   },
   "Child-Edit.dc.html": {
    "x": 940,
-   "y": 24480,
+   "y": 25704,
    "w": 390,
    "h": 844,
    "title": "3 · Edit Leo. Tap Remove Leo",
@@ -822,7 +849,7 @@
   },
   "Child-Remove.dc.html": {
    "x": 1410,
-   "y": 24480,
+   "y": 25704,
    "w": 390,
    "h": 844,
    "title": "4 · Are you sure? Tap Yes",
@@ -831,7 +858,7 @@
   },
   "Children-Removed.dc.html": {
    "x": 1880,
-   "y": 24480,
+   "y": 25704,
    "w": 390,
    "h": 844,
    "title": "5 · Children. Leo removed",
@@ -840,7 +867,7 @@
   },
   "R9-Settings.dc.html": {
    "x": 0,
-   "y": 25704,
+   "y": 26928,
    "w": 390,
    "h": 844,
    "title": "1 · Settings. Tap Notifications",
@@ -849,7 +876,7 @@
   },
   "Notifications.dc.html": {
    "x": 470,
-   "y": 25704,
+   "y": 26928,
    "w": 390,
    "h": 844,
    "title": "2 · Notifications. Tap ntfy",
@@ -858,7 +885,7 @@
   },
   "Ntfy.dc.html": {
    "x": 940,
-   "y": 25704,
+   "y": 26928,
    "w": 390,
    "h": 844,
    "title": "3 · Set up ntfy. Send a test",
@@ -867,7 +894,7 @@
   },
   "R10-Parent-PIN.dc.html": {
    "x": 0,
-   "y": 26928,
+   "y": 28152,
    "w": 390,
    "h": 844,
    "title": "1 · Grown-up PIN. Tap Forgot PIN?",
@@ -876,7 +903,7 @@
   },
   "PIN-Forgot.dc.html": {
    "x": 470,
-   "y": 26928,
+   "y": 28152,
    "w": 390,
    "h": 844,
    "title": "2 · Forgot PIN. Tap Send code",
@@ -885,7 +912,7 @@
   },
   "Notif-Reset.dc.html": {
    "x": 940,
-   "y": 26928,
+   "y": 28152,
    "w": 390,
    "h": 844,
    "title": "3 · Grown-ups’ phones. ntfy alert",
@@ -894,7 +921,7 @@
   },
   "PIN-Reset.dc.html": {
    "x": 1410,
-   "y": 26928,
+   "y": 28152,
    "w": 390,
    "h": 844,
    "title": "4 · Set a new PIN. Tap Save PIN",
@@ -903,7 +930,7 @@
   },
   "Parent-PIN-After.dc.html": {
    "x": 1880,
-   "y": 26928,
+   "y": 28152,
    "w": 390,
    "h": 844,
    "title": "5 · Try the new PIN",
@@ -912,7 +939,7 @@
   },
   "R11-Settings.dc.html": {
    "x": 0,
-   "y": 28152,
+   "y": 29376,
    "w": 390,
    "h": 844,
    "title": "1 · Settings. Tap Recovery email",
@@ -921,7 +948,7 @@
   },
   "Recovery.dc.html": {
    "x": 470,
-   "y": 28152,
+   "y": 29376,
    "w": 390,
    "h": 844,
    "title": "2 · Recovery email. Tap Change email",
@@ -930,7 +957,7 @@
   },
   "Recovery-Edit.dc.html": {
    "x": 940,
-   "y": 28152,
+   "y": 29376,
    "w": 390,
    "h": 844,
    "title": "3 · New email and PIN. Tap Send link",
@@ -939,7 +966,7 @@
   },
   "Recovery-Sent.dc.html": {
    "x": 1410,
-   "y": 28152,
+   "y": 29376,
    "w": 390,
    "h": 844,
    "title": "4 · Check your inbox",
@@ -948,7 +975,7 @@
   },
   "R-Space-Child-Coming.dc.html": {
    "x": 0,
-   "y": 29376,
+   "y": 30600,
    "w": 390,
    "h": 844,
    "title": "1 · Mia’s trip. Tap Coming up",
@@ -957,7 +984,7 @@
   },
   "Child-Coming.dc.html": {
    "x": 470,
-   "y": 29376,
+   "y": 30600,
    "w": 390,
    "h": 844,
    "title": "2 · Chores due on other days",
@@ -966,7 +993,7 @@
   },
   "R-Stop-Parent2.dc.html": {
    "x": 0,
-   "y": 30600,
+   "y": 31824,
    "w": 390,
    "h": 844,
    "title": "1 · The chore. Tap Skip…",
@@ -975,7 +1002,7 @@
   },
   "Skip-Options.dc.html": {
    "x": 470,
-   "y": 30600,
+   "y": 31824,
    "w": 390,
    "h": 844,
    "title": "2 · Skip for how long? Tap 3 days",
@@ -984,7 +1011,7 @@
   },
   "Parent-Stops-SkippedLong.dc.html": {
    "x": 940,
-   "y": 30600,
+   "y": 31824,
    "w": 390,
    "h": 844,
    "title": "3 · Skipped until Tuesday",
@@ -993,7 +1020,7 @@
   },
   "R-Parent-Stops-Done.dc.html": {
    "x": 0,
-   "y": 31824,
+   "y": 33048,
    "w": 390,
    "h": 844,
    "title": "1 · Checked. Tap Undo within a minute",
@@ -1002,7 +1029,7 @@
   },
   "Parent-Stops-Undone.dc.html": {
    "x": 470,
-   "y": 31824,
+   "y": 33048,
    "w": 390,
    "h": 844,
    "title": "2 · Waiting for a check again",
@@ -1011,7 +1038,7 @@
   },
   "R-Claim-Parent.dc.html": {
    "x": 0,
-   "y": 33048,
+   "y": 34272,
    "w": 390,
    "h": 844,
    "title": "1 · Hand out? Tap Not now",
@@ -1020,7 +1047,7 @@
   },
   "Claim-Decline.dc.html": {
    "x": 470,
-   "y": 33048,
+   "y": 34272,
    "w": 390,
    "h": 844,
    "title": "2 · Pick a message. Tap Send message",
@@ -1029,7 +1056,7 @@
   },
   "Rewards-Declined.dc.html": {
    "x": 940,
-   "y": 33048,
+   "y": 34272,
    "w": 390,
    "h": 844,
    "title": "3 · Rewards. Message sent",
@@ -1038,7 +1065,7 @@
   },
   "Child-Rewards-Declined.dc.html": {
    "x": 1410,
-   "y": 33048,
+   "y": 34272,
    "w": 390,
    "h": 844,
    "title": "4 · Mia sees the message",
@@ -1047,7 +1074,7 @@
   },
   "R-Settings-Grownups.dc.html": {
    "x": 0,
-   "y": 34272,
+   "y": 35496,
    "w": 390,
    "h": 844,
    "title": "1 · Settings. Tap Grown-ups",
@@ -1056,7 +1083,7 @@
   },
   "Grown-ups.dc.html": {
    "x": 470,
-   "y": 34272,
+   "y": 35496,
    "w": 390,
    "h": 844,
    "title": "2 · Grown-ups. Tap Invite",
@@ -1065,7 +1092,7 @@
   },
   "Invite.dc.html": {
    "x": 940,
-   "y": 34272,
+   "y": 35496,
    "w": 390,
    "h": 844,
    "title": "3 · Their Google email. Tap Send invite",
@@ -1074,7 +1101,7 @@
   },
   "Grown-ups-Invited.dc.html": {
    "x": 1410,
-   "y": 34272,
+   "y": 35496,
    "w": 390,
    "h": 844,
    "title": "4 · Invite sent",
@@ -1083,7 +1110,7 @@
   },
   "Ranks.dc.html": {
    "x": 0,
-   "y": 35496,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "1 · Ranks",
@@ -1092,7 +1119,7 @@
   },
   "Auto-Lock.dc.html": {
    "x": 470,
-   "y": 35496,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "2 · Auto-lock",
@@ -1101,7 +1128,7 @@
   },
   "Auto-Return.dc.html": {
    "x": 940,
-   "y": 35496,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "3 · Back to Who’s flying",
@@ -1110,7 +1137,7 @@
   },
   "Devices.dc.html": {
    "x": 1410,
-   "y": 35496,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "4 · Devices",
@@ -1119,7 +1146,7 @@
   },
   "Daily-Reset.dc.html": {
    "x": 1880,
-   "y": 35496,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "5 · Daily reset and bonus",
@@ -1215,6 +1242,9 @@
   "Passcode-Setup.dc.html",
   "Home-Locking.dc.html",
   "Main-Locked.dc.html",
+  "R-Ranks.dc.html",
+  "Star-History.dc.html",
+  "Star-History-Empty.dc.html",
   "Settings.dc.html",
   "Settings-Children.dc.html",
   "Child-Edit.dc.html",
@@ -1397,69 +1427,76 @@
   "t20": {
    "x": 0,
    "y": 24220,
-   "text": "A grown-up manages children",
+   "text": "A grown-up looks at a child’s star history",
    "kind": "title1",
-   "maxW": 2270
+   "maxW": 1330
   },
   "t21": {
    "x": 0,
    "y": 25444,
-   "text": "A grown-up sets up ntfy",
+   "text": "A grown-up manages children",
    "kind": "title1",
-   "maxW": 1330
+   "maxW": 2270
   },
   "t22": {
    "x": 0,
    "y": 26668,
-   "text": "A grown-up forgot the PIN",
+   "text": "A grown-up sets up ntfy",
    "kind": "title1",
-   "maxW": 2270
+   "maxW": 1330
   },
   "t23": {
    "x": 0,
    "y": 27892,
-   "text": "A grown-up changes the recovery email",
+   "text": "A grown-up forgot the PIN",
    "kind": "title1",
-   "maxW": 1800
+   "maxW": 2270
   },
   "t24": {
    "x": 0,
    "y": 29116,
-   "text": "A child sees what’s coming up",
+   "text": "A grown-up changes the recovery email",
    "kind": "title1",
-   "maxW": 1250
+   "maxW": 1800
   },
   "t25": {
    "x": 0,
    "y": 30340,
-   "text": "A grown-up skips a chore for several days",
+   "text": "A child sees what’s coming up",
    "kind": "title1",
-   "maxW": 1330
+   "maxW": 1250
   },
   "t26": {
    "x": 0,
    "y": 31564,
-   "text": "A grown-up undoes an accepted chore",
+   "text": "A grown-up skips a chore for several days",
    "kind": "title1",
-   "maxW": 1250
+   "maxW": 1330
   },
   "t27": {
    "x": 0,
    "y": 32788,
-   "text": "A grown-up declines a reward claim",
+   "text": "A grown-up undoes an accepted chore",
    "kind": "title1",
-   "maxW": 1800
+   "maxW": 1250
   },
   "t28": {
    "x": 0,
    "y": 34012,
-   "text": "A grown-up invites another grown-up",
+   "text": "A grown-up declines a reward claim",
    "kind": "title1",
    "maxW": 1800
   },
   "t29": {
    "x": 0,
    "y": 35236,
+   "text": "A grown-up invites another grown-up",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t30": {
+   "x": 0,
+   "y": 36460,
    "text": "Other grown-up screens",
    "kind": "title1",
    "maxW": 2270
