@@ -1108,9 +1108,18 @@
    "is_interactive": true,
    "radius": 28
   },
-  "Ranks.dc.html": {
+  "App-Icon.dc.html": {
    "x": 0,
    "y": 36720,
+   "w": 390,
+   "h": 844,
+   "title": "1 · App icon. Full size, maskable, small, on a home screen",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Ranks.dc.html": {
+   "x": 0,
+   "y": 37944,
    "w": 390,
    "h": 844,
    "title": "1 · Ranks",
@@ -1119,7 +1128,7 @@
   },
   "Auto-Lock.dc.html": {
    "x": 470,
-   "y": 36720,
+   "y": 37944,
    "w": 390,
    "h": 844,
    "title": "2 · Auto-lock",
@@ -1128,7 +1137,7 @@
   },
   "Auto-Return.dc.html": {
    "x": 940,
-   "y": 36720,
+   "y": 37944,
    "w": 390,
    "h": 844,
    "title": "3 · Back to Who’s flying",
@@ -1137,7 +1146,7 @@
   },
   "Devices.dc.html": {
    "x": 1410,
-   "y": 36720,
+   "y": 37944,
    "w": 390,
    "h": 844,
    "title": "4 · Devices",
@@ -1146,7 +1155,7 @@
   },
   "Daily-Reset.dc.html": {
    "x": 1880,
-   "y": 36720,
+   "y": 37944,
    "w": 390,
    "h": 844,
    "title": "5 · Daily reset and bonus",
@@ -1277,6 +1286,7 @@
   "Grown-ups.dc.html",
   "Invite.dc.html",
   "Grown-ups-Invited.dc.html",
+  "App-Icon.dc.html",
   "Ranks.dc.html",
   "Auto-Lock.dc.html",
   "Auto-Return.dc.html",
@@ -1497,6 +1507,13 @@
   "t30": {
    "x": 0,
    "y": 36460,
+   "text": "App icon for the home screen",
+   "kind": "title1",
+   "maxW": 1250
+  },
+  "t31": {
+   "x": 0,
+   "y": 37684,
    "text": "Other grown-up screens",
    "kind": "title1",
    "maxW": 2270
