@@ -35,12 +35,11 @@ die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 # ---- Checks before anything changes ----------------------------------------
 
 [ "$(id -u)" -eq 0 ] || die "run this as root: sudo bash $0"
-[ -n "${SUDO_USER:-}" ] || die "run it with sudo from your own login, so I know who deploys"
-DEPLOY_USER=$SUDO_USER
-[ "$DEPLOY_USER" != root ] || die "run it with sudo from a normal login, not as root"
+[ -n "${SUDO_USER:-}" ] || die "run it with sudo from your own login"
+[ "$SUDO_USER" != root ] || die "run it with sudo from a normal login, not as root"
 
-DEPLOY_HOME=$(getent passwd "$DEPLOY_USER" | cut -d: -f6)
-SECRETS_DIR=${1:-$DEPLOY_HOME/rocket-rewards-secrets}
+LOGIN_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+SECRETS_DIR=${1:-$LOGIN_HOME/rocket-rewards-secrets}
 
 [ -x "$NODE" ] || die "$NODE not found"
 command -v caddy >/dev/null || die "caddy is not installed"
@@ -64,9 +63,9 @@ if ! id "$APP" >/dev/null 2>&1; then
 fi
 
 say "creating folders"
-# The code folder belongs to the deploy user (item 7 syncs into it over SSH).
-# The app user can read it but not change it.
-install -d -m 755 -o "$DEPLOY_USER" -g "$DEPLOY_USER" "$CODE_DIR"
+# The code folder is made here and handed to the deploy user by
+# scripts/vm-deploy-user.sh. The app user can read it but not change it.
+install -d -m 755 "$CODE_DIR"
 # The data folder holds the database and the photos: only the app user.
 install -d -m 700 -o "$APP" -g "$APP" "$DATA_DIR"
 install -d -m 700 -o root -g root "$ETC_DIR"
@@ -222,5 +221,5 @@ cat <<EOF
 
 Next steps:
   - Delete the temporary secrets folder:  rm -r "$SECRETS_DIR"
-  - Item 7 (deploy on push) syncs the app into $CODE_DIR and starts $APP.service
+  - Run scripts/vm-deploy-user.sh to create the deploy user, which syncs the app into $CODE_DIR and starts $APP.service
 EOF

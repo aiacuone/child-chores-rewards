@@ -44,24 +44,49 @@ Replace a secret when it may have leaked, or on a schedule. Secrets live in two 
 
 ## The deploy key
 
+The deploy key logs in as the `rocket-deploy` user ([vm-setup.md](../vm-setup.md#the-deploy-user)). The same steps set it up the first time and replace it later.
+
 1. Make a new key pair:
 
    ```
-   ssh-keygen -t ed25519 -N "" -C "rocket-rewards-deploy" -f /home/adrian/.config/rocket-rewards/github-deploy-new
+   ssh-keygen -t ed25519 -N "" -C "rocket-deploy" -f /home/adrian/.config/rocket-rewards/rocket-deploy-new
    ```
 
-2. Add the new public key to the VM, then test it:
+2. Copy the script and the public half to the VM, and run the script. It makes the user if it is missing, installs the key in place of any old one, and sets the sudo rule:
 
    ```
-   ssh-copy-id -i /home/adrian/.config/rocket-rewards/github-deploy-new.pub ubuntu@shtrong.duckdns.org
-   ssh -i /home/adrian/.config/rocket-rewards/github-deploy-new -o IdentitiesOnly=yes ubuntu@shtrong.duckdns.org 'echo key works'
+   scp scripts/vm-deploy-user.sh ubuntu@shtrong.duckdns.org:
+   scp /home/adrian/.config/rocket-rewards/rocket-deploy-new.pub ubuntu@shtrong.duckdns.org:rocket-deploy.pub
+   ssh ubuntu@shtrong.duckdns.org 'sudo bash vm-deploy-user.sh rocket-deploy.pub'
    ```
 
-3. Replace the GitHub secret:
+3. Test the new key. It should print the service status, then "good: no general sudo":
 
    ```
-   gh secret set DEPLOY_SSH_KEY < /home/adrian/.config/rocket-rewards/github-deploy-new
+   ssh -i /home/adrian/.config/rocket-rewards/rocket-deploy-new -o IdentitiesOnly=yes rocket-deploy@rocket-rewards.duckdns.org 'sudo -n /usr/bin/systemctl status rocket-rewards --no-pager | head -3; sudo -n true && echo "BAD: general sudo works" || echo "good: no general sudo"'
    ```
 
-4. Push a small change to `main` and check that the deploy job passes at https://github.com/aiacuone/rocket-rewards/actions
-5. Remove the old public key line (comment `rocket-rewards-deploy`, the older one) from `~/.ssh/authorized_keys` on the VM, then rename the new files over the old ones locally.
+4. Replace the GitHub secret:
+
+   ```
+   gh secret set DEPLOY_SSH_KEY < /home/adrian/.config/rocket-rewards/rocket-deploy-new
+   ```
+
+5. Push a small change to `main` and check that the deploy job passes at https://github.com/aiacuone/rocket-rewards/actions
+6. Clean up. Rename the new files over the old ones locally, and delete the copies on the VM:
+
+   ```
+   mv /home/adrian/.config/rocket-rewards/rocket-deploy-new /home/adrian/.config/rocket-rewards/rocket-deploy
+   mv /home/adrian/.config/rocket-rewards/rocket-deploy-new.pub /home/adrian/.config/rocket-rewards/rocket-deploy.pub
+   ssh ubuntu@shtrong.duckdns.org 'rm ~/vm-deploy-user.sh ~/rocket-deploy.pub'
+   ```
+
+### One-time cleanup of the old key
+
+The first deploy key (comment `rocket-rewards-deploy`) logs in as `ubuntu`, which has full sudo. Once a deploy has worked with the new key, remove it:
+
+```
+ssh ubuntu@shtrong.duckdns.org "sed -i '/ rocket-rewards-deploy\$/d' ~/.ssh/authorized_keys"
+```
+
+Then delete the old private key, `/home/adrian/.config/rocket-rewards/github-deploy`, and its `.pub` file. Shtrong's own deploy key is a different key and is not touched.

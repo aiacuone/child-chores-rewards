@@ -47,6 +47,6 @@ jobs:
             --exclude 'build/' \
             --exclude '.svelte-kit/' \
             -e 'ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes' \
-            ./ ubuntu@rocket-rewards.duckdns.org:rocket-rewards-src/
-          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes ubuntu@rocket-rewards.duckdns.org \
+            ./ rocket-deploy@rocket-rewards.duckdns.org:rocket-rewards-src/
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes rocket-deploy@rocket-rewards.duckdns.org \
             'bash ~/rocket-rewards-src/scripts/activate-release.sh'

@@ -5,7 +5,7 @@ Rocket Rewards runs on the shared Oracle VM ([ADR 0004](adr/0004-hosting-and-dep
 ## What it creates
 
 - System user `rocket-rewards`, with no login.
-- `/opt/rocket-rewards`: the app's code, owned by the deploy user. Item 7 syncs into it.
+- `/opt/rocket-rewards`: the app's code. It is handed to the deploy user by `scripts/vm-deploy-user.sh` (see "The deploy user" below), and each deploy syncs into it.
 - `/var/lib/rocket-rewards`: the SQLite file and photos, readable only by the app user.
 - `/etc/rocket-rewards/`: `app.env`, `duckdns.env` and `r2.env`, root only.
 - `rocket-rewards.service`: enabled, not started. The deploy in item 7 starts it, on port 3003 (3000 to 3002 are taken by other apps).
@@ -48,12 +48,23 @@ The secrets stay in `/etc/rocket-rewards/`, root only. They are never in git.
 - DuckDNS not answering OK: check the token, `journalctl -u rocket-rewards-duckdns`.
 - No certificate yet: ports 80 and 443 must be open, `journalctl -u caddy -n 50`.
 
+## The deploy user
+
+GitHub deploys as `rocket-deploy`, not as your own login. `scripts/vm-deploy-user.sh` makes it, once, after `vm-setup.sh`:
+
+- It can log in with one SSH key only, with no forwarding.
+- It owns `/opt/rocket-rewards` and its own source folder.
+- Its only sudo rights are to stop, start and check `rocket-rewards.service`. The rule is in `/etc/sudoers.d/rocket-rewards-deploy`.
+- It cannot read the secrets in `/etc/rocket-rewards` or the database in `/var/lib/rocket-rewards`, and it has no other sudo.
+- A package that runs code during the deploy therefore cannot take over the shared VM.
+
+To set it up, or to replace its key, follow "The deploy key" in [how-to/rotate-secrets.md](how-to/rotate-secrets.md).
+
 ## Deploys
 
 A push to `main` deploys, through the `deploy` job in `.github/workflows/ci.yml`:
 
 - It runs only after the `test` job passes. A failing test stops the deploy.
-- It copies the source to `~/rocket-rewards-src` on the VM over SSH, then runs `scripts/activate-release.sh` there.
+- It copies the source to `~/rocket-rewards-src` of the `rocket-deploy` user over SSH, then runs `scripts/activate-release.sh` there.
 - That script builds the app, swaps it into `/opt/rocket-rewards`, restarts `rocket-rewards.service` and checks that port 3003 answers. If it does not, the previous release is put back.
-- The deploy key is the `DEPLOY_SSH_KEY` secret in GitHub. Its public half is in the deploy user's `~/.ssh/authorized_keys` on the VM. The private half is in `~/.config/rocket-rewards/github-deploy` on the developer's machine.
-- The deploy user needs passwordless `sudo systemctl` for this service. It is the same `ubuntu` login that shtrong deploys with.
+- The deploy key is the `DEPLOY_SSH_KEY` secret in GitHub. Its public half is the one key in `/home/rocket-deploy/.ssh/authorized_keys` on the VM. The private half is in `~/.config/rocket-rewards/rocket-deploy` on the developer's machine.
