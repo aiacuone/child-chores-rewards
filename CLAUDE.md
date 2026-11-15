@@ -23,3 +23,12 @@ A kids chores-and-rewards web app for children aged 5 to 12, for one family's ow
 ## Open decisions
 
 See "Not designed yet" at the end of `docs/SPEC.md`. Decide these while building and add the answer to the spec.
+
+## How we work here
+
+- Work through the tracker, issue #2 (setup and pipeline), with `/work-issue`. Its items are sub-issues, one branch per item, merged to `main` without a pull request. The features tracker is planned with `/plan-issues` after the setup is done and the design briefs are applied.
+- Commits for an item end with `Closes #N` for that item's issue number.
+- Decisions are in `docs/adr/` (index: `docs/adr/README.md`). Do not re-decide them. A new significant decision goes through `/decide-app-adr`.
+- The repo is public. Keep secrets out of it: they live in `~/.config/rocket-rewards/*.env` on the developer's machine and in a root-only file on the VM.
+- Claude's remote commands to the shared VM are blocked, so VM steps are handed over as scripts for the developer to run.
+- Tests: Vitest for the rules, Playwright for each flow as it is built.
