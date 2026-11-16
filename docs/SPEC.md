@@ -76,7 +76,7 @@ Grown-ups get push alerts through ntfy, which has apps for iOS, Android and desk
 - **Topic name is a secret:** topics on the public ntfy.sh server can be read and published to by anyone who knows the name. The app generates a long random topic name and shows it only in grown-up mode. There is no extra password or own server.
 - **Setup flow:** Settings > Notifications > ntfy shows the topic, a Send test button and a Subscribe step.
 - **Tapping an alert:** opens the app at the PIN screen, and then directly at that chore's (or reward's) check screen.
-- **No names or details in alerts:** alerts pass through the public ntfy.sh server, so they say only what kind of thing happened: "A chore is waiting for you to check", "A reward was claimed", "PIN reset code sent. If this wasn't you, open the app and change the PIN." No child names, chore or reward names, or email addresses. Tapping the alert shows the details after the PIN. Messages are sent with ntfy caching turned off (`Cache: no`).
+- **No names or details in alerts:** alerts pass through the public ntfy.sh server, so they say only what kind of thing happened: "A chore is ready to check" (body "A chore is waiting. Open Rocket Rewards to take a look."), "A reward was claimed" (body "A child wants a reward. Open Rocket Rewards to hand it out."), "PIN reset code sent" (body "A PIN reset code was sent. If this wasn't you, open the app and change the PIN."), "PIN pad locked" (body "Too many wrong PIN tries. The PIN pad is locked for 30 seconds.") No child names, chore or reward names, or email addresses. Tapping the alert shows the details after the PIN. Messages are sent with ntfy caching turned off (`Cache: no`).
 
 ## Settings
 

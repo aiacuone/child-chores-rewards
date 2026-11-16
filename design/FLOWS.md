@@ -177,6 +177,15 @@ Each flow is one row on the design canvas, read left to right. Board files are i
 - `PIN-Reset.dc.html`: 4 · Set a new PIN. Tap Save PIN
 - `Parent-PIN-After.dc.html`: 5 · Try the new PIN
 
+## A wrong PIN is entered
+
+- `R-Parent-PIN-Try.dc.html`: 1 · Grown-up PIN. Enter a wrong PIN
+- `Parent-PIN-Wrong.dc.html`: 2 · Wrong PIN, try again. After 5 tries it locks
+- `Parent-PIN-Locked.dc.html`: 3 · Locked, with a countdown. Tap Forgot PIN?
+- `Notif-PIN-Locked.dc.html`: 4 · Grown-ups’ phones. ntfy alert
+- `PIN-Reset-Wrong.dc.html`: 5 · Reset code is wrong. Tap Save PIN
+- `PIN-Reset-Expired.dc.html`: 6 · Code cancelled. Tap Send a new code
+
 ## A grown-up changes the recovery email
 
 - `R11-Settings.dc.html`: 1 · Settings. Tap Recovery email
