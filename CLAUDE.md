@@ -9,6 +9,8 @@ A kids chores-and-rewards web app for children aged 5 to 12, for one family's ow
 - `design/FLOWS.md`: every user flow, with its screens in order. Use it to find which screens belong together.
 - `design/TOKENS.md`: colours, fonts and sizes. Use them as variables.
 - `design/canvas.json`: the canvas layout (board positions and titles).
+- `docs/how-it-works/`: how the code is put together (start with `database.md`).
+- `docs/how-to/`: steps for jobs you repeat.
 
 ## Ground rules
 
