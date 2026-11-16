@@ -1,6 +1,6 @@
 # 5. Google sign-in and sessions
 
-Status: accepted
+Status: accepted; its access rule (uninvited accounts start their own family) is superseded by [ADR 0017](0017-grown-up-invites.md)
 
 ## Context
 

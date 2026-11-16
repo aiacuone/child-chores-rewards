@@ -27,3 +27,4 @@ Each record explains one technical decision: the options, what was chosen, why, 
 | [0014](0014-styling.md) | Styling | Tailwind with the tokens as theme values, Bits UI for the date picker, dialogs and switches |
 | [0015](0015-testing.md) | Testing | Vitest for the rules, Playwright for key flows and accessibility, before each deploy |
 | [0016](0016-app-display-name.md) | App display name | Rocket Rewards, at rocket-rewards.duckdns.org |
+| [0017](0017-grown-up-invites.md) | Grown-up invites | Invited Google emails join the family; everyone else is refused, with no server list after the first family |
