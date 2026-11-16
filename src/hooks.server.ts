@@ -1,4 +1,4 @@
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit/hooks';
 import {
 	SESSION_COOKIE,
@@ -7,14 +7,24 @@ import {
 	validateSession
 } from '#lib/server/auth.ts';
 import { getDb } from '#lib/server/db/app.ts';
+import { addSecurityHeaders } from '#lib/server/security-headers.ts';
 import { testRoutesAllowed } from '#lib/server/test-routes.ts';
 
 const PUBLIC_PATHS = ['/login', '/login/google', '/login/google/callback'];
 
-export const handle: Handle = async ({ event, resolve }) => {
+export const handle: Handle = async (input) => {
+	const response = await guard(input);
+	addSecurityHeaders(response.headers);
+	return response;
+};
+
+// Every response gets the security headers. The one exception is the redirect
+// to /login thrown below: SvelteKit builds it after this hook, and it has no
+// body for the headers to protect.
+const guard: Handle = async ({ event, resolve }) => {
 	// Test-only pages do not exist outside local test runs.
 	if (event.url.pathname.startsWith('/test/')) {
-		if (!testRoutesAllowed(event.url)) error(404, 'Not found');
+		if (!testRoutesAllowed(event.url)) return new Response('Not found', { status: 404 });
 		return resolve(event);
 	}
 
@@ -39,7 +49,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		/\.(png|svg|ico|webmanifest|js|css|woff2?)$/.test(path);
 
 	if (!event.locals.user && !isPublic) {
-		if (path.startsWith('/api/')) error(401, 'Not signed in');
+		if (path.startsWith('/api/')) return new Response('Not signed in', { status: 401 });
 		redirect(303, '/login');
 	}
 
