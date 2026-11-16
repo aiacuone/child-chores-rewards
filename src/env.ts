@@ -14,6 +14,12 @@ export const variables = defineEnvVars({
 		description: 'Google emails that may sign in, separated by commas or spaces',
 		schema: (value) => value || undefined
 	},
+	// Only for Playwright on a developer's machine or in CI. Never set on the VM.
+	// Even when set, the test pages answer only on localhost (see test-routes.ts).
+	TEST_ROUTES: {
+		description: 'Set to 1 to turn on the test-only sign-in and preview pages',
+		schema: (value) => value === '1'
+	},
 	DATABASE_FILE: {
 		description: 'Path to the SQLite file',
 		schema: (value) => value || 'data/rocket-rewards.db'

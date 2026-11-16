@@ -17,3 +17,7 @@ vite.config.ts.timestamp-*
 
 # Python
 __pycache__/
+
+# Playwright
+/test-results
+/playwright-report

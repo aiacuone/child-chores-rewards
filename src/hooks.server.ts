@@ -7,10 +7,17 @@ import {
 	validateSession
 } from '#lib/server/auth.ts';
 import { getDb } from '#lib/server/db/app.ts';
+import { testRoutesAllowed } from '#lib/server/test-routes.ts';
 
 const PUBLIC_PATHS = ['/login', '/login/google', '/login/google/callback'];
 
 export const handle: Handle = async ({ event, resolve }) => {
+	// Test-only pages do not exist outside local test runs.
+	if (event.url.pathname.startsWith('/test/')) {
+		if (!testRoutesAllowed(event.url)) error(404, 'Not found');
+		return resolve(event);
+	}
+
 	const token = event.cookies.get(SESSION_COOKIE);
 	event.locals.user = null;
 

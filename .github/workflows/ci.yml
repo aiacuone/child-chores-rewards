@@ -30,6 +30,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run verify
+      # End-to-end tests on the build that verify just made (playwright.config.ts).
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
 
   deploy:
     name: Deploy to the VM
