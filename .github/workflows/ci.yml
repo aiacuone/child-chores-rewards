@@ -1,9 +1,20 @@
 name: CI
 
 on:
+  # A push that changes only docs, designs or Markdown files does not run CI or
+  # deploy: nothing in the build or on the VM reads them. If a push also changes
+  # any other file, everything runs as usual.
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'design/**'
+      - '**.md'
   pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'design/**'
+      - '**.md'
 
 permissions:
   contents: read
