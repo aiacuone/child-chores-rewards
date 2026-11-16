@@ -15,6 +15,13 @@
       "when": 1794733703804,
       "tag": "0001_high_lady_mastermind",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1794806178343,
+      "tag": "0002_remarkable_sally_floyd",
+      "breakpoints": true
     }
   ]
 }
