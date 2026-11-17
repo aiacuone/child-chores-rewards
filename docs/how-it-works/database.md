@@ -97,6 +97,14 @@ The family's shared PIN is in `family.pin_hash`, never as the PIN itself ([ADR 0
 - **`family.ntfy_topic`** is the family's secret alert topic, 32 random letters and digits (`src/lib/server/alerts.ts`).
 - **`family.setup_done_at`** is set by Finish on setup step 4. While it is empty, `/` sends the family to their setup step.
 
+## Live updates: `family.version`
+
+Screens on other devices refresh when the family's data changes (ADR 0006). The signal is one number, `family.version`:
+
+- **Triggers bump it.** Every insert, update or delete on `child`, `chore`, `chore_copy` or `star_event` adds 1 to that row's family's `version` (migration `0010`). No code has to remember to do it, so new features get live updates for free.
+- **Screens poll it.** `GET /api/changes` returns the signed-in family's version (`src/lib/server/live.ts`). Details are in [live-updates.md](live-updates.md).
+- Only the changed family's number moves, so one family's activity never makes another family's screens reload.
+
 ## Migrations: how the tables get built
 
 The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps, run one after another. Each one only describes what changed since the one before, so they do not repeat each other.
@@ -110,6 +118,8 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0006` adds `chore` and `chore_copy`.
 - `0007` adds each chore's repeat (`repeat_kind` and the `repeat_…` columns) and the `chore_reset` table.
 - `0008` adds each chore's `expectations` (what done looks like, shown on the stop).
+- `0009` adds `done_at` to `chore_copy` (when the child tapped "I did it!") and the family's `version`.
+- `0010` adds the triggers that bump `family.version` (see "Live updates" below). It was written by hand with `npx drizzle-kit generate --custom`, because Drizzle cannot describe triggers in `schema.ts`.
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

@@ -1,42 +1,8 @@
-import { expect, test, type Page } from '@playwright/test';
-import { TEST_PIN, expectAccessible, signIn } from './helpers';
+import { expect, test } from '@playwright/test';
+import { BASE, addChores, expectAccessible, signIn } from './helpers';
 import { WEEKDAYS, addDays, choreDay, weekday } from '../src/lib/repeat';
 
 // A child's trip (#22): today's stops in order, the count, a stop, Coming up.
-
-const BASE = 'http://localhost:4173';
-const JSON_POST = { origin: BASE, 'content-type': 'application/json' };
-
-/** Add chores through the grown-up API, as a grown-up would on the Chores tab. */
-async function addChores(
-	page: Page,
-	chores: { name: string; expectations?: string; repeat?: object }[]
-) {
-	const { token } = await (
-		await page.request.post('/api/grown-up/unlock', { data: { pin: TEST_PIN } })
-	).json();
-	const headers = { ...JSON_POST, 'x-grown-up': token };
-	const { children } = await (await page.request.get('/api/grown-up/chores', { headers })).json();
-	const mia = children.find((c: { name: string }) => c.name === 'Mia').id as number;
-	const ids: Record<string, number> = {};
-	for (const c of chores) {
-		const res = await page.request.post('/api/grown-up/chores', {
-			headers,
-			data: {
-				name: c.name,
-				expectations: c.expectations ?? '',
-				icon: 'toys',
-				stars: 10,
-				childIds: [mia],
-				repeat: c.repeat ?? { kind: 'daily' }
-			}
-		});
-		expect(res.status()).toBe(201);
-		ids[c.name] = (await res.json()).id;
-	}
-	await page.request.post('/api/grown-up/lock', { headers });
-	return { mia, ids };
-}
 
 test('a child sees today’s stops in order, opens one, and sees what is coming up', async ({
 	page

@@ -14,6 +14,10 @@ const TOPIC_LENGTH = 32;
 
 export const ALERTS = {
 	test: { title: 'Test alert', body: 'Rocket Rewards alerts are working.' },
+	choreWaiting: {
+		title: 'A chore is ready to check',
+		body: 'A chore is waiting. Open Rocket Rewards to take a look.'
+	},
 	pinLocked: {
 		title: 'PIN pad locked',
 		body: 'Too many wrong PIN tries. The PIN pad is locked for 30 seconds.'

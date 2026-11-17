@@ -141,6 +141,8 @@ Settings is a grown-up-only tab. Rows:
 ## Checking, undo and send back
 
 - A child can tap Undo for about a minute after "I did it!" while the chore is still waiting for a grown-up.
+- **After "I did it!"** (decided in #23): the trip shows "Sent! A grown-up will check it." with Undo for 60 seconds. When the stop was not Up next, it reads "Set the table moved to the front!" instead, still with Undo. The message goes as soon as a grown-up checks the chore.
+- **Live updates** (decided in #23): screens check for changes every 4 seconds, and at once when the app comes back into view.
 - A grown-up can undo an accepted chore for 1 minute after accepting it.
 - A grown-up can send a chore back with a kind message ("Almost! Give it another go", and others). The child sees the message on the trip, and the stop opens again.
 - A grown-up can also choose "That wasn't Mia" to move a chore and its stars to the right child.

@@ -1,6 +1,8 @@
 <script lang="ts">
 	// What every page of a child's trip shares: the stars, the child's colour
-	// along the top, and the return to Who's flying when nobody touches it.
+	// along the top, the return to Who's flying when nobody touches it, and
+	// refreshing when something changes on another device.
+	import LiveUpdates from '#lib/components/LiveUpdates.svelte';
 	import StarField from '#lib/components/StarField.svelte';
 	import StillThere from '#lib/components/StillThere.svelte';
 
@@ -18,4 +20,5 @@
 	{@render children()}
 </main>
 
+<LiveUpdates version={data.version} />
 <StillThere name={child.name} colour={child.colour} rank={child.rank} />

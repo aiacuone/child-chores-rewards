@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { openDatabase, schema } from './db';
 import { forFamily, type FamilyScope } from './family';
 import { addChore } from './chores';
-import { comingUp, openStop, tripStops } from './trip';
+import { comingUp, iDidIt, justSent, openStop, tripStops, undoIDidIt } from './trip';
+import { familyVersion } from './live';
 import type { ChoreInput } from './forms/chores';
 
 let opened: ReturnType<typeof openDatabase>;
@@ -111,5 +112,84 @@ describe("one family cannot see another's trip", () => {
 		expect(comingUp(ours, sam, now)).toEqual([]);
 		expect(openStop(ours, sam, theirChore, now)).toBeNull();
 		expect(openStop(ours, mia, theirChore, now)).toBeNull();
+	});
+});
+
+describe('"I did it!" and Undo', () => {
+	const later = (seconds: number) => new Date(now.getTime() + seconds * 1000);
+
+	it('sends the stop to Grown-up checking once, so a double tap changes nothing', () => {
+		const bed = chore('Make your bed', [mia]);
+		expect(iDidIt(ours, mia, bed, now)).toEqual({ name: 'Make your bed', moved: false });
+		expect(path(mia)).toEqual([['Make your bed', 'waiting']]);
+		expect(iDidIt(ours, mia, bed, now)).toBeNull();
+	});
+
+	it('says when a stop that was not Up next moves to the front', () => {
+		chore('Make your bed', [mia]);
+		const table = chore('Set the table', [mia]);
+		expect(iDidIt(ours, mia, table, now)?.moved).toBe(true);
+		expect(path(mia)).toEqual([
+			['Set the table', 'waiting'],
+			['Make your bed', 'next']
+		]);
+	});
+
+	it('only works on the child’s own unfinished stop for today', () => {
+		const bed = chore('Make your bed', [mia]);
+		const weekly = chore('Wash the car', [mia], { kind: 'weekly', days: [5] });
+		expect(iDidIt(ours, leo, bed, now)).toBeNull();
+		expect(iDidIt(ours, mia, weekly, now)).toBeNull();
+		setStatus(bed, mia, 'completed');
+		expect(iDidIt(ours, mia, bed, now)).toBeNull();
+	});
+
+	it('shows the message and allows Undo for a minute', () => {
+		const bed = chore('Make your bed', [mia]);
+		iDidIt(ours, mia, bed, now);
+		expect(justSent(ours, mia, bed, later(20))).toEqual({
+			choreId: bed,
+			name: 'Make your bed',
+			secondsLeft: 40
+		});
+		expect(justSent(ours, mia, bed, later(60))).toBeNull();
+		expect(undoIDidIt(ours, mia, bed, later(59))).toBe(true);
+		expect(path(mia)).toEqual([['Make your bed', 'next']]);
+	});
+
+	it('refuses Undo after the minute, or once a grown-up has checked it', () => {
+		const bed = chore('Make your bed', [mia]);
+		const table = chore('Set the table', [mia]);
+		iDidIt(ours, mia, bed, now);
+		iDidIt(ours, mia, table, now);
+		expect(undoIDidIt(ours, mia, bed, later(75))).toBe(false);
+		setStatus(table, mia, 'completed');
+		expect(undoIDidIt(ours, mia, table, later(5))).toBe(false);
+		expect(justSent(ours, mia, table, later(5))).toBeNull();
+		expect(path(mia)).toEqual([
+			['Set the table', 'done'],
+			['Make your bed', 'waiting']
+		]);
+	});
+
+	it('never touches another family’s chores', () => {
+		const theirChore = chore('Feed the cat', [sam], { kind: 'daily' }, theirs);
+		expect(iDidIt(ours, sam, theirChore, now)).toBeNull();
+		iDidIt(theirs, sam, theirChore, now);
+		expect(justSent(ours, sam, theirChore, now)).toBeNull();
+		expect(undoIDidIt(ours, sam, theirChore, now)).toBe(false);
+		expect(tripStops(theirs, sam, now)[0].state).toBe('waiting');
+	});
+});
+
+describe('live updates', () => {
+	it('bumps only the changed family’s version', () => {
+		const before = [familyVersion(ours), familyVersion(theirs)];
+		const bed = chore('Make your bed', [mia]);
+		const afterAdd = familyVersion(ours);
+		expect(afterAdd).toBeGreaterThan(before[0]);
+		iDidIt(ours, mia, bed, now);
+		expect(familyVersion(ours)).toBeGreaterThan(afterAdd);
+		expect(familyVersion(theirs)).toBe(before[1]);
 	});
 });

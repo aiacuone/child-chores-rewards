@@ -1,11 +1,13 @@
 <script lang="ts">
 	// A child's trip (Space-Child.dc.html, Space-Child-Open.dc.html,
-	// Space-Child-Waiting.dc.html), or "Nothing to do today!" when no stops are
+	// Space-Child-Waiting.dc.html, Space-Child-Reordered.dc.html), or "Nothing
+	// to do today!" when no stops are
 	// due (Space-Child-Empty.dc.html). The empty day keeps the name header, because
 	// the spec keeps each child's name and "Not Mia? Switch" on their trip screens.
 	// Temporary fixes: the bonus planet opens nothing until #25, the star count
 	// opens nothing and "See my rewards" is left out until #26, and once every
 	// stop is finished the count shows only "5 of 5 stops" until #25.
+	import { enhance } from '$app/forms';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
 	import Planet from '#lib/components/Planet.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
@@ -19,6 +21,16 @@
 	const stops = $derived(data.stops);
 	const finished = $derived(stops.filter((s) => s.state === 'done' || s.state === 'waiting').length);
 	const board = $derived(tripPath(stops.length, finished));
+	// The message after "I did it!", with Undo, until the minute is up.
+	let showSent = $state(false);
+	$effect(() => {
+		const sent = data.sent;
+		showSent = sent !== null;
+		if (!sent) return;
+		const timer = setTimeout(() => (showSent = false), sent.secondsLeft * 1000);
+		return () => clearTimeout(timer);
+	});
+
 	const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 	const LOOK = {
@@ -272,4 +284,33 @@
 			</a>
 		</div>
 	{/if}
+{/if}
+
+{#if showSent && data.sent}
+	<div aria-hidden="true" class="h-24"></div>
+	<div
+		role="status"
+		class="fixed inset-x-0 bottom-6 z-[6] mx-auto flex min-h-[60px] max-w-[350px] items-center gap-3 rounded-[20px] border-2 border-amber bg-card px-4 text-[16px] font-black"
+		style="width:calc(100% - 40px)"
+	>
+		<svg
+			aria-hidden="true"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="var(--color-amber)"
+			stroke-width="2.4"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class="flex-none"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg
+		>
+		<span class="flex-1">
+			{data.sent.moved ? `${data.sent.name} moved to the front!` : 'Sent! A grown-up will check it.'}
+		</span>
+		<form method="POST" action="?/undo" use:enhance>
+			<input type="hidden" name="chore" value={data.sent.choreId} />
+			<button class="inline-flex min-h-11 items-center rounded-full bg-label px-4 text-ink">Undo</button>
+		</form>
+	</div>
 {/if}

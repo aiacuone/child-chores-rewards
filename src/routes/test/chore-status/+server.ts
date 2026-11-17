@@ -1,6 +1,5 @@
 // Test-only: set one child's copy of a chore to a status, so Playwright can
-// draw a trip with done and waiting stops before "I did it!" (#23) and the
-// grown-up check (#24) exist. hooks.server.ts answers 404 for every /test/ path
+// draw a trip with done stops before the grown-up check (#24) exists. hooks.server.ts answers 404 for every /test/ path
 // unless test routes are allowed, so this never runs on the live site.
 //
 //   /test/chore-status?as=trip-1&chore=3&child=2&status=completed

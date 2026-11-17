@@ -25,6 +25,12 @@ export const family = sqliteTable('family', {
 	pinLockStage: integer('pin_lock_stage').notNull().default(0),
 	/** The PIN pad is locked until this time. */
 	pinLockedUntil: integer('pin_locked_until', { mode: 'timestamp_ms' }),
+	/**
+	 * Goes up by one whenever the family's children, chores, chore copies or
+	 * stars change (database triggers, migration 0010). Screens poll it to know
+	 * when to reload (ADR 0006, live.ts).
+	 */
+	version: integer('version').notNull().default(0),
 	createdAt: createdAt()
 });
 
@@ -196,6 +202,8 @@ export const choreCopy = sqliteTable(
 		status: text('status', { enum: ['pending', 'waiting', 'completed', 'skipped'] })
 			.notNull()
 			.default('pending'),
+		/** When the child tapped "I did it!". Undo is allowed for about a minute after it. */
+		doneAt: integer('done_at', { mode: 'timestamp_ms' }),
 		createdAt: createdAt()
 	},
 	(t) => [

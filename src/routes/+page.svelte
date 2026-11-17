@@ -6,6 +6,7 @@
 	import Planet from '#lib/components/Planet.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
 	import StarCount from '#lib/components/StarCount.svelte';
+	import LiveUpdates from '#lib/components/LiveUpdates.svelte';
 	import StarField from '#lib/components/StarField.svelte';
 	import { grownup } from '#lib/grownup.svelte.ts';
 
@@ -119,3 +120,5 @@
 		{/if}
 	</div>
 </main>
+
+<LiveUpdates version={data.version} />

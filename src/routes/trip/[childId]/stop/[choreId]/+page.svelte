@@ -1,5 +1,5 @@
 <script lang="ts">
-	// One stop (Stop.dc.html). Temporary fix: no "I did it!" until #23.
+	// One stop (Stop.dc.html). "I did it!" asks "Are you Mia?" first.
 	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
 	import Planet from '#lib/components/Planet.svelte';
@@ -37,8 +37,25 @@
 	{/if}
 
 	<a
+		href="{trip}/stop/{stop.choreId}/confirm"
+		class="mt-6 flex min-h-14 items-center justify-center gap-2 rounded-[20px] bg-hi font-heading text-[19px] text-ink-on-orange shadow-[0_5px_0_#8c5731]"
+	>
+		<svg
+			aria-hidden="true"
+			width="22"
+			height="22"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2.4"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class="flex-none"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg
+		>I did it!
+	</a>
+	<a
 		href={trip}
-		class="mt-6 flex min-h-14 items-center justify-center rounded-[20px] border-2 border-line bg-card font-heading text-[19px]"
+		class="flex min-h-14 items-center justify-center rounded-[20px] border-2 border-line bg-card font-heading text-[19px]"
 		>Back to my trip</a
 	>
 </div>

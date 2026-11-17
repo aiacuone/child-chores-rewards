@@ -41,7 +41,7 @@ export function resetFamily(scope: FamilyScope, now = new Date()) {
 
 		const reset = tx
 			.update(schema.choreCopy)
-			.set({ status: 'pending' })
+			.set({ status: 'pending', doneAt: null })
 			.where(
 				scope.where(
 					schema.choreCopy,

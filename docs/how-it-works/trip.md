@@ -12,10 +12,11 @@ A child's trip is the path of today's chores, from the home planet to the bonus 
 | Page | Screen | Shows |
 | --- | --- | --- |
 | `/trip/<child>` | Space-Child, Space-Child-Open, Space-Child-Waiting, Space-Child-Empty | The path, the count and the Coming up button, or "Nothing to do today!" |
-| `/trip/<child>/stop/<chore>` | Stop | One unfinished stop: picture, name, stars, repeat and expectations. |
+| `/trip/<child>/stop/<chore>` | Stop | One unfinished stop: picture, name, stars, repeat, expectations and "I did it!". |
+| `/trip/<child>/stop/<chore>/confirm` | Confirm-Who | "Are you Mia?" before the stop is sent. |
 | `/trip/<child>/coming-up` | Child-Coming | Chores due on the next 6 days instead of today. |
 
-`src/routes/trip/[childId]/+layout.server.ts` finds the child for all three. It refuses with 404 when the id is not a whole number or the child is not in the signed-in family, so a page below it never runs for another family's child. `+layout.svelte` adds the stars background, the child's colour along the top, and the return to Who's flying when nobody touches the screen (`StillThere`).
+`src/routes/trip/[childId]/+layout.server.ts` finds the child for all of them. It refuses with 404 when the id is not a whole number or the child is not in the signed-in family, so a page below it never runs for another family's child. `+layout.svelte` adds the stars background, the child's colour along the top, the return to Who's flying when nobody touches the screen (`StillThere`), and live updates (`LiveUpdates`).
 
 These pages need a signed-in device, not grown-up mode: children use them.
 
@@ -95,6 +96,28 @@ The +20 is `DAILY_BONUS` in `src/lib/bonus.ts`, until Settings makes it adjustab
 
 `copies` is the only query, and it checks the family twice. `scope.where` limits the copies to the signed-in family, and `eq(schema.chore.familyId, scope.familyId)` does the same for the joined chores. A copy can never bring in another family's chore, even if the ids were mixed up. The layout has already refused another family's child with 404.
 
+## "I did it!" and Undo
+
+The flow (design/FLOWS.md, "A child does a chore" and "A child does chores in any order"):
+
+1. The stop page's **I did it!** opens `/confirm`, "Are you Mia?". **No, that's not me** goes back to Who's flying.
+2. **Yes, I'm Mia** posts the page's form action. `iDidIt` sets the copy to `waiting` and `done_at` to now, but only if `openStop` would open it and it is still `pending`. A double tap finds it already waiting, so nothing changes and no second alert is sent.
+3. When it changed, every grown-up gets the "A chore is ready to check" alert (`ALERTS.choreWaiting`), with no names ([ADR 0009](../adr/0009-ntfy-alerts.md)). It is sent without waiting for ntfy, so the child is never held up.
+4. The trip opens with `?sent=<chore>`. `justSent` returns the stop's name and the seconds of Undo left, or `null` once a grown-up has checked it or the minute is up. The message is "Sent! A grown-up will check it." when the stop was Up next, and "Set the table moved to the front!" when it jumped ahead (`&moved=1`). Both have **Undo**.
+5. **Undo** posts `?/undo`. `undoIDidIt` puts the copy back to `pending` only while it is still `waiting` and `done_at` is within `UNDO_SECONDS` (60) plus 10 seconds' grace, so a tap at 0:59 still counts.
+
+| Function | What it does |
+| --- | --- |
+| `iDidIt(scope, child, chore)` | Pending to waiting, once. Returns `{ name, moved }`, or `null` when nothing changed. |
+| `justSent(scope, child, chore)` | The message and Undo time left, while Undo is allowed. |
+| `undoIDidIt(scope, child, chore)` | Waiting back to pending, within the minute. Returns whether it changed. |
+
+The daily reset clears `done_at` along with the status ([reset.md](reset.md)).
+
+## Live updates
+
+The trip pages and Who's flying refresh on their own when something changes on another device. The trip layout returns the family's `version` and renders `LiveUpdates`. How it works: [live-updates.md](live-updates.md).
+
 ## Where things go (`trip-path.ts`)
 
 The design draws 5 stops on a 390 px wide board. `tripPath(count, finished)` works out the same layout for any number of stops:
@@ -111,10 +134,12 @@ The page turns each x into a percentage of the board's width (`pct`), so the lay
 
 ## Test-only status route
 
-Until "I did it!" (#23) and the grown-up check (#24) exist, nothing in the app can mark a copy done or waiting. `/test/chore-status` sets a copy's status for Playwright. Like every `/test/` page, it answers 404 unless test routes are allowed (local test runs only).
+Until the grown-up check (#24) exists, nothing in the app can mark a copy done. `/test/chore-status` sets a copy's status for Playwright. Like every `/test/` page, it answers 404 unless test routes are allowed (local test runs only).
 
 ## Tests
 
 - `src/lib/server/trip.test.ts`: only the child's own stops due today and not skipped, the order and Up next, Coming up's 6 days, which stops open, and another family's chores never shown or opened.
 - `src/lib/trip-path.test.ts`: the layout against the design.
 - `e2e/trip.test.ts`: the trip with done and waiting stops, opening a stop, Coming up, the "any order" count, and another family getting 404 on every trip page.
+- `src/lib/server/trip.test.ts` also checks "I did it!" (once only, moved or not, only open stops), Undo (within the minute, not after a grown-up checks it), another family's chores, and that only the changed family's version goes up.
+- `e2e/i-did-it.test.ts`: the whole flow with a second device following within seconds, the alert with no names, Undo, "No, that's not me", and a second confirm doing nothing.

@@ -1,8 +1,10 @@
 // A child's trip (docs/SPEC.md, "Trip, stars and bonus"; Space-Child.dc.html).
 // The trip is the child's copies of chores that are due on today's chore day,
 // apart from skipped ones. Coming up is their chores due on the next 6 days
-// instead (Child-Coming.dc.html). Only the signed-in family's rows are read.
-import { and, eq } from 'drizzle-orm';
+// instead (Child-Coming.dc.html). "I did it!" sends a stop to a grown-up, and
+// Undo takes it back for about a minute. Only the signed-in family's rows are
+// read or changed.
+import { and, eq, gte } from 'drizzle-orm';
 import { schema } from './db';
 import type { FamilyScope } from './family';
 import { toRepeat } from './chores';
@@ -32,10 +34,20 @@ export type ComingUp = {
 /** How far ahead Coming up looks: the next 6 days. */
 const COMING_UP_DAYS = 6;
 
+/** How long Undo shows after "I did it!" (docs/SPEC.md: "about a minute"). */
+export const UNDO_SECONDS = 60;
+/** The server allows Undo a little longer, so a tap at 0:59 still counts. */
+const UNDO_GRACE_SECONDS = 10;
+
 /** The child's copies with their chores, oldest chore first. */
 function copies(scope: FamilyScope, childId: number) {
 	return scope.db
-		.select({ chore: schema.chore, status: schema.choreCopy.status })
+		.select({
+			chore: schema.chore,
+			copyId: schema.choreCopy.id,
+			status: schema.choreCopy.status,
+			doneAt: schema.choreCopy.doneAt
+		})
 		.from(schema.choreCopy)
 		.innerJoin(schema.chore, eq(schema.chore.id, schema.choreCopy.choreId))
 		.where(
@@ -118,4 +130,71 @@ export function openStop(scope: FamilyScope, childId: number, choreId: number, n
 		expectations: stop.chore.expectations,
 		repeats: repeatLabel(stop.repeat, day)
 	};
+}
+
+/**
+ * "I did it!": the child's stop goes to Grown-up checking. Only a stop that
+ * could be opened (the child's own, due today and pending) changes, and only
+ * once, so a double tap sends one alert. Returns what the trip needs for its
+ * message, or null when nothing changed.
+ */
+export function iDidIt(scope: FamilyScope, childId: number, choreId: number, now = new Date()) {
+	const stop = openStop(scope, childId, choreId, now);
+	if (!stop) return null;
+	const before = tripStops(scope, childId, now).find((s) => s.choreId === choreId);
+	const changed = scope.db
+		.update(schema.choreCopy)
+		.set({ status: 'waiting', doneAt: now })
+		.where(
+			scope.where(
+				schema.choreCopy,
+				eq(schema.choreCopy.choreId, choreId),
+				eq(schema.choreCopy.childId, childId),
+				eq(schema.choreCopy.status, 'pending')
+			)
+		)
+		.run().changes;
+	if (changed !== 1) return null;
+	// Up next stays where it is; any other stop jumps ahead of it.
+	return { name: stop.name, moved: before?.state === 'open' };
+}
+
+/** Whether the stop is still waiting and inside the Undo window. */
+const undoable = (status: string, doneAt: Date | null, now: Date) =>
+	status === 'waiting' && doneAt !== null && now.getTime() - doneAt.getTime() < UNDO_SECONDS * 1000;
+
+/**
+ * The stop just sent with "I did it!", for the trip's message, while Undo is
+ * still allowed: its name and how many seconds of Undo are left. Null once a
+ * grown-up has checked it or the minute is up.
+ */
+export function justSent(scope: FamilyScope, childId: number, choreId: number, now = new Date()) {
+	const copy = copies(scope, childId).find((c) => c.chore.id === choreId);
+	if (!copy || !undoable(copy.status, copy.doneAt, now)) return null;
+	const left = UNDO_SECONDS - Math.floor((now.getTime() - copy.doneAt!.getTime()) / 1000);
+	return { choreId, name: copy.chore.name, secondsLeft: Math.max(left, 0) };
+}
+
+/**
+ * Undo "I did it!": back to pending, but only while it is still waiting for a
+ * grown-up and within the minute. Returns whether it changed.
+ */
+export function undoIDidIt(scope: FamilyScope, childId: number, choreId: number, now = new Date()) {
+	if (!Number.isSafeInteger(choreId) || choreId <= 0) return false;
+	const since = new Date(now.getTime() - (UNDO_SECONDS + UNDO_GRACE_SECONDS) * 1000);
+	return (
+		scope.db
+			.update(schema.choreCopy)
+			.set({ status: 'pending', doneAt: null })
+			.where(
+				scope.where(
+					schema.choreCopy,
+					eq(schema.choreCopy.choreId, choreId),
+					eq(schema.choreCopy.childId, childId),
+					eq(schema.choreCopy.status, 'waiting'),
+					gte(schema.choreCopy.doneAt, since)
+				)
+			)
+			.run().changes === 1
+	);
 }
