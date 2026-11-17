@@ -43,6 +43,13 @@
       "when": 1794893993117,
       "tag": "0005_cooing_whiplash",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1794895623351,
+      "tag": "0006_chunky_payback",
+      "breakpoints": true
     }
   ]
 }

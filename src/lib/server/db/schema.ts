@@ -1,4 +1,4 @@
-import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 const createdAt = () =>
 	integer('created_at', { mode: 'timestamp' })
@@ -119,6 +119,54 @@ export const child = sqliteTable(
 );
 
 /**
+ * A chore in the family's library (the Chores tab). It may have no children
+ * assigned. Repeats come with #21; until then every chore is daily.
+ */
+export const chore = sqliteTable(
+	'chore',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		name: text('name').notNull(),
+		/** One of CHORE_ICONS in src/lib/chore-icons.ts. */
+		icon: text('icon', { enum: ['bed', 'paw', 'toys', 'book', 'plate', 'bin'] }).notNull(),
+		stars: integer('stars').notNull(),
+		createdAt: createdAt()
+	},
+	(t) => [index('chore_family_idx').on(t.familyId)]
+);
+
+/**
+ * One child's copy of a chore, with its own status (docs/SPEC.md, "Chores").
+ * Assigning a child adds a copy; unassigning removes it.
+ */
+export const choreCopy = sqliteTable(
+	'chore_copy',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		choreId: integer('chore_id')
+			.notNull()
+			.references(() => chore.id, { onDelete: 'cascade' }),
+		childId: integer('child_id')
+			.notNull()
+			.references(() => child.id, { onDelete: 'cascade' }),
+		status: text('status', { enum: ['pending', 'waiting', 'completed', 'skipped'] })
+			.notNull()
+			.default('pending'),
+		createdAt: createdAt()
+	},
+	(t) => [
+		index('chore_copy_family_idx').on(t.familyId),
+		uniqueIndex('chore_copy_chore_child_idx').on(t.choreId, t.childId)
+	]
+);
+
+/**
  * Every change to a child's stars is one row (ADR 0003). The balance is the sum
  * of the rows; nothing else changes it. Undo deletes rows, and "That wasn't Mia"
  * moves them, so the log shows only what stands.
@@ -150,4 +198,6 @@ export type Family = typeof family.$inferSelect;
 export type User = typeof user.$inferSelect;
 export type Child = typeof child.$inferSelect;
 export type StarEvent = typeof starEvent.$inferSelect;
+export type Chore = typeof chore.$inferSelect;
+export type ChoreCopy = typeof choreCopy.$inferSelect;
 export type EmailVerification = typeof emailVerification.$inferSelect;

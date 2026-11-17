@@ -10,7 +10,7 @@
 	let now = $state(Date.now());
 	let keepGoing = $state<HTMLButtonElement>();
 
-	const left = $derived(Math.max(0, grownup.lastTouch + AUTO_LOCK - now));
+	const left = $derived(Math.min(AUTO_LOCK, Math.max(0, grownup.lastTouch + AUTO_LOCK - now)));
 	const warning = $derived(left <= LOCK_WARNING);
 	const seconds = $derived(Math.ceil(left / 1000));
 	const clock = $derived(`${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`);

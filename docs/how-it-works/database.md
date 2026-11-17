@@ -11,6 +11,8 @@ The app keeps everything in one SQLite file ([ADR 0002](../adr/0002-database.md)
 | `session` | One signed-in device (the id is a hash of the cookie token). |
 | `child` | A child in a family. |
 | `star_event` | One change to a child's stars. |
+| `chore` | A chore in the family's library. |
+| `chore_copy` | One child's copy of a chore, with its own status. |
 
 ## How tables link: `family_id`
 
@@ -104,6 +106,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0003` adds each child's rocket `colour` and the family's `pin_hash`.
 - `0004` adds the family's `recovery_email`, `ntfy_topic` and `setup_done_at`, and the `email_verification` table.
 - `0005` adds the family's wrong-PIN count (`pin_fails`, `pin_lock_stage`, `pin_locked_until`) and the `grownup_token` table.
+- `0006` adds `chore` and `chore_copy`.
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

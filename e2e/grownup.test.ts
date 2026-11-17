@@ -26,7 +26,7 @@ test('the right PIN opens grown-up mode, which a refresh locks', async ({ page }
 
 	// Moving between grown-up pages keeps it open.
 	await page.getByRole('link', { name: 'Chores' }).click();
-	await expect(page.getByRole('heading', { name: 'Chores' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Chores', exact: true })).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Chores' })).toHaveAttribute('aria-current', 'page');
 
 	// The token is only in page memory: a refresh asks again.

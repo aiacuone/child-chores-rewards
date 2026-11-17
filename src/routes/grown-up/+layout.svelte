@@ -12,7 +12,10 @@
 
 	let { children } = $props();
 
-	const current = $derived((page.url.pathname.split('/')[2] || 'home') as Tab);
+	const parts = $derived(page.url.pathname.split('/').filter(Boolean));
+	const current = $derived((parts[1] || 'home') as Tab);
+	// The tab bar shows on the tab pages themselves, not on a chore or a form (as drawn).
+	const showTabs = $derived(parts.length <= 2);
 
 	onDestroy(() => {
 		if (grownup.token) lock({ toWhosFlying: false });
@@ -26,7 +29,7 @@
 		<div class="relative z-[2] mx-auto flex max-w-[420px] flex-col gap-3.5 px-5 pt-[62px] pb-32">
 			{@render children()}
 		</div>
-		<GrownupTabs {current} />
+		{#if showTabs}<GrownupTabs {current} />{/if}
 	{:else}
 		<div class="relative z-[2] mx-auto max-w-[420px] px-6 pt-[26px] pb-10">
 			<PinPad />

@@ -7,6 +7,54 @@ Grown-up mode is what the PIN opens: checking chores, handing out rewards and ch
 | Page | `src/lib/grownup.svelte.ts` | Holds the grown-up token in memory, reports touches, locks. |
 | Server | `src/lib/server/grownup.ts` | Checks the PIN, counts wrong PINs, checks and ends tokens. |
 
+## The grown-up token, start to finish
+
+The grown-up token is what proves "the PIN was typed on this device a moment ago". Every grown-up API route asks for it.
+
+### Its life
+
+| Step | Page (`src/lib/grownup.svelte.ts`) | Server (`src/lib/server/grownup.ts`) |
+| --- | --- | --- |
+| 1. Right PIN | `unlockWithPin` posts the PIN. | `unlock` makes 32 random bytes (43 characters as base64url), saves only their SHA-256 hash in `grownup_token`, and sends the token back once. |
+| 2. Kept | Stores it in `state.token`, in memory only. | Keeps the hash, the family, this device's session and an expiry 2 min 45 s away. |
+| 3. Used | `grownupFetch` adds it to each request in the `x-grown-up` header. | `requireGrownUp` hashes the header and looks for a matching row: same family, same session, not expired. If found, the expiry moves to 2 min 45 s from now. If not, 401. |
+| 4. Kept alive | `touch` posts to `/api/grown-up/touch` at most every 30 seconds while the screen is used. | The touch route only calls `requireGrownUp`, which pushes the expiry back. |
+| 5. Ended | `lock` forgets the token and posts it to `/api/grown-up/lock`. | `endToken` deletes the row, so the token stops working at once. |
+| 5. Or runs out | The bar locks the page at 2 minutes without a touch. | With no requests, the row expires 45 seconds later and is refused from then on. |
+
+### The `grownup_token` row
+
+| Column | Holds |
+| --- | --- |
+| `id` | The SHA-256 hash of the token. The token itself is never stored. |
+| `family_id` | The family it opens. Deleting the family deletes the row. |
+| `session_id` | The hashed id of the device's sign-in. Signing the device out deletes the row. |
+| `expires_at` | When it stops working, unless it is used before then. |
+
+### Example
+
+| Time | What happens | Server expiry |
+| --- | --- | --- |
+| 0:00 | Right PIN. Token made. | 2:45 |
+| 0:20 | Grown-up opens Chores (`grownupFetch`). | 3:05 |
+| 0:50 | A tap, 30 s since the last report: touch sent. | 3:35 |
+| 2:50 | No touch for 2 minutes: the page locks and tells the server. | Row deleted |
+| | If the lock post never arrived (for example the network dropped), nothing more is sent. | Refused from 3:35 |
+
+### Why it is built this way
+
+| Choice | Protects against |
+| --- | --- |
+| Kept in page memory, not a cookie or storage | A child reopening the app, refreshing or opening a new tab gets the PIN pad, not grown-up mode. |
+| Sent in a header, not a cookie | Another website cannot make the browser send it, because browsers add cookies to requests by themselves but never a custom header. |
+| Only the hash stored | A copy of the database has no working tokens in it. |
+| Tied to the family and the session | A token copied to another device or another family's account does not work. |
+| Shape checked first (`isToken`) | Anything that is not 43 URL-safe characters is refused before the database is read. |
+| Check and extend in one update (`useToken`) | A token cannot pass the check and then expire before its expiry is pushed back. |
+| 45 s of grace | The page reports touches only every 30 s, so a grown-up who is still tapping is never refused just before their page would have reported it. |
+
+Expired rows are not cleaned up yet. They stop working, and they are deleted when their device signs out.
+
 ## The token lives only in page memory
 
 When the right PIN is entered, the server makes a random token and sends it to the page. The page keeps it in one variable inside `src/lib/grownup.svelte.ts`, never in a cookie, local storage or session storage. The server keeps only a hash of it.
