@@ -22,6 +22,13 @@
       "when": 1794806178343,
       "tag": "0002_remarkable_sally_floyd",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1794823915797,
+      "tag": "0003_cold_leech",
+      "breakpoints": true
     }
   ]
 }

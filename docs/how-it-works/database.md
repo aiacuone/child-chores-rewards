@@ -78,6 +78,13 @@ A child's stars are never stored as a number ([ADR 0003](../adr/0003-data-model-
 - The rank comes from the current balance, in `src/lib/ranks.ts` (Cadet 0, Pilot 50, Explorer 100, Captain 250, Commander 500). A rank can drop after a reward.
 - Only the functions in `src/lib/server/stars.ts` change stars. Do not write to `star_event` anywhere else.
 
+## The grown-up PIN
+
+The family's shared PIN is in `family.pin_hash`, never as the PIN itself ([ADR 0007](../adr/0007-pin-and-grown-up-mode.md)).
+
+- `src/lib/server/pin.ts` turns the PIN into a salted scrypt hash (`scrypt$<salt>$<hash>`) and checks a PIN against it.
+- `pin_hash` is empty until setup step 2. While it is empty, setup is open; once it is set, the setup pages refuse (`src/lib/server/setup.ts`), so they cannot be used to replace the PIN.
+
 ## Migrations: how the tables get built
 
 The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps, run one after another. Each one only describes what changed since the one before, so they do not repeat each other.
@@ -85,6 +92,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0000` creates the first tables (`family`, `user`, `session`).
 - `0001` is the next change to them.
 - `0002` adds `child` and `star_event`.
+- `0003` adds each child's rocket `colour` and the family's `pin_hash`.
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

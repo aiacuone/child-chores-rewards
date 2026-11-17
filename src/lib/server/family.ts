@@ -3,6 +3,7 @@
 import { and, eq, type SQL } from 'drizzle-orm';
 import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
 import { schema, type Db } from './db';
+import type { Child } from './db/schema';
 
 export class NotInFamily extends Error {
 	constructor(what: string) {
@@ -26,7 +27,12 @@ export function forFamily(db: Db, familyId: number) {
 		where,
 
 		children() {
-			return db.select().from(schema.child).where(where(schema.child)).orderBy(schema.child.id).all();
+			return db
+				.select()
+				.from(schema.child)
+				.where(where(schema.child))
+				.orderBy(schema.child.id)
+				.all();
 		},
 
 		/** The child, or null if it does not exist or belongs to another family. */
@@ -46,8 +52,8 @@ export function forFamily(db: Db, familyId: number) {
 			return row;
 		},
 
-		addChild(name: string) {
-			const [row] = db.insert(schema.child).values({ familyId, name }).returning().all();
+		addChild(name: string, colour: Child['colour'] = 'pink') {
+			const [row] = db.insert(schema.child).values({ familyId, name, colour }).returning().all();
 			return row;
 		}
 	};

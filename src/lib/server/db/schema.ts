@@ -11,6 +11,8 @@ const createdAt = () =>
 export const family = sqliteTable('family', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	name: text('name').notNull(),
+	/** The shared grown-up PIN as a salted scrypt hash (pin.ts). Null until setup sets it. */
+	pinHash: text('pin_hash'),
 	createdAt: createdAt()
 });
 
@@ -44,7 +46,7 @@ export const session = sqliteTable(
 	(t) => [index('session_user_idx').on(t.userId)]
 );
 
-/** A child in the family. Setup and Settings add the rest (colour, photo, passcode). */
+/** A child in the family. Settings adds the rest later (photo, passcode). */
 export const child = sqliteTable(
 	'child',
 	{
@@ -53,6 +55,10 @@ export const child = sqliteTable(
 			.notNull()
 			.references(() => family.id, { onDelete: 'cascade' }),
 		name: text('name').notNull(),
+		/** Their rocket colour, one of COLOURS in src/lib/colours.ts. */
+		colour: text('colour', { enum: ['pink', 'blue', 'purple', 'green'] })
+			.notNull()
+			.default('pink'),
 		createdAt: createdAt()
 	},
 	(t) => [index('child_family_idx').on(t.familyId)]
