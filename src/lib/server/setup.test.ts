@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { openDatabase, schema } from './db';
 import { forFamily, type FamilyScope } from './family';
-import { SetupClosed, saveChildren, setFirstPin, setupStep } from './setup';
+import { SetupClosed, finishSetup, saveChildren, setFirstPin, setupStep } from './setup';
+import { startVerification } from './recovery-email';
 import { verifyPin } from './pin';
 
 let opened: ReturnType<typeof openDatabase>;
@@ -27,12 +28,28 @@ const pinHashOf = (scope: FamilyScope) =>
 		.pinHash;
 
 describe('setup', () => {
-	it('goes children, then PIN, then done', () => {
+	it('goes children, PIN, recovery email, alerts, then done', () => {
 		expect(setupStep(ours)).toBe('children');
 		saveChildren(ours, [{ name: 'Mia', colour: 'pink' }]);
 		expect(setupStep(ours)).toBe('pin');
 		setFirstPin(ours, '4826');
+		expect(setupStep(ours)).toBe('email');
+		expect(() => finishSetup(ours)).toThrow(SetupClosed);
+		startVerification(ours, 'grown-up@example.com');
+		expect(setupStep(ours)).toBe('alerts');
+		finishSetup(ours);
 		expect(setupStep(ours)).toBe('done');
+		expect(() => finishSetup(ours)).toThrow(SetupClosed);
+	});
+
+	it("finishing one family's setup leaves another's open", () => {
+		for (const scope of [ours, theirs]) {
+			saveChildren(scope, [{ name: 'Mia', colour: 'pink' }]);
+			setFirstPin(scope, '4826');
+			startVerification(scope, 'grown-up@example.com');
+		}
+		finishSetup(ours);
+		expect(setupStep(theirs)).toBe('alerts');
 	});
 
 	it('replaces the children when step 1 is saved again', () => {

@@ -5,13 +5,26 @@ import { defineEnvVars } from '@sveltejs/kit/env';
 export const variables = defineEnvVars({
 	// Optional so the app can be built and tested without them; sign-in
 	// stays off until both are set.
-	GOOGLE_CLIENT_ID: { description: 'Google OAuth client ID', schema: (value) => value || undefined },
+	GOOGLE_CLIENT_ID: {
+		description: 'Google OAuth client ID',
+		schema: (value) => value || undefined
+	},
 	GOOGLE_CLIENT_SECRET: {
 		description: 'Google OAuth client secret',
 		schema: (value) => value || undefined
 	},
 	ALLOWED_EMAILS: {
 		description: 'Google emails that may sign in, separated by commas or spaces',
+		schema: (value) => value || undefined
+	},
+	// Gmail for the recovery email link and PIN reset codes (ADR 0008).
+	// Without them no email is sent, and the page says so.
+	GMAIL_USER: {
+		description: 'Gmail address the app sends from',
+		schema: (value) => value || undefined
+	},
+	GMAIL_APP_PASSWORD: {
+		description: 'Gmail app password (16 letters, no spaces)',
 		schema: (value) => value || undefined
 	},
 	// Only for Playwright on a developer's machine or in CI. Never set on the VM.

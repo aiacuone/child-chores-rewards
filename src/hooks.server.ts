@@ -10,7 +10,8 @@ import { getDb } from '#lib/server/db/app.ts';
 import { addSecurityHeaders } from '#lib/server/security-headers.ts';
 import { testRoutesAllowed } from '#lib/server/test-routes.ts';
 
-const PUBLIC_PATHS = ['/login', '/login/google', '/login/google/callback'];
+// /verify-email is opened from an email, often on a device that is not signed in.
+const PUBLIC_PATHS = ['/login', '/login/google', '/login/google/callback', '/verify-email'];
 
 export const handle: Handle = async (input) => {
 	const response = await guard(input);

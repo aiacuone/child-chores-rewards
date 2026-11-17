@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MESSAGES, parseChildren, parsePin } from './setup';
+import { MESSAGES, parseChildren, parseEmail, parsePin } from './setup';
 
 const form = (fields: Record<string, string | string[]>) => {
 	const f = new FormData();
@@ -127,5 +127,29 @@ describe('PIN form', () => {
 			ok: false,
 			message: MESSAGES.pinMatch
 		});
+	});
+});
+
+describe('recovery email form', () => {
+	it('accepts a plain address', () => {
+		expect(parseEmail(form({ email: ' jane@example.com ' }))).toEqual({
+			ok: true,
+			value: 'jane@example.com'
+		});
+	});
+
+	it('refuses anything else', () => {
+		for (const email of [
+			'',
+			'jane',
+			'jane@',
+			'@example.com',
+			'jane @example.com',
+			'jane@example.com\r\nBcc: x@example.com',
+			'"Jane" <jane@example.com>',
+			`${'a'.repeat(250)}@example.com`
+		])
+			expect(parseEmail(form({ email })), email).toEqual({ ok: false, message: MESSAGES.badEmail });
+		expect(parseEmail(form({}))).toEqual({ ok: false, message: MESSAGES.badEmail });
 	});
 });

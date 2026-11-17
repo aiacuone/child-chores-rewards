@@ -25,6 +25,7 @@
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
 		"@tailwindcss/vite": "^4.3.5",
 		"@types/better-sqlite3": "^9.6.0",
+		"@types/nodemailer": "^8.0.2",
 		"bits-ui": "^2.21.0",
 		"drizzle-kit": "^0.31.11",
 		"svelte": "^5.57.3",
@@ -37,6 +38,7 @@
 	"dependencies": {
 		"better-sqlite3": "^13.2.0",
 		"drizzle-orm": "^0.45.4",
+		"nodemailer": "^10.6.0",
 		"zod": "^4.6.7"
 	},
 	"allowScripts": {

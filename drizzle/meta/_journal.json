@@ -29,6 +29,13 @@
       "when": 1794823915797,
       "tag": "0003_cold_leech",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1794890201758,
+      "tag": "0004_premium_taskmaster",
+      "breakpoints": true
     }
   ]
 }

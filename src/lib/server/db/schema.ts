@@ -13,8 +13,37 @@ export const family = sqliteTable('family', {
 	name: text('name').notNull(),
 	/** The shared grown-up PIN as a salted scrypt hash (pin.ts). Null until setup sets it. */
 	pinHash: text('pin_hash'),
+	/** Where PIN reset codes go. Set only once its confirm link is opened. */
+	recoveryEmail: text('recovery_email'),
+	/** The family's secret ntfy topic (alerts.ts). Shown only to grown-ups. */
+	ntfyTopic: text('ntfy_topic'),
+	/** When setup step 4 was finished. Null while setup is open. */
+	setupDoneAt: integer('setup_done_at', { mode: 'timestamp' }),
 	createdAt: createdAt()
 });
+
+/**
+ * A confirm link sent to a new recovery email. The token is in the link only;
+ * this keeps its hash. Rows are kept after use so sends can be counted.
+ */
+export const emailVerification = sqliteTable(
+	'email_verification',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		email: text('email').notNull(),
+		tokenHash: text('token_hash').notNull().unique(),
+		expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+		/** When it was confirmed, or cancelled by a newer link. */
+		usedAt: integer('used_at', { mode: 'timestamp_ms' }),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date())
+	},
+	(t) => [index('email_verification_family_idx').on(t.familyId, t.createdAt)]
+);
 
 /** A grown-up who signs in with Google. The first one in a family is its owner. */
 export const user = sqliteTable(
@@ -96,3 +125,4 @@ export type Family = typeof family.$inferSelect;
 export type User = typeof user.$inferSelect;
 export type Child = typeof child.$inferSelect;
 export type StarEvent = typeof starEvent.$inferSelect;
+export type EmailVerification = typeof emailVerification.$inferSelect;

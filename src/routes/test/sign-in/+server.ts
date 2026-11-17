@@ -11,6 +11,7 @@ import { getDb } from '#lib/server/db/app.ts';
 import { schema } from '#lib/server/db/index.ts';
 import { forFamily } from '#lib/server/family.ts';
 import { saveChildren, setFirstPin, setupStep } from '#lib/server/setup.ts';
+import { ensureTopic } from '#lib/server/alerts.ts';
 import type { RequestHandler } from './$types';
 
 // The PIN the finished test family uses (e2e/helpers.ts has the same value).
@@ -35,6 +36,11 @@ export const GET: RequestHandler = ({ cookies, url }) => {
 				{ name: 'Leo', colour: 'blue' }
 			]);
 			setFirstPin(scope, TEST_PIN);
+			ensureTopic(scope);
+			db.update(schema.family)
+				.set({ setupDoneAt: new Date() })
+				.where(eq(schema.family.id, scope.familyId))
+				.run();
 		}
 	}
 

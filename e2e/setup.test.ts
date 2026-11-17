@@ -1,9 +1,18 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { expectAccessible, signIn } from './helpers';
 
-// Grown-up setup steps 1 and 2 (#16): Setup-Children, then Setup-PIN.
+const RECOVERY = 'setup-flow-recovery@example.test';
 
-test('a new family adds children and chooses a PIN', async ({ page }) => {
+type Outbox = {
+	emails: { to: string; subject: string; text: string }[];
+	alerts: { topic: string; headers: Record<string, string>; body: string }[];
+};
+const outbox = async (page: Page): Promise<Outbox> =>
+	(await page.request.get('/test/outbox')).json();
+
+// Grown-up setup (#16, #17): children, PIN, recovery email, alerts, then all set.
+
+test('a new family goes through all four setup steps', async ({ page }) => {
 	await signIn(page, { as: 'setup-flow', newFamily: true });
 	await expect(page).toHaveURL('/setup/children');
 	await expect(page.getByRole('heading', { name: 'Who’s flying?' })).toBeVisible();
@@ -55,13 +64,84 @@ test('a new family adds children and chooses a PIN', async ({ page }) => {
 	await page.getByLabel('PIN', { exact: true }).fill('4826');
 	await page.getByLabel('Type it again').fill('4826');
 	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(page).toHaveURL('/');
 
-	// Setup is closed once the PIN is set.
-	for (const path of ['/setup', '/setup/children', '/setup/pin']) {
+	// Step 3: recovery email. No way back to the PIN, which is now locked.
+	await expect(page).toHaveURL('/setup/email');
+	await expect(page.getByRole('heading', { name: 'Recovery email' })).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Back' })).toHaveCount(0);
+	await expectAccessible(page);
+	for (const path of ['/setup/children', '/setup/pin']) {
+		await page.goto(path);
+		await expect(page, path).toHaveURL('/setup/email');
+	}
+	await page.getByLabel('Email').fill('jane@example');
+	await page.getByRole('button', { name: 'Send confirm link' }).click();
+	await expect(page.getByRole('alert')).toHaveText('Check the email address.');
+	await page.getByLabel('Email').fill(RECOVERY);
+	await page.getByRole('button', { name: 'Send confirm link' }).click();
+
+	// Step 4: alerts.
+	await expect(page).toHaveURL('/setup/alerts');
+	await expect(page.getByRole('heading', { name: 'Get alerts on this phone' })).toBeVisible();
+	const topic = await page.getByLabel('Your topic').inputValue();
+	expect(topic).toMatch(/^[a-z0-9]{32}$/);
+	await expectAccessible(page);
+	await page.getByRole('button', { name: 'Send a test alert' }).click();
+	await expect
+		.poll(async () => (await outbox(page)).alerts.filter((a) => a.topic === topic))
+		.toEqual([
+			{
+				topic,
+				headers: { Title: 'Test alert', Cache: 'no', Tags: 'rocket' },
+				body: 'Rocket Rewards alerts are working.'
+			}
+		]);
+	await page.getByRole('button', { name: 'Finish' }).click();
+
+	await expect(page).toHaveURL('/setup/done');
+	await expect(page.getByRole('heading', { name: 'You’re all set!' })).toBeVisible();
+	await expectAccessible(page);
+
+	// Setup is closed once it is finished.
+	for (const path of ['/setup', '/setup/children', '/setup/pin', '/setup/email', '/setup/alerts']) {
 		await page.goto(path);
 		await expect(page, path).toHaveURL('/');
 	}
+});
+
+test('the recovery email is used only after its link is confirmed', async ({ page, browser }) => {
+	await signIn(page, { as: 'setup-link', newFamily: true });
+	await page.getByLabel('Child 1', { exact: true }).fill('Mia');
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByLabel('PIN', { exact: true }).fill('4826');
+	await page.getByLabel('Type it again').fill('4826');
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByLabel('Email').fill('link-test@example.test');
+	await page.getByRole('button', { name: 'Send confirm link' }).click();
+	await expect(page).toHaveURL('/setup/alerts');
+
+	const mail = (await outbox(page)).emails.filter((e) => e.to === 'link-test@example.test');
+	expect(mail).toHaveLength(1);
+	expect(mail[0].subject).toBe('Confirm your Rocket Rewards recovery email');
+	const link = /(http\S+\/verify-email\?token=\S+)/.exec(mail[0].text)![1];
+
+	// Opened on another device that is not signed in.
+	const otherDevice = await browser.newContext();
+	const other = await otherDevice.newPage();
+	await other.goto(link);
+	await expect(other.getByRole('heading', { name: 'Confirm recovery email' })).toBeVisible();
+	await expect(other.getByText('Use l•••@example.test for PIN reset codes?')).toBeVisible();
+	await expectAccessible(other);
+	await other.getByRole('button', { name: 'Confirm' }).click();
+	await expect(other.getByRole('status')).toHaveText(
+		'Recovery email confirmed. You can close this page.'
+	);
+
+	await other.goto(link);
+	await expect(other.getByRole('alert')).toHaveText('This link has expired or was already used.');
+	await other.goto(`${new URL(link).origin}/verify-email?token=nonsense`);
+	await expect(other.getByRole('alert')).toHaveText('This link has expired or was already used.');
+	await otherDevice.close();
 });
 
 test('two children cannot share a name or a colour', async ({ page }) => {
@@ -95,14 +175,24 @@ test('the PIN step needs children first', async ({ page }) => {
 	await expect(page).toHaveURL('/setup/children');
 });
 
-test('the server refuses a PIN post once setup is done', async ({ page }) => {
+test('the server refuses setup posts once setup is done', async ({ page }) => {
 	await signIn(page);
-	const res = await page.request.post('/setup/pin', {
-		form: { pin: '0000', again: '0000' },
-		// Post like a plain browser form, so the answer is a real redirect, not JSON.
-		headers: { origin: 'http://localhost:4173', accept: 'text/html' },
-		maxRedirects: 0
-	});
-	expect(res.status()).toBe(303);
-	expect(res.headers()['location']).toBe('/');
+	const posts: [string, Record<string, string>][] = [
+		['/setup/children', { 'name-0': 'Zed', 'colour-0': 'green' }],
+		['/setup/pin', { pin: '0000', again: '0000' }],
+		['/setup/email', { email: 'someone@example.test' }],
+		['/setup/alerts?/test', {}],
+		['/setup/alerts?/finish', {}]
+	];
+	for (const [path, form] of posts) {
+		const res = await page.request.post(path, {
+			form,
+			// Post like a plain browser form, so the answer is a real redirect, not JSON.
+			headers: { origin: 'http://localhost:4173', accept: 'text/html' },
+			maxRedirects: 0
+		});
+		expect(res.status(), path).toBe(303);
+		expect(['/', '/setup'], path).toContain(res.headers()['location']);
+	}
+	expect((await outbox(page)).emails.filter((e) => e.to === 'someone@example.test')).toEqual([]);
 });

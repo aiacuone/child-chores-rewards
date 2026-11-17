@@ -40,10 +40,10 @@ Replace a secret when it may have leaked, or on a schedule. Secrets live in two 
 
 5. Check that sign-in still works at https://rocket-rewards.duckdns.org.
 6. Now remove the old secret at the link in step 1.
-7. For a local `.env`, rebuild it from the secrets files:
+7. For a local `.env`, rebuild it from the secrets files. Gmail is included so a local run can send the recovery email link:
 
    ```
-   { cat ~/.config/rocket-rewards/google.env; echo; cat ~/.config/rocket-rewards/allowed.env; } | grep -v '^$' > .env
+   { cat ~/.config/rocket-rewards/google.env; echo; cat ~/.config/rocket-rewards/gmail.env; echo; cat ~/.config/rocket-rewards/allowed.env; } | grep -v '^$' > .env
    chmod 600 .env
    ```
 

@@ -13,7 +13,11 @@ export const MESSAGES = {
 	sameName: 'Each child needs their own name.',
 	sameColour: 'Each child needs their own colour.',
 	pinShape: 'Use 4 numbers.',
-	pinMatch: "The PINs don't match. Try again."
+	pinMatch: "The PINs don't match. Try again.",
+	badEmail: 'Check the email address.',
+	emailNotSent: "The email didn't send. Try again.",
+	tooManyEmails: 'Too many emails. Try again in an hour.',
+	alertNotSent: "The test alert didn't send. Try again."
 } as const;
 
 // Letters in any language, with spaces, hyphens, apostrophes and full stops
@@ -79,4 +83,16 @@ export function parsePin(form: FormData): Result<string> {
 		return { ok: false, message: MESSAGES.pinShape };
 	if (parsed.data.pin !== parsed.data.again) return { ok: false, message: MESSAGES.pinMatch };
 	return { ok: true, value: parsed.data.pin };
+}
+
+// A plain address: no spaces, quotes, angle brackets or line breaks, at most 254 characters.
+const email = z.email().max(254);
+
+/** Read the recovery email. It is refused, not cleaned, when it is not a plain address. */
+export function parseEmail(form: FormData): Result<string> {
+	const raw = form.get('email');
+	if (typeof raw !== 'string') return { ok: false, message: MESSAGES.badEmail };
+	const parsed = email.safeParse(raw.trim());
+	if (!parsed.success) return { ok: false, message: MESSAGES.badEmail };
+	return { ok: true, value: parsed.data };
 }

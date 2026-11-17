@@ -85,6 +85,13 @@ The family's shared PIN is in `family.pin_hash`, never as the PIN itself ([ADR 0
 - `src/lib/server/pin.ts` turns the PIN into a salted scrypt hash (`scrypt$<salt>$<hash>`) and checks a PIN against it.
 - `pin_hash` is empty until setup step 2. While it is empty, setup is open; once it is set, the setup pages refuse (`src/lib/server/setup.ts`), so they cannot be used to replace the PIN.
 
+## Recovery email and alerts
+
+- **`family.recovery_email`** is set only when someone opens the confirm link and presses Confirm (`src/lib/server/recovery-email.ts`). Until then the address waits in `email_verification`.
+- **`email_verification`** has one row per confirm link sent. It keeps a hash of the link's token, never the token. A link works once, for 24 hours, and a newer link cancels older ones. Rows are kept after use so a family can be limited to 5 links an hour.
+- **`family.ntfy_topic`** is the family's secret alert topic, 32 random letters and digits (`src/lib/server/alerts.ts`).
+- **`family.setup_done_at`** is set by Finish on setup step 4. While it is empty, `/` sends the family to their setup step.
+
 ## Migrations: how the tables get built
 
 The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps, run one after another. Each one only describes what changed since the one before, so they do not repeat each other.
@@ -93,6 +100,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0001` is the next change to them.
 - `0002` adds `child` and `star_event`.
 - `0003` adds each child's rocket `colour` and the family's `pin_hash`.
+- `0004` adds the family's `recovery_email`, `ntfy_topic` and `setup_done_at`, and the `email_verification` table.
 
 Nothing combines them into one file. Running them in order builds the whole database.
 
