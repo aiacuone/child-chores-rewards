@@ -17,6 +17,8 @@
 	--color-amber: #ffd166;
 	--color-label: #1e2756;
 	--color-bonus-planet: #f2b544;
+	/* Wrong PIN and locked PIN pad (Parent-PIN-Wrong, Parent-PIN-Locked). */
+	--color-danger: #ff8a8a;
 
 	--color-mia: #f28aa0;
 	--color-leo: #6ec6f0;

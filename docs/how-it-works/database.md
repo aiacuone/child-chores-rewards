@@ -83,6 +83,8 @@ A child's stars are never stored as a number ([ADR 0003](../adr/0003-data-model-
 The family's shared PIN is in `family.pin_hash`, never as the PIN itself ([ADR 0007](../adr/0007-pin-and-grown-up-mode.md)).
 
 - `src/lib/server/pin.ts` turns the PIN into a salted scrypt hash (`scrypt$<salt>$<hash>`) and checks a PIN against it.
+- `pin_fails`, `pin_lock_stage` and `pin_locked_until` count wrong PINs for the whole family and lock the pad (`src/lib/server/grownup.ts`). The right PIN resets them.
+- `grownup_token` has one row per device in grown-up mode: a hash of the token the page keeps in memory, the device's session, and when it stops working. Signing the device out deletes it.
 - `pin_hash` is empty until setup step 2. While it is empty, setup is open; once it is set, the setup pages refuse (`src/lib/server/setup.ts`), so they cannot be used to replace the PIN.
 
 ## Recovery email and alerts
@@ -101,6 +103,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0002` adds `child` and `star_event`.
 - `0003` adds each child's rocket `colour` and the family's `pin_hash`.
 - `0004` adds the family's `recovery_email`, `ntfy_topic` and `setup_done_at`, and the `email_verification` table.
+- `0005` adds the family's wrong-PIN count (`pin_fails`, `pin_lock_stage`, `pin_locked_until`) and the `grownup_token` table.
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

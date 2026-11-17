@@ -1,9 +1,11 @@
+<script lang="ts" module>
+	export type Tab = 'home' | 'chores' | 'rewards' | 'ranks' | 'settings';
+</script>
+
 <script lang="ts">
 	// The grown-up tab bar, as in the grown-up screens (for example Ranks.dc.html).
 	// The current tab is orange and marked with aria-current, so it is not shown
 	// by colour alone.
-	export type Tab = 'home' | 'chores' | 'rewards' | 'ranks' | 'settings';
-
 	let { current }: { current: Tab } = $props();
 
 	const tabs: { id: Tab; label: string; href: string }[] = [

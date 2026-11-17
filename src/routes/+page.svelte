@@ -7,8 +7,12 @@
 	import Rocket from '#lib/components/Rocket.svelte';
 	import StarCount from '#lib/components/StarCount.svelte';
 	import StarField from '#lib/components/StarField.svelte';
+	import { grownup } from '#lib/grownup.svelte.ts';
 
 	let { data } = $props();
+
+	// "Grown-up mode is locked" (Main-Locked.dc.html), shown once after locking.
+	let lockedNote = $state(false);
 
 	// The "Add to Home Screen" tip shows once per device, and never when the app
 	// already runs from the home screen. Remembered in this browser only.
@@ -16,6 +20,9 @@
 	let showTip = $state(false);
 
 	onMount(() => {
+		lockedNote = grownup.justLocked;
+		grownup.clearJustLocked();
+
 		const standalone =
 			window.matchMedia('(display-mode: standalone)').matches ||
 			(navigator as Navigator & { standalone?: boolean }).standalone === true;
@@ -80,6 +87,28 @@
 			>
 			I’m a grown-up
 		</a>
+
+		{#if lockedNote}
+			<p
+				role="status"
+				class="m-0 flex min-h-[52px] items-center gap-2.5 rounded-[18px] border-2 border-hi bg-hi/16 px-4 text-[15px] font-black"
+			>
+				<svg
+					aria-hidden="true"
+					width="22"
+					height="22"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.4"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="flex-none text-hi"
+					><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 018 0v3" /></svg
+				>
+				Grown-up mode is locked
+			</p>
+		{/if}
 
 		{#if showTip}
 			<p

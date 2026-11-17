@@ -13,10 +13,15 @@ const TOPIC_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789';
 const TOPIC_LENGTH = 32;
 
 export const ALERTS = {
-	test: { title: 'Test alert', body: 'Rocket Rewards alerts are working.' }
+	test: { title: 'Test alert', body: 'Rocket Rewards alerts are working.' },
+	pinLocked: {
+		title: 'PIN pad locked',
+		body: 'Too many wrong PIN tries. The PIN pad is locked for 30 seconds.'
+	}
 } as const;
 
-export type Alert = { title: string; body: string };
+/** `click` is the app page a tap on the alert opens. */
+export type Alert = { title: string; body: string; click?: string };
 
 export class AlertNotSent extends Error {}
 
@@ -29,6 +34,16 @@ export function newTopic() {
 
 export const isTopic = (t: unknown): t is string =>
 	typeof t === 'string' && new RegExp(`^[a-z0-9]{${TOPIC_LENGTH}}$`).test(t);
+
+/** The family's topic, or null before setup step 4. */
+export function familyTopic(scope: FamilyScope) {
+	const [row] = scope.db
+		.select({ topic: schema.family.ntfyTopic })
+		.from(schema.family)
+		.where(eq(schema.family.id, scope.familyId))
+		.all();
+	return row?.topic ?? null;
+}
 
 /** The family's topic, made the first time it is needed. */
 export function ensureTopic(scope: FamilyScope) {
@@ -49,7 +64,8 @@ export function ensureTopic(scope: FamilyScope) {
 
 export async function sendAlert(topic: string, alert: Alert) {
 	if (!isTopic(topic)) throw new AlertNotSent('bad topic');
-	const headers = { Title: alert.title, Cache: 'no', Tags: 'rocket' };
+	const headers: Record<string, string> = { Title: alert.title, Cache: 'no', Tags: 'rocket' };
+	if (alert.click) headers.Click = alert.click;
 	if (TEST_ROUTES) {
 		outbox.alerts.push({ topic, headers, body: alert.body });
 		return;

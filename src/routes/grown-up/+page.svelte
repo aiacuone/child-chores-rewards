@@ -1,12 +1,11 @@
 <script lang="ts">
-	// Stand-in until #19 builds the PIN pad and grown-up mode.
+	// Mission control (Parent-Home.dc.html). Temporary fix: only the heading until
+	// #24 (chores to check), #27 (rewards to hand out) and #22 (each child's
+	// progress) fill it in.
 </script>
 
 <svelte:head>
-	<title>Rocket Rewards</title>
+	<title>Rocket Rewards: Mission control</title>
 </svelte:head>
 
-<main class="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
-	<h1 class="font-heading text-[38px] leading-none">Rocket Rewards</h1>
-	<p class="text-[18px] text-muted">Coming soon.</p>
-</main>
+<h1 class="m-0 font-heading text-[34px] leading-[1.05] font-normal">Mission control</h1>

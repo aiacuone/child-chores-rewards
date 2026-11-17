@@ -19,6 +19,12 @@ export const family = sqliteTable('family', {
 	ntfyTopic: text('ntfy_topic'),
 	/** When setup step 4 was finished. Null while setup is open. */
 	setupDoneAt: integer('setup_done_at', { mode: 'timestamp' }),
+	/** Wrong PINs in a row before the first lock (grownup.ts). */
+	pinFails: integer('pin_fails').notNull().default(0),
+	/** How many locks in this run of wrong PINs: 1 is 30 s, 2 is 1 min, 3 is 5 min, 4 is 15 min. */
+	pinLockStage: integer('pin_lock_stage').notNull().default(0),
+	/** The PIN pad is locked until this time. */
+	pinLockedUntil: integer('pin_locked_until', { mode: 'timestamp_ms' }),
 	createdAt: createdAt()
 });
 
@@ -73,6 +79,25 @@ export const session = sqliteTable(
 		expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull()
 	},
 	(t) => [index('session_user_idx').on(t.userId)]
+);
+
+/**
+ * Grown-up mode on one device (ADR 0007). The token itself lives only in the
+ * page's memory; this keeps its hash, tied to the device's session.
+ */
+export const grownupToken = sqliteTable(
+	'grownup_token',
+	{
+		id: text('id').primaryKey(),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		sessionId: text('session_id')
+			.notNull()
+			.references(() => session.id, { onDelete: 'cascade' }),
+		expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull()
+	},
+	(t) => [index('grownup_token_session_idx').on(t.sessionId)]
 );
 
 /** A child in the family. Settings adds the rest later (photo, passcode). */

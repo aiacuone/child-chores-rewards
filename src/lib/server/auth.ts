@@ -94,7 +94,7 @@ export function validateSession(db: Db, token: string, now = Date.now()) {
 	}
 	const { id: userId, familyId, role, email, name } = row.user;
 	const user: SignedInUser = { id: userId, familyId, role, email, name };
-	return { user, expiresAt };
+	return { user, expiresAt, sessionId: id };
 }
 
 /** Sign out this device. */

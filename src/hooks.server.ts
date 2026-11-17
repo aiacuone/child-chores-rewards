@@ -31,11 +31,13 @@ const guard: Handle = async ({ event, resolve }) => {
 
 	const token = event.cookies.get(SESSION_COOKIE);
 	event.locals.user = null;
+	event.locals.sessionId = null;
 
 	if (token) {
 		const result = validateSession(getDb(), token);
 		if (result) {
 			event.locals.user = result.user;
+			event.locals.sessionId = result.sessionId;
 			setSessionCookie(event.cookies, token, result.expiresAt, event.url.protocol === 'https:');
 		} else {
 			clearSessionCookie(event.cookies);

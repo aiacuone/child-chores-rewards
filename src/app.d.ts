@@ -4,6 +4,8 @@ declare global {
 	namespace App {
 		interface Locals {
 			user: SignedInUser | null;
+			/** The hashed id of this device's session, or null when signed out. */
+			sessionId: string | null;
 		}
 	}
 }

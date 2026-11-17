@@ -104,10 +104,3 @@ test("another family's child, or a made-up id, is not found", async ({ page, bro
 	}
 	await otherDevice.close();
 });
-
-test('the grown-up button leads to a stand-in until the PIN is built', async ({ page }) => {
-	await signIn(page);
-	await page.getByRole('link', { name: 'I’m a grown-up' }).click();
-	await expect(page).toHaveURL('/grown-up');
-	await expect(page.getByText('Coming soon.')).toBeVisible();
-});
