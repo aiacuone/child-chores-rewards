@@ -50,6 +50,13 @@
       "when": 1794895623351,
       "tag": "0006_chunky_payback",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1794910973071,
+      "tag": "0007_yellow_nuke",
+      "breakpoints": true
     }
   ]
 }

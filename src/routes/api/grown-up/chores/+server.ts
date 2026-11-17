@@ -1,7 +1,7 @@
 // The chores library for grown-up pages. Every request needs a working grown-up
 // token (requireGrownUp) and reaches only the signed-in family's chores.
 import { error, json } from '@sveltejs/kit';
-import { addChore, listChores } from '#lib/server/chores.ts';
+import { addChore, BadRepeat, listChores } from '#lib/server/chores.ts';
 import { colourValue } from '#lib/colours.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { forFamily, NotInFamily } from '#lib/server/family.ts';
@@ -29,7 +29,7 @@ export const POST: RequestHandler = async (event) => {
 	try {
 		return json({ id: addChore(scope, input) }, { status: 201 });
 	} catch (e) {
-		if (e instanceof NotInFamily) error(400, 'Bad request');
+		if (e instanceof NotInFamily || e instanceof BadRepeat) error(400, 'Bad request');
 		throw e;
 	}
 };

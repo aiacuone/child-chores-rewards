@@ -133,9 +133,45 @@ export const chore = sqliteTable(
 		/** One of CHORE_ICONS in src/lib/chore-icons.ts. */
 		icon: text('icon', { enum: ['bed', 'paw', 'toys', 'book', 'plate', 'bin'] }).notNull(),
 		stars: integer('stars').notNull(),
+		/**
+		 * When it is due (src/lib/repeat.ts). Only the columns its kind uses are
+		 * filled: weekly `repeat_days`, monthly `repeat_day`, custom `repeat_every`,
+		 * `repeat_unit` and `repeat_date` (the start), once `repeat_date`.
+		 */
+		repeatKind: text('repeat_kind', { enum: ['daily', 'weekly', 'monthly', 'custom', 'once'] })
+			.notNull()
+			.default('daily'),
+		/** Weekly: one bit per day, Monday = 1 up to Sunday = 64. */
+		repeatDays: integer('repeat_days'),
+		/** Monthly: day of the month, 1 to 31. */
+		repeatDay: integer('repeat_day'),
+		repeatEvery: integer('repeat_every'),
+		repeatUnit: text('repeat_unit', { enum: ['days', 'weeks'] }),
+		/** A Melbourne date, 'YYYY-MM-DD'. */
+		repeatDate: text('repeat_date'),
 		createdAt: createdAt()
 	},
 	(t) => [index('chore_family_idx').on(t.familyId)]
+);
+
+/**
+ * One row per family per chore day the daily reset ran (ADR 0010). The unique
+ * index makes each day's reset run once, and the rows show a missed or late one.
+ */
+export const choreReset = sqliteTable(
+	'chore_reset',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		/** The chore day it reset for, a Melbourne date 'YYYY-MM-DD'. */
+		choreDay: text('chore_day').notNull(),
+		ranAt: integer('ran_at', { mode: 'timestamp_ms' }).notNull(),
+		/** How many copies went back to pending. */
+		copiesReset: integer('copies_reset').notNull().default(0)
+	},
+	(t) => [uniqueIndex('chore_reset_family_day_idx').on(t.familyId, t.choreDay)]
 );
 
 /**

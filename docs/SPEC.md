@@ -46,6 +46,13 @@ Each chore has its own schedule, chosen on the Edit chore screen. Every chore re
 - **Not due today:** a chore that is not due does not appear on the child's trip. Children see a "Coming up" section for chores due on later days.
 - **Daily reset:** at the reset time, Completed and Skipped chores that are due again return to Pending. Set in Settings under "Daily reset and bonus".
 - **Time zone:** all times, including the reset time, are Melbourne time (Australia/Melbourne), whatever the server's clock or the device's settings.
+- **Chore day:** before the reset time it is still the day before, so at 3:00 am Tuesday Monday's chores are showing.
+- **Picking the schedule** (decided in #21; only Weekly is designed):
+  - Weekly: the day buttons M T W T F S S. At least one day must be ticked.
+  - Monthly: a − day + stepper, 1st to 31st. In a month without that day it is due on the last day (the 31st falls on 30 November).
+  - Custom: an "Every − 2 +" stepper (1 to 30) with a Days / Weeks switch, counted from the day it is saved. Changing only the name, picture, stars or children keeps the count.
+  - Once: buttons for today and the next 6 days (Today, Tomorrow, Thu …). The chore stays in the library after its day and is never due again.
+- **Labels:** "Every day", "Mon, Wed, Fri", "Monthly, on the 15th", "Every 3 days", "Every 2 weeks", "Once, Sunday" (or "Once, 3 Dec" once the day is more than a week away). Saving a new schedule shows "Saved · now repeats …".
 
 ## Grown-up mode and PIN
 

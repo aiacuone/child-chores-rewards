@@ -40,7 +40,13 @@
 		title="New chore"
 		submitLabel="Add chore"
 		{kids}
-		initial={{ name: '', icon: 'bed', stars: CHORE_STARS.start, childIds: kids.map((k) => k.id) }}
+		initial={{
+			name: '',
+			icon: 'bed',
+			stars: CHORE_STARS.start,
+			childIds: kids.map((k) => k.id),
+			repeat: { kind: 'daily' }
+		}}
 		onsave={save}
 	/>
 {/if}

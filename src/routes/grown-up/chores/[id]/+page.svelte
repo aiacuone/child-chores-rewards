@@ -1,7 +1,6 @@
 <script lang="ts">
 	// One chore (Stop-Parent.dc.html, Stop-Parent-Saved.dc.html).
-	// Temporary fixes: no "Today" row until #22, no Skip and Hide until #29, and
-	// "Saved" without the repeat days until #21.
+	// Temporary fixes: no "Today" row until #22, and no Skip and Hide until #29.
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -11,6 +10,7 @@
 	import DoneNotice from '#lib/components/DoneNotice.svelte';
 	import Planet from '#lib/components/Planet.svelte';
 	import { SAVE_FAILED, whoDoesIt, type ChoreRow, type Kid } from '#lib/chores.ts';
+	import { choreDay, repeatLabel } from '#lib/repeat.ts';
 	import { grownupFetch } from '#lib/grownup.svelte.ts';
 
 	const id = $derived(page.params.id);
@@ -50,7 +50,12 @@
 {#if missing}
 	<p class="m-0 text-[18px] text-muted">Not found.</p>
 {:else if chore}
-	{#if page.url.searchParams.has('saved')}
+	{@const repeats = repeatLabel(chore.repeat, choreDay(new Date()))}
+	{#if page.url.searchParams.get('saved') === 'repeat'}
+		<DoneNotice
+			text="Saved · now repeats {repeats.replace(/^(Every|Monthly|Once)/, (w) => w.toLowerCase())}"
+		/>
+	{:else if page.url.searchParams.has('saved')}
 		<DoneNotice text="Saved" />
 	{/if}
 
@@ -65,7 +70,7 @@
 	</div>
 
 	<dl class="m-0 overflow-hidden rounded-[18px] bg-card">
-		{#each [['Who', whoDoesIt(chore.childIds, kids)], ['Repeats', 'Every day'], ['Stars', `+${chore.stars}`]] as [term, value], i (term)}
+		{#each [['Who', whoDoesIt(chore.childIds, kids)], ['Repeats', repeats], ['Stars', `+${chore.stars}`]] as [term, value], i (term)}
 			<div
 				class={[
 					'flex min-h-[52px] items-center justify-between px-4 text-[15px]',

@@ -1,7 +1,7 @@
 // One chore: read, change or remove it. Grown-up token required; a chore from
 // another family, or an id that is not a whole number, is "not found".
 import { error, json } from '@sveltejs/kit';
-import { getChore, removeChore, updateChore } from '#lib/server/chores.ts';
+import { BadRepeat, getChore, removeChore, updateChore } from '#lib/server/chores.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { forFamily, NotInFamily } from '#lib/server/family.ts';
 import { parseChore } from '#lib/server/forms/chores.ts';
@@ -30,7 +30,7 @@ export const PUT = async (event: RequestEvent) => {
 	try {
 		if (!updateChore(scope, id, input)) error(404, 'Not found');
 	} catch (e) {
-		if (e instanceof NotInFamily) error(400, 'Bad request');
+		if (e instanceof NotInFamily || e instanceof BadRepeat) error(400, 'Bad request');
 		throw e;
 	}
 	return new Response(null, { status: 204 });

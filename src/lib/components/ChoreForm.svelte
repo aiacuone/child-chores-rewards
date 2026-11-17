@@ -1,10 +1,21 @@
 <script lang="ts">
 	// The chore form: New chore (Add-Stop.dc.html) and Edit chore (Edit-Stop.dc.html).
-	// Temporary fixes: no Repeats picker until #21 (every chore is daily), and no
-	// "Use my own photo" until #36.
+	// Temporary fix: no "Use my own photo" until #36.
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
+	import Stepper from '#lib/components/Stepper.svelte';
 	import { CHORE_ICONS, CHORE_STARS, MAX_CHORE_NAME } from '#lib/chore-icons.ts';
 	import { SAVE_FAILED, type ChoreFields, type Kid } from '#lib/chores.ts';
+	import {
+		REPEAT_KINDS,
+		REPEAT_LABELS,
+		REPEAT_LIMITS,
+		WEEKDAYS,
+		choreDay,
+		onceChoices,
+		ordinal,
+		weekday,
+		type RepeatInput
+	} from '#lib/repeat.ts';
 
 	let {
 		title,
@@ -27,7 +38,44 @@
 	let saving = $state(false);
 	let failed = $state(false);
 
-	const ready = $derived(chore.name.trim().length > 0 && !saving);
+	// Every kind keeps its own setting, so switching Weekly to Monthly and back
+	// keeps the days ticked. Each starts from today.
+	const today = choreDay(new Date());
+	const days = onceChoices(today);
+	const startRepeat = () => ({
+		kind: initial.repeat.kind,
+		weekDays: initial.repeat.kind === 'weekly' ? [...initial.repeat.days] : [weekday(today)],
+		monthDay: initial.repeat.kind === 'monthly' ? initial.repeat.day : +today.slice(8, 10),
+		every: initial.repeat.kind === 'custom' ? initial.repeat.every : 2,
+		unit: initial.repeat.kind === 'custom' ? initial.repeat.unit : ('days' as 'days' | 'weeks'),
+		// A saved Once date that has passed is not one of the choices, so nothing is picked.
+		onceDate:
+			initial.repeat.kind === 'once'
+				? initial.repeat.date
+				: (null as string | null)
+	});
+	const r = $state(startRepeat());
+
+	const repeat = $derived.by((): RepeatInput | null => {
+		switch (r.kind) {
+			case 'daily':
+				return { kind: 'daily' };
+			case 'weekly':
+				return r.weekDays.length ? { kind: 'weekly', days: [...r.weekDays].sort() } : null;
+			case 'monthly':
+				return { kind: 'monthly', day: r.monthDay };
+			case 'custom':
+				return { kind: 'custom', every: r.every, unit: r.unit };
+			case 'once':
+				return r.onceDate ? { kind: 'once', date: r.onceDate } : null;
+		}
+	});
+
+	const ready = $derived(chore.name.trim().length > 0 && repeat !== null && !saving);
+
+	function toggleDay(d: number) {
+		r.weekDays = r.weekDays.includes(d) ? r.weekDays.filter((x) => x !== d) : [...r.weekDays, d];
+	}
 
 	function toggle(id: number) {
 		chore.childIds = chore.childIds.includes(id)
@@ -40,7 +88,9 @@
 		if (!ready) return;
 		saving = true;
 		failed = false;
-		const ok = await onsave({ ...chore, name: chore.name.trim() }).catch(() => false);
+		const ok = await onsave({ ...chore, name: chore.name.trim(), repeat: repeat! }).catch(
+			() => false
+		);
 		saving = false;
 		failed = !ok;
 	}
@@ -86,41 +136,15 @@
 		</div>
 	</fieldset>
 
-	<div class="flex min-h-14 items-center gap-3 rounded-2xl bg-card px-3.5">
-		<span id="stars-label" class="flex-1 font-black">Stars</span>
-		<button
-			type="button"
-			aria-label="Fewer stars"
-			disabled={chore.stars <= CHORE_STARS.min}
-			onclick={() => (chore.stars = Math.max(CHORE_STARS.min, chore.stars - CHORE_STARS.step))}
-			class="flex size-11 items-center justify-center rounded-full bg-label text-[24px] font-black text-ink disabled:opacity-40"
-			>−</button
-		>
-		<output
-			aria-labelledby="stars-label"
-			aria-live="polite"
-			class="w-10 text-center font-heading text-[24px] text-amber">{chore.stars}</output
-		>
-		<button
-			type="button"
-			aria-label="More stars"
-			disabled={chore.stars >= CHORE_STARS.max}
-			onclick={() => (chore.stars = Math.min(CHORE_STARS.max, chore.stars + CHORE_STARS.step))}
-			class="flex size-11 items-center justify-center rounded-full bg-label text-ink disabled:opacity-40"
-		>
-			<svg
-				aria-hidden="true"
-				width="22"
-				height="22"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2.4"
-				stroke-linecap="round"
-				stroke-linejoin="round"><path d="M12 5v14M5 12h14" /></svg
-			>
-		</button>
-	</div>
+	<Stepper
+		label="Stars"
+		bind:value={chore.stars}
+		min={CHORE_STARS.min}
+		max={CHORE_STARS.max}
+		step={CHORE_STARS.step}
+		less="Fewer stars"
+		more="More stars"
+	/>
 
 	<div class="flex flex-col gap-1.5">
 		<span id="who-label" class="text-[14px] font-black text-muted">Who does it?</span>
@@ -158,6 +182,106 @@
 			{/each}
 		</div>
 	</div>
+
+	<fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
+		<legend class="mb-1.5 p-0 text-[14px] font-black text-muted">Repeats</legend>
+		<div class="flex gap-1 rounded-2xl bg-card p-1">
+			{#each REPEAT_KINDS as kind (kind)}
+				<label
+					class={[
+						'relative flex min-h-11 flex-auto cursor-pointer items-center justify-center rounded-xl px-1 text-[13px] font-black has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-hi',
+						r.kind === kind ? 'bg-hi text-ink-on-orange' : 'text-muted'
+					]}
+				>
+					<input
+						type="radio"
+						name="chore-repeat"
+						value={kind}
+						bind:group={r.kind}
+						class="absolute inset-0 m-0 cursor-pointer appearance-none"
+					/>
+					{REPEAT_LABELS[kind]}
+				</label>
+			{/each}
+		</div>
+
+		{#if r.kind === 'weekly'}
+			<div role="group" aria-label="Days" class="flex gap-[5px]">
+				{#each WEEKDAYS as day, d (d)}
+					{@const on = r.weekDays.includes(d)}
+					<button
+						type="button"
+						aria-pressed={on}
+						aria-label={day.long}
+						onclick={() => toggleDay(d)}
+						class={[
+							'flex min-h-11 flex-1 items-center justify-center rounded-xl text-[14px] font-black',
+							on ? 'bg-ok text-ink-on-teal' : 'bg-card text-muted'
+						]}>{day.letter}</button
+					>
+				{/each}
+			</div>
+		{:else if r.kind === 'monthly'}
+			<Stepper
+				label="Day of the month"
+				bind:value={r.monthDay}
+				min={REPEAT_LIMITS.monthDay.min}
+				max={REPEAT_LIMITS.monthDay.max}
+				less="Earlier day"
+				more="Later day"
+				show={ordinal}
+			/>
+		{:else if r.kind === 'custom'}
+			<Stepper
+				label="Every"
+				bind:value={r.every}
+				min={REPEAT_LIMITS.every.min}
+				max={REPEAT_LIMITS.every.max}
+				less="Fewer"
+				more="More"
+			/>
+			<div class="flex gap-1 rounded-2xl bg-card p-1">
+				{#each [['days', 'Days'], ['weeks', 'Weeks']] as const as [unit, text] (unit)}
+					<label
+						class={[
+							'relative flex min-h-11 flex-1 cursor-pointer items-center justify-center rounded-xl text-[13px] font-black has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-hi',
+							r.unit === unit ? 'bg-ok text-ink-on-teal' : 'text-muted'
+						]}
+					>
+						<input
+							type="radio"
+							name="chore-repeat-unit"
+							value={unit}
+							bind:group={r.unit}
+							class="absolute inset-0 m-0 cursor-pointer appearance-none"
+						/>
+						{text}
+					</label>
+				{/each}
+			</div>
+		{:else if r.kind === 'once'}
+			<div role="radiogroup" aria-label="Day" class="grid grid-cols-4 gap-[5px]">
+				{#each days as day (day.date)}
+					<label
+						class={[
+							'relative flex min-h-11 cursor-pointer items-center justify-center rounded-xl text-[14px] font-black has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-hi',
+							r.onceDate === day.date ? 'bg-ok text-ink-on-teal' : 'bg-card text-muted'
+						]}
+					>
+						<input
+							type="radio"
+							name="chore-repeat-once"
+							value={day.date}
+							bind:group={r.onceDate}
+							aria-label={day.long}
+							class="absolute inset-0 m-0 cursor-pointer appearance-none"
+						/>
+						{day.label}
+					</label>
+				{/each}
+			</div>
+		{/if}
+	</fieldset>
 
 	{#if failed}
 		<p role="alert" class="m-0 text-[16px] font-black text-amber">{SAVE_FAILED}</p>

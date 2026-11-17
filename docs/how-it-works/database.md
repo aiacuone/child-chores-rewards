@@ -13,6 +13,7 @@ The app keeps everything in one SQLite file ([ADR 0002](../adr/0002-database.md)
 | `star_event` | One change to a child's stars. |
 | `chore` | A chore in the family's library. |
 | `chore_copy` | One child's copy of a chore, with its own status. |
+| `chore_reset` | One daily reset that ran for a family ([reset.md](reset.md)). |
 
 ## How tables link: `family_id`
 
@@ -107,6 +108,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0004` adds the family's `recovery_email`, `ntfy_topic` and `setup_done_at`, and the `email_verification` table.
 - `0005` adds the family's wrong-PIN count (`pin_fails`, `pin_lock_stage`, `pin_locked_until`) and the `grownup_token` table.
 - `0006` adds `chore` and `chore_copy`.
+- `0007` adds each chore's repeat (`repeat_kind` and the `repeat_…` columns) and the `chore_reset` table.
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

@@ -6,7 +6,7 @@ The chores library is the family's list of chores, managed from the Chores tab i
 
 | Table | Holds |
 | --- | --- |
-| `chore` | The chore itself: name, picture (`icon`), stars. One row per chore in the family. |
+| `chore` | The chore itself: name, picture (`icon`), stars and when it repeats ([repeats.md](repeats.md)). One row per chore in the family. |
 | `chore_copy` | One row per child the chore is assigned to, with that child's own `status` (pending, waiting, completed, skipped). |
 
 - Ticking Mia and Leo under "Who does it?" gives the chore two copies, so Mia finishing hers does not finish Leo's.
@@ -58,6 +58,7 @@ The input is checked before these functions run:
 | `icon` | One of the 6 pictures in `src/lib/chore-icons.ts`. |
 | `stars` | 5 to 100, in steps of 5. |
 | `childIds` | Up to 4 different child ids. Whether they belong to the family is checked by `checkChildren`. |
+| `repeat` | One of the five kinds, with only its own settings ([repeats.md](repeats.md)). A Once date more than 6 days ahead, or in the past, is refused in `chores.ts` (`BadRepeat`), unless it is the date the chore already had. |
 
 Anything else is refused with 400, not fixed.
 

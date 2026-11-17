@@ -1,11 +1,12 @@
 <script lang="ts">
-	// Edit chore (Edit-Stop.dc.html). Temporary fix: no Repeats picker until #21.
+	// Edit chore (Edit-Stop.dc.html). Saving goes back to the chore with "Saved",
+	// and "· now repeats …" when the repeat changed (Stop-Parent-Saved.dc.html).
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChoreForm from '#lib/components/ChoreForm.svelte';
-	import type { ChoreFields, ChoreRow, Kid } from '#lib/chores.ts';
+	import { choreFields, type ChoreFields, type ChoreRow, type Kid } from '#lib/chores.ts';
 	import { grownupFetch } from '#lib/grownup.svelte.ts';
 
 	const id = $derived(page.params.id);
@@ -33,7 +34,8 @@
 			body: JSON.stringify(fields)
 		});
 		if (!res.ok) return false;
-		await goto(`/grown-up/chores/${id}?saved`);
+		const repeatChanged = JSON.stringify(fields.repeat) !== JSON.stringify(choreFields(chore!).repeat);
+		await goto(`/grown-up/chores/${id}?saved${repeatChanged ? '=repeat' : ''}`);
 		return true;
 	}
 </script>
@@ -51,7 +53,7 @@
 		title="Edit chore"
 		submitLabel="Save changes"
 		{kids}
-		initial={{ name: chore.name, icon: chore.icon, stars: chore.stars, childIds: chore.childIds }}
+		initial={choreFields(chore)}
 		onsave={save}
 	/>
 {/if}

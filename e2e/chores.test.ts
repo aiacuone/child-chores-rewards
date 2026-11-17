@@ -1,7 +1,16 @@
 import { expect, test, type Page } from '@playwright/test';
 import { TEST_PIN, expectAccessible, signIn } from './helpers';
 
-// The chores library (#20): add, edit, assign, filter and remove chores.
+// The chores library (#20): add, edit, assign, filter and remove chores, and
+// when they repeat (#21).
+
+const DAILY = { kind: 'daily' };
+
+/** Back on the chore's screen after Save changes, with this notice. */
+async function expectSaved(page: Page, text: string | RegExp) {
+	await expect(page).toHaveURL(/\/grown-up\/chores\/\d+\?saved/);
+	await expect(page.getByRole('status')).toHaveText(text);
+}
 
 async function grownUp(page: Page, as: string) {
 	await signIn(page, { as });
@@ -46,6 +55,64 @@ test('add a chore, then edit who does it and its stars', async ({ page }) => {
 	await expect(page.getByRole('status')).toHaveText('Saved');
 	await expect(page.getByText('Leo', { exact: true })).toBeVisible();
 	await expect(page.getByText('+5', { exact: true })).toBeVisible();
+});
+
+test('change when a chore repeats', async ({ page }) => {
+	await grownUp(page, 'chores-repeats');
+	await page.getByRole('link', { name: 'Add chore' }).click();
+	await page.getByLabel('Chore name').fill('Tidy the toy box');
+	await expect(page.getByRole('radio', { name: 'Daily' })).toBeChecked();
+	await page.getByRole('button', { name: 'Add chore' }).click();
+	await page.getByRole('link', { name: /Tidy the toy box/ }).click();
+	await page.getByRole('link', { name: 'Edit chore' }).click();
+
+	// Weekly starts with today ticked: make it Monday, Wednesday and Friday.
+	await page.getByRole('radio', { name: 'Weekly' }).check();
+	await expectAccessible(page);
+	const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+	for (const day of days) {
+		const button = page.getByRole('button', { name: day });
+		if ((await button.getAttribute('aria-pressed')) === 'true') await button.click();
+	}
+	await expect(page.getByRole('button', { name: 'Save changes' })).toBeDisabled();
+	for (const day of ['Monday', 'Wednesday', 'Friday'])
+		await page.getByRole('button', { name: day }).click();
+	await page.getByRole('button', { name: 'Save changes' }).click();
+
+	await expectSaved(page, 'Saved · now repeats Mon, Wed, Fri');
+	await expect(page.getByText('Mon, Wed, Fri', { exact: true })).toBeVisible();
+
+	// Monthly and Custom.
+	await page.getByRole('link', { name: 'Edit chore' }).click();
+	await expect(page.getByRole('button', { name: 'Wednesday' })).toHaveAttribute(
+		'aria-pressed',
+		'true'
+	);
+	await page.getByRole('radio', { name: 'Custom' }).check();
+	await page.getByRole('button', { name: 'More', exact: true }).click();
+	await expectAccessible(page);
+	await page.getByRole('button', { name: 'Save changes' }).click();
+	await expectSaved(page, 'Saved · now repeats every 3 days');
+
+	// Saving without changing the repeat says only "Saved".
+	await page.getByRole('link', { name: 'Edit chore' }).click();
+	await page.getByRole('button', { name: 'More stars' }).click();
+	await page.getByRole('button', { name: 'Save changes' }).click();
+	await expectSaved(page, 'Saved');
+
+	// Once, tomorrow.
+	await page.getByRole('link', { name: 'Edit chore' }).click();
+	await page.getByRole('radio', { name: 'Once' }).check();
+	await expect(page.getByRole('button', { name: 'Save changes' })).toBeDisabled();
+	await page.getByRole('radio', { name: /^Tomorrow, / }).check();
+	await expectAccessible(page);
+	await page.getByRole('button', { name: 'Save changes' }).click();
+	await expectSaved(page, /Saved · now repeats once, [A-Z][a-z]+day$/);
+
+	await page.getByRole('link', { name: 'Back' }).click();
+	await expect(page.getByRole('link', { name: /Tidy the toy box/ })).toContainText(
+		/Once, [A-Z][a-z]+day · Mia, Leo/
+	);
 });
 
 test('the chips filter by child and by nobody', async ({ page }) => {
@@ -112,7 +179,13 @@ test('the chore API needs grown-up mode and keeps families apart', async ({ page
 	).json();
 	const created = await page.request.post('/api/grown-up/chores', {
 		headers: { ...ORIGIN, 'x-grown-up': token },
-		data: { name: 'Feed the cat', icon: 'paw', stars: 10, childIds: [list.children[0].id] }
+		data: {
+			name: 'Feed the cat',
+			icon: 'paw',
+			stars: 10,
+			childIds: [list.children[0].id],
+			repeat: DAILY
+		}
 	});
 	expect(created.status()).toBe(201);
 	const { id } = await created.json();
@@ -128,7 +201,7 @@ test('the chore API needs grown-up mode and keeps families apart', async ({ page
 		(
 			await other.request.put(`/api/grown-up/chores/${id}`, {
 				headers: h,
-				data: { name: 'Mine now', icon: 'paw', stars: 10, childIds: [] }
+				data: { name: 'Mine now', icon: 'paw', stars: 10, childIds: [], repeat: DAILY }
 			})
 		).status()
 	).toBe(404);
@@ -140,7 +213,13 @@ test('the chore API needs grown-up mode and keeps families apart', async ({ page
 		(
 			await other.request.post('/api/grown-up/chores', {
 				headers: h,
-				data: { name: 'Sneaky', icon: 'paw', stars: 10, childIds: [list.children[0].id] }
+				data: {
+					name: 'Sneaky',
+					icon: 'paw',
+					stars: 10,
+					childIds: [list.children[0].id],
+					repeat: DAILY
+				}
 			})
 		).status()
 	).toBe(400);
@@ -150,4 +229,21 @@ test('the chore API needs grown-up mode and keeps families apart', async ({ page
 		headers: { 'x-grown-up': token }
 	});
 	expect((await still.json()).name).toBe('Feed the cat');
+
+	// A Once date more than a week away is refused.
+	const far = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+	expect(
+		(
+			await page.request.put(`/api/grown-up/chores/${id}`, {
+				headers: { ...ORIGIN, 'x-grown-up': token },
+				data: {
+					name: 'Feed the cat',
+					icon: 'paw',
+					stars: 10,
+					childIds: [],
+					repeat: { kind: 'once', date: far }
+				}
+			})
+		).status()
+	).toBe(400);
 });

@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit';
-import type { Handle } from '@sveltejs/kit/hooks';
+import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
+import { building } from '$app/env';
 import {
 	SESSION_COOKIE,
 	clearSessionCookie,
@@ -7,11 +8,18 @@ import {
 	validateSession
 } from '#lib/server/auth.ts';
 import { getDb } from '#lib/server/db/app.ts';
+import { startResetJob } from '#lib/server/reset.ts';
 import { addSecurityHeaders } from '#lib/server/security-headers.ts';
 import { testRoutesAllowed } from '#lib/server/test-routes.ts';
 
 // /verify-email is opened from an email, often on a device that is not signed in.
 const PUBLIC_PATHS = ['/login', '/login/google', '/login/google/callback', '/verify-email'];
+
+// The daily reset runs inside the app (ADR 0010). Starting it here also
+// catches up a reset missed while the app was stopped.
+export const init: ServerInit = () => {
+	if (!building) startResetJob(getDb());
+};
 
 export const handle: Handle = async (input) => {
 	const response = await guard(input);

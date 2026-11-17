@@ -6,8 +6,10 @@
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
 	import DoneNotice from '#lib/components/DoneNotice.svelte';
 	import { whoDoesIt, type ChoreRow, type Kid } from '#lib/chores.ts';
+	import { choreDay, repeatLabel } from '#lib/repeat.ts';
 	import { grownupFetch } from '#lib/grownup.svelte.ts';
 
+	const today = choreDay(new Date());
 	let kids = $state<Kid[]>([]);
 	let chores = $state<ChoreRow[] | null>(null);
 
@@ -98,7 +100,7 @@
 					<span class="min-w-0 flex-1">
 						<span class="block text-[15px] font-black">{chore.name}</span>
 						<span class="block text-[13px] font-bold text-muted"
-							>Every day · {whoDoesIt(chore.childIds, kids)}</span
+							>{repeatLabel(chore.repeat, today)} · {whoDoesIt(chore.childIds, kids)}</span
 						>
 					</span>
 					{#if chore.id === addedId}
