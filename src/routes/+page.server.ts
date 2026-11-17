@@ -1,13 +1,14 @@
 import { redirect } from '@sveltejs/kit';
 import { forFamily } from '#lib/server/family.ts';
 import { getDb } from '#lib/server/db/app.ts';
+import { childCards } from '#lib/server/flying.ts';
 import { setupStep } from '#lib/server/setup.ts';
 import type { PageServerLoad } from './$types';
 
+// Who's flying: every device starts here after sign-in, once setup is done.
 export const load: PageServerLoad = async ({ locals }) => {
-	if (locals.user) {
-		const step = setupStep(forFamily(getDb(), locals.user.familyId));
-		if (step !== 'done') redirect(303, `/setup/${step}`);
-	}
-	return { name: locals.user?.name ?? '' };
+	const scope = forFamily(getDb(), locals.user!.familyId);
+	const step = setupStep(scope);
+	if (step !== 'done') redirect(303, `/setup/${step}`);
+	return { children: childCards(scope) };
 };

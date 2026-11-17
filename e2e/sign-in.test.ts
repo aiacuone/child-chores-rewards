@@ -10,7 +10,8 @@ test('a signed-out visitor is sent to the sign-in page', async ({ page }) => {
 
 test('the test sign-in signs in a grown-up', async ({ page }) => {
 	await signIn(page);
-	await expect(page.getByText('Signed in as Test grown-up.')).toBeVisible();
+	await expect(page).toHaveURL('/');
+	await expect(page.getByRole('heading', { name: 'Who’s flying today?' })).toBeVisible();
 	await expectAccessible(page);
 });
 
