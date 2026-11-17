@@ -118,6 +118,10 @@ Settings is a grown-up-only tab. Rows:
 ## Trip, stars and bonus
 
 - A child's trip is today's chores. A child can do the stops in any order, and every unfinished stop can be opened.
+- **Trip order** (decided in #22): from the start of the path, done stops, then stops waiting for a grown-up, then the rest, each group oldest chore first. The first of the rest is "Up next". More than 5 stops make the trip taller, and the page scrolls.
+- **Expectations** (decided in #22): a chore has an optional "Expectations" line (up to 200 characters) saying what done looks like, for example "Put every toy back in the box and push it under your bed." Grown-ups write it on New chore and Edit chore, and the child sees it on the stop.
+- **Coming up** (decided in #22): the child's chores that are not due today but are due in the next 6 days, soonest first, with the day ("Thursday"). The "Coming up · 2" button shows only when there is at least one.
+- **Nothing to do today** keeps the trip's header (name, "Not Mia? Switch", stars), so the name stays on every trip screen.
 - Finished stops move to the front of the path. Stops waiting for a grown-up come next, then unfinished ones. The orange "Up next" is only a suggestion.
 - Skipped, hidden and not-due chores leave the path, so the count (for example "2 of 4") shrinks with them. A skipped or hidden chore does not stop a child earning the bonus for the rest.
 - Finishing every stop for the day earns a daily bonus (default +20 stars, set by a grown-up). The end of the trip is a bonus planet, not a reward.

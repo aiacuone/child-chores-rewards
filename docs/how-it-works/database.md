@@ -109,6 +109,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0005` adds the family's wrong-PIN count (`pin_fails`, `pin_lock_stage`, `pin_locked_until`) and the `grownup_token` table.
 - `0006` adds `chore` and `chore_copy`.
 - `0007` adds each chore's repeat (`repeat_kind` and the `repeat_…` columns) and the `chore_reset` table.
+- `0008` adds each chore's `expectations` (what done looks like, shown on the stop).
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

@@ -133,6 +133,8 @@ export const chore = sqliteTable(
 		/** One of CHORE_ICONS in src/lib/chore-icons.ts. */
 		icon: text('icon', { enum: ['bed', 'paw', 'toys', 'book', 'plate', 'bin'] }).notNull(),
 		stars: integer('stars').notNull(),
+		/** What done looks like, shown to the child on the stop. Empty when not given. */
+		expectations: text('expectations').notNull().default(''),
 		/**
 		 * When it is due (src/lib/repeat.ts). Only the columns its kind uses are
 		 * filled: weekly `repeat_days`, monthly `repeat_day`, custom `repeat_every`,

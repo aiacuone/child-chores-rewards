@@ -29,6 +29,7 @@ afterEach(() => opened.sqlite.close());
 
 const toyBox = (childIds: number[]) => ({
 	name: 'Tidy the toy box',
+	expectations: '',
 	icon: 'toys' as const,
 	stars: 10,
 	childIds,
@@ -140,6 +141,7 @@ describe('repeats', () => {
 describe('chore form checks', () => {
 	const ok = {
 		name: 'Water the plants',
+		expectations: '',
 		icon: 'bed',
 		stars: 10,
 		childIds: [1, 2],
@@ -159,6 +161,12 @@ describe('chore form checks', () => {
 	it('accepts a normal chore, with emoji or accents', () => {
 		expect(parseChore(ok)).toEqual(ok);
 		expect(parseChore({ ...ok, name: 'Feed Biscuit 🐶' })).not.toBeNull();
+		expect(
+			parseChore({
+				...ok,
+				expectations: 'Put every toy back in the box and push it under your bed.'
+			})
+		).not.toBeNull();
 		expect(parseChore({ ...ok, name: 'Ranger la chambre, s’il te plaît' })).not.toBeNull();
 	});
 
@@ -177,7 +185,11 @@ describe('chore form checks', () => {
 			{ ...ok, childIds: [1, 1] },
 			{ ...ok, childIds: [1, 2, 3, 4, 5] },
 			{ ...ok, childIds: [-1] },
-			{ name: 'No icon', stars: 10, childIds: [], repeat: { kind: 'daily' } },
+			{ name: 'No icon', expectations: '', stars: 10, childIds: [], repeat: { kind: 'daily' } },
+			{ ...ok, expectations: undefined },
+			{ ...ok, expectations: ' padded' },
+			{ ...ok, expectations: 'two\nlines' },
+			{ ...ok, expectations: 'x'.repeat(201) },
 			{ ...ok, repeat: undefined },
 			{ ...ok, repeat: { kind: 'yearly' } },
 			{ ...ok, repeat: { kind: 'weekly', days: [] } },

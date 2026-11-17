@@ -8,6 +8,7 @@ export type ChoreRow = {
 	name: string;
 	icon: ChoreIconId;
 	stars: number;
+	expectations: string;
 	repeat: Repeat;
 	childIds: number[];
 };
@@ -21,6 +22,7 @@ export function choreFields(c: ChoreRow): ChoreFields {
 		name: c.name,
 		icon: c.icon,
 		stars: c.stars,
+		expectations: c.expectations,
 		childIds: c.childIds,
 		repeat:
 			repeat.kind === 'custom' ? { kind: 'custom', every: repeat.every, unit: repeat.unit } : repeat

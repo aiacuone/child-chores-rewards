@@ -1,6 +1,6 @@
 // Server checks for a chore (Add-Stop, Edit-Stop). Bad input is refused, not fixed.
 import { z } from 'zod';
-import { CHORE_ICON_IDS, CHORE_STARS, MAX_CHORE_NAME } from '../../chore-icons';
+import { CHORE_ICON_IDS, CHORE_STARS, MAX_CHORE_NAME, MAX_EXPECTATIONS } from '../../chore-icons';
 import { isDate, REPEAT_LIMITS } from '../../repeat';
 
 // Any printable text: letters in any language, numbers, punctuation, emoji.
@@ -33,6 +33,8 @@ const repeatInput = z.discriminatedUnion('kind', [
 
 export const choreInput = z.object({
 	name: z.string().max(MAX_CHORE_NAME).regex(NAME),
+	// Optional: the same rules as the name, or empty.
+	expectations: z.string().max(MAX_EXPECTATIONS).regex(NAME).or(z.literal('')),
 	icon: z.enum(CHORE_ICON_IDS),
 	stars: z
 		.number()

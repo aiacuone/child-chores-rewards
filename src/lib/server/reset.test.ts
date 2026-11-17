@@ -35,7 +35,7 @@ const tue6 = new Date('2026-11-16T19:00:00Z');
 const wed6 = new Date('2026-11-17T19:00:00Z');
 
 const chore = (scope: FamilyScope, childIds: number[], repeat: ChoreInput['repeat']) =>
-	addChore(scope, { name: 'Tidy the toy box', icon: 'toys', stars: 10, childIds, repeat }, monNoon);
+	addChore(scope, { name: 'Tidy the toy box', expectations: '', icon: 'toys', stars: 10, childIds, repeat }, monNoon);
 
 const setStatus = (status: string, childId: number) =>
 	opened.sqlite.prepare('update chore_copy set status = ? where child_id = ?').run(status, childId);

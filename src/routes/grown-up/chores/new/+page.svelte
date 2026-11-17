@@ -44,6 +44,7 @@
 			name: '',
 			icon: 'bed',
 			stars: CHORE_STARS.start,
+			expectations: '',
 			childIds: kids.map((k) => k.id),
 			repeat: { kind: 'daily' }
 		}}

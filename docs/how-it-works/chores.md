@@ -54,6 +54,7 @@ The input is checked before these functions run:
 
 | Field | Allowed |
 | --- | --- |
+| `expectations` | Empty, or up to 200 characters with the same rules as the name. |
 | `name` | 1 to 40 characters. Letters in any language, numbers, punctuation and emoji. No invisible or control characters, and no spaces at either end. |
 | `icon` | One of the 6 pictures in `src/lib/chore-icons.ts`. |
 | `stars` | 5 to 100, in steps of 5. |

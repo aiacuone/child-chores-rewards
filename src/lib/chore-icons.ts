@@ -15,3 +15,4 @@ export const CHORE_ICON_IDS = CHORE_ICONS.map((i) => i.id) as [ChoreIconId, ...C
 /** Stars for a chore: 5 to 100 in steps of 5, starting at 10. */
 export const CHORE_STARS = { min: 5, max: 100, step: 5, start: 10 } as const;
 export const MAX_CHORE_NAME = 40;
+export const MAX_EXPECTATIONS = 200;

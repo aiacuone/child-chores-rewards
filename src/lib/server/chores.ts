@@ -18,6 +18,7 @@ export type ChoreSummary = {
 	name: string;
 	icon: ChoreInput['icon'];
 	stars: number;
+	expectations: string;
 	repeat: Repeat;
 	childIds: number[];
 };
@@ -89,6 +90,7 @@ export function listChores(scope: FamilyScope): ChoreSummary[] {
 		name: c.name,
 		icon: c.icon,
 		stars: c.stars,
+		expectations: c.expectations,
 		repeat: toRepeat(c),
 		childIds: copies.filter((k) => k.choreId === c.id).map((k) => k.childId)
 	}));
@@ -114,6 +116,7 @@ export function getChore(scope: FamilyScope, choreId: number) {
 		name: c.name,
 		icon: c.icon,
 		stars: c.stars,
+		expectations: c.expectations,
 		repeat: toRepeat(c),
 		childIds: copies.map((k) => k.childId),
 		copies
@@ -157,6 +160,7 @@ export function addChore(scope: FamilyScope, input: ChoreInput, now = new Date()
 				name: input.name,
 				icon: input.icon,
 				stars: input.stars,
+				expectations: input.expectations,
 				...repeatColumns(repeat)
 			})
 			.returning({ id: schema.chore.id })
@@ -180,7 +184,13 @@ export function updateChore(
 		if (!old) return false;
 		const repeat = savedRepeat(input.repeat, choreDay(now), toRepeat(old));
 		tx.update(schema.chore)
-			.set({ name: input.name, icon: input.icon, stars: input.stars, ...repeatColumns(repeat) })
+			.set({
+				name: input.name,
+				icon: input.icon,
+				stars: input.stars,
+				expectations: input.expectations,
+				...repeatColumns(repeat)
+			})
 			.where(mine)
 			.run();
 		assign(scope, tx, choreId, input.childIds);

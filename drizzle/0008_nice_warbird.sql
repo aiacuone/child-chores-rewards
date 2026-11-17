@@ -1,0 +1,1 @@
+ALTER TABLE `chore` ADD `expectations` text DEFAULT '' NOT NULL;

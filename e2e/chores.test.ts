@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { TEST_PIN, expectAccessible, signIn } from './helpers';
+import { choreDay } from '../src/lib/repeat';
 
 // The chores library (#20): add, edit, assign, filter and remove chores, and
 // when they repeat (#21).
@@ -184,6 +185,7 @@ test('the chore API needs grown-up mode and keeps families apart', async ({ page
 			icon: 'paw',
 			stars: 10,
 			childIds: [list.children[0].id],
+			expectations: '',
 			repeat: DAILY
 		}
 	});
@@ -201,7 +203,14 @@ test('the chore API needs grown-up mode and keeps families apart', async ({ page
 		(
 			await other.request.put(`/api/grown-up/chores/${id}`, {
 				headers: h,
-				data: { name: 'Mine now', icon: 'paw', stars: 10, childIds: [], repeat: DAILY }
+				data: {
+					name: 'Mine now',
+					icon: 'paw',
+					stars: 10,
+					childIds: [],
+					expectations: '',
+					repeat: DAILY
+				}
 			})
 		).status()
 	).toBe(404);
@@ -218,6 +227,7 @@ test('the chore API needs grown-up mode and keeps families apart', async ({ page
 					icon: 'paw',
 					stars: 10,
 					childIds: [list.children[0].id],
+					expectations: '',
 					repeat: DAILY
 				}
 			})
@@ -238,6 +248,7 @@ test('the chore API needs grown-up mode and keeps families apart', async ({ page
 				headers: { ...ORIGIN, 'x-grown-up': token },
 				data: {
 					name: 'Feed the cat',
+					expectations: '',
 					icon: 'paw',
 					stars: 10,
 					childIds: [],
@@ -246,4 +257,21 @@ test('the chore API needs grown-up mode and keeps families apart', async ({ page
 			})
 		).status()
 	).toBe(400);
+	// The same chore with today's date saves, so the date was the only problem.
+	const today = choreDay(new Date());
+	expect(
+		(
+			await page.request.put(`/api/grown-up/chores/${id}`, {
+				headers: { ...ORIGIN, 'x-grown-up': token },
+				data: {
+					name: 'Feed the cat',
+					expectations: '',
+					icon: 'paw',
+					stars: 10,
+					childIds: [],
+					repeat: { kind: 'once', date: today }
+				}
+			})
+		).status()
+	).toBe(204);
 });

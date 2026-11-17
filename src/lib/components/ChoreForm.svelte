@@ -3,7 +3,12 @@
 	// Temporary fix: no "Use my own photo" until #36.
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
 	import Stepper from '#lib/components/Stepper.svelte';
-	import { CHORE_ICONS, CHORE_STARS, MAX_CHORE_NAME } from '#lib/chore-icons.ts';
+	import {
+		CHORE_ICONS,
+		CHORE_STARS,
+		MAX_CHORE_NAME,
+		MAX_EXPECTATIONS
+	} from '#lib/chore-icons.ts';
 	import { SAVE_FAILED, type ChoreFields, type Kid } from '#lib/chores.ts';
 	import {
 		REPEAT_KINDS,
@@ -88,7 +93,12 @@
 		if (!ready) return;
 		saving = true;
 		failed = false;
-		const ok = await onsave({ ...chore, name: chore.name.trim(), repeat: repeat! }).catch(
+		const ok = await onsave({
+			...chore,
+			name: chore.name.trim(),
+			expectations: chore.expectations.trim(),
+			repeat: repeat!
+		}).catch(
 			() => false
 		);
 		saving = false;
@@ -108,6 +118,19 @@
 			autocomplete="off"
 			placeholder="e.g. Water the plants"
 			bind:value={chore.name}
+			class="min-h-[54px] rounded-2xl border-2 border-line bg-card px-4 text-[17px] font-extrabold text-ink placeholder:text-muted"
+		/>
+	</div>
+
+	<div class="flex flex-col gap-1.5">
+		<label for="chore-expectations" class="text-[14px] font-black text-muted">Expectations</label>
+		<input
+			id="chore-expectations"
+			type="text"
+			maxlength={MAX_EXPECTATIONS}
+			autocomplete="off"
+			placeholder="e.g. Put every toy back in the box"
+			bind:value={chore.expectations}
 			class="min-h-[54px] rounded-2xl border-2 border-line bg-card px-4 text-[17px] font-extrabold text-ink placeholder:text-muted"
 		/>
 	</div>
