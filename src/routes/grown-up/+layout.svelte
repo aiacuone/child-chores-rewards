@@ -14,8 +14,9 @@
 
 	const parts = $derived(page.url.pathname.split('/').filter(Boolean));
 	const current = $derived((parts[1] || 'home') as Tab);
-	// The tab bar shows on the tab pages themselves, not on a chore or a form (as drawn).
-	const showTabs = $derived(parts.length <= 2);
+	// The tab bar shows on the tab pages themselves, not on a chore or a form (as
+	// drawn), and on the star history, which is drawn with it.
+	const showTabs = $derived(parts.length <= 2 || parts[1] === 'ranks');
 
 	onDestroy(() => {
 		if (grownup.token) lock({ toWhosFlying: false });

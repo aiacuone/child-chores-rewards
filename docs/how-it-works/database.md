@@ -80,7 +80,7 @@ A child's stars are never stored as a number ([ADR 0003](../adr/0003-data-model-
 | `reward` | negative | a grown-up hands out a reward (`source_id` is the claim, [claims.md](claims.md)) |
 
 - `source_id` says which chore copy or reward claim a row came from. For a `bonus` row it is the chore day as a number (`20261117`), so a day can only have one ([daily-bonus.md](daily-bonus.md)).
-- **Undoing an accepted chore** deletes the one row the accept added, by its id (`chore_copy.star_event_id`), because a daily chore's copy collects a row every day. **"That wasn't Mia"** writes the row for the right child instead ([checking.md](checking.md)). The log shows only what stands.
+- **Undoing an accepted chore** deletes the one row the accept added, by its id (`chore_copy.star_event_id`), because a daily chore's copy collects a row every day. **"That wasn't Mia"** writes the row for the right child instead ([checking.md](checking.md)). The log shows only what stands, which is what the grown-ups' star history reads ([ranks.md](ranks.md)).
 - Each row keeps the stars at the time, so editing a chore's value later does not change past stars.
 - The rank comes from the current balance, in `src/lib/ranks.ts` (Cadet 0, Pilot 50, Explorer 100, Captain 250, Commander 500). A rank can drop after a reward.
 - Only the functions in `src/lib/server/stars.ts` change stars. Do not write to `star_event` anywhere else.

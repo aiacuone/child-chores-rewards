@@ -130,6 +130,7 @@ Settings is a grown-up-only tab. Rows:
 - Stars only go down when a reward is claimed. There are no penalties.
 - **Ranks** (Cadet 0, Pilot 50, Explorer 100, Captain 250, Commander 500) use the child's current star balance, so a rank can drop after a reward is handed out. Rank shows on the child's rocket, which keeps the child's colour: Cadet plain, Pilot wing and hull stripes, Explorer side boosters, Captain gold collar and wing tips, Commander gold star and glow. The rocket upgrades everywhere it appears at 40 px or taller.
 - **Star history (grown-ups only):** on the Ranks tab, each child has a "Star history" link that opens a list of that child's star changes, grouped by day, newest first (chores, daily bonus, rewards handed out). Undo and "That wasn't Mia" correct the history rather than adding rows, so it shows only what stands. Children never see it.
+- **Ranks tab and history details** (decided in #28): the ladder and the "Star history" link are for the child whose tile is chosen (the first child until another tile is tapped). Days are Melbourne calendar days, newest first, with times like "9:14". A chore or reward that was removed later shows as "A removed chore" or "A removed reward handed out". The newest 500 changes are shown.
 
 ## Rewards
 

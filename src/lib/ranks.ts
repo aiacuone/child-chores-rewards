@@ -2,11 +2,11 @@
 // Shared by the server and the Rocket component, so it has no server imports.
 
 export const RANKS = [
-	{ name: 'Cadet', min: 0 },
-	{ name: 'Pilot', min: 50 },
-	{ name: 'Explorer', min: 100 },
-	{ name: 'Captain', min: 250 },
-	{ name: 'Commander', min: 500 }
+	{ name: 'Cadet', min: 0, perk: 'Plain rocket' },
+	{ name: 'Pilot', min: 50, perk: 'Wing and hull stripes' },
+	{ name: 'Explorer', min: 100, perk: 'Side boosters' },
+	{ name: 'Captain', min: 250, perk: 'Gold collar and wing tips' },
+	{ name: 'Commander', min: 500, perk: 'Gold star and glow' }
 ] as const;
 
 export type RankName = (typeof RANKS)[number]['name'];
