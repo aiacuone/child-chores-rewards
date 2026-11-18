@@ -11,6 +11,16 @@ Each flow is one row on the design canvas, read left to right. Board files are i
 - `Space-Child-Waiting.dc.html`: 5 · Trip. Stop waits for a grown-up
 - `Parent-Notification.dc.html`: 6 · Grown-up’s phone. ntfy alert
 
+```mermaid
+flowchart LR
+    A["1 · Who's flying?<br/>Main"] --> B["2 · Mia's trip<br/>Space-Child"]
+    B --> C["3 · The stop<br/>Stop"]
+    C -->|I did it!| D["4 · Are you Mia?<br/>Confirm-Who"]
+    D -->|Yes| E["5 · Stop waits<br/>Space-Child-Waiting"]
+    E --> F["6 · ntfy alert<br/>Parent-Notification"]
+    E -.->|Undo within a minute| G["A child undoes<br/>(A child undoes, or a grown-up sends a chore back)"]
+```
+
 ## A child does chores in any order
 
 - `Space-Child-Open.dc.html`: 1 · Trip. All stops open. Tap the last one
@@ -34,6 +44,17 @@ Each flow is one row on the design canvas, read left to right. Board files are i
 - `Claim-Parent.dc.html`: 5 · Hand out. Tap Yes
 - `Rewards-Claimed.dc.html`: 6 · Rewards. Stars taken
 - `Child-Rewards-Claimed.dc.html`: 7 · Child sees new star total
+
+```mermaid
+flowchart LR
+    A["1 · My rewards<br/>R-Child-Rewards2"] -->|Claim| B["2 · Asked a grown-up<br/>Claim-Waiting"]
+    B --> C["3 · ntfy alert<br/>Notif-Claim"]
+    C --> D["4 · Grown-up PIN<br/>Parent-PIN-Claim"]
+    D --> E["5 · Hand out?<br/>Claim-Parent"]
+    E -->|Yes| F["6 · Stars taken<br/>Rewards-Claimed"]
+    F --> G["7 · New star total<br/>Child-Rewards-Claimed"]
+    E -.->|Not now| H["Pick a message<br/>(A grown-up declines a reward claim)"]
+```
 
 ## A child undoes, or a grown-up sends a chore back
 
@@ -73,6 +94,17 @@ Each flow is one row on the design canvas, read left to right. Board files are i
 - `Stop-Waiting.dc.html`: 4 · Check it. Tap Yes, it’s done!
 - `Parent-Stops-Done.dc.html`: 5 · Chores. Checked
 - `Space-Child-Done.dc.html`: 6 · Mia’s rocket flies on
+
+```mermaid
+flowchart LR
+    A["1 · Who's flying?<br/>R2-Main"] --> B["2 · Grown-up PIN<br/>Parent-PIN"]
+    B --> C["3 · Mission control<br/>Parent-Home"]
+    C --> D["4 · Check it<br/>Stop-Waiting"]
+    D -->|Yes, it's done!| E["5 · Chores. Checked<br/>Parent-Stops-Done"]
+    E --> F["6 · Mia's rocket flies on<br/>Space-Child-Done"]
+    D -.->|Not done yet| G["Send back<br/>(A child undoes, or a grown-up sends a chore back)"]
+    D -.->|That wasn't Mia| H["Fix the wrong child<br/>(A grown-up fixes the wrong child)"]
+```
 
 ## A grown-up adds a chore
 
@@ -185,6 +217,17 @@ Each flow is one row on the design canvas, read left to right. Board files are i
 - `Notif-PIN-Locked.dc.html`: 4 · Grown-ups’ phones. ntfy alert
 - `PIN-Reset-Wrong.dc.html`: 5 · Reset code is wrong. Tap Save PIN
 - `PIN-Reset-Expired.dc.html`: 6 · Code cancelled. Tap Send a new code
+
+```mermaid
+flowchart LR
+    A["1 · Grown-up PIN<br/>R-Parent-PIN-Try"] -->|Wrong PIN| B["2 · Try again<br/>Parent-PIN-Wrong"]
+    B -->|After 5 tries| C["3 · Locked, countdown<br/>Parent-PIN-Locked"]
+    C --> D["4 · ntfy alert<br/>Notif-PIN-Locked"]
+    C -->|Forgot PIN?| E["A grown-up forgot the PIN"]
+    E -->|Wrong reset code| F["5 · Code is wrong<br/>PIN-Reset-Wrong"]
+    F --> G["6 · Code cancelled<br/>PIN-Reset-Expired"]
+    G -->|Send a new code| E
+```
 
 ## A child’s camera is turned off
 
