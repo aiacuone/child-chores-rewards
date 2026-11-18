@@ -685,9 +685,171 @@
    "is_interactive": true,
    "radius": 28
   },
-  "Space-Child-Idle.dc.html": {
+  "R-My-Rocket.dc.html": {
    "x": 0,
    "y": 19584,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Put your face in the window. Tap Take a photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "My-Rocket-Camera-Blocked.dc.html": {
+   "x": 470,
+   "y": 19584,
+   "w": 390,
+   "h": 844,
+   "title": "2 · The camera is off. Tap Pick a photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-My-Rocket-Crop.dc.html": {
+   "x": 940,
+   "y": 19584,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Move and zoom",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Photo-Choose.dc.html": {
+   "x": 0,
+   "y": 20808,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Take or pick a photo. Tap Take a photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Photo-Choose-Camera-Blocked.dc.html": {
+   "x": 470,
+   "y": 20808,
+   "w": 390,
+   "h": 844,
+   "title": "2 · The camera is off. Tap Pick a photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Photo-Crop.dc.html": {
+   "x": 940,
+   "y": 20808,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Move and zoom",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Edit-Photo.dc.html": {
+   "x": 0,
+   "y": 22032,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Edit Leo. Tap Remove photo",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Child-Photo-Remove-Confirm.dc.html": {
+   "x": 470,
+   "y": 22032,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Remove Leo’s photo? Tap Yes",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Child-Edit-Plain.dc.html": {
+   "x": 940,
+   "y": 22032,
+   "w": 390,
+   "h": 844,
+   "title": "3 · Edit Leo. The rocket is plain again",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Add-Stop-Photo.dc.html": {
+   "x": 0,
+   "y": 23256,
+   "w": 390,
+   "h": 844,
+   "title": "1 · New chore with a photo. Tap Remove",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Photo-Remove-Confirm.dc.html": {
+   "x": 470,
+   "y": 23256,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Remove this photo? Tap Yes",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Add-Stop-Plain.dc.html": {
+   "x": 940,
+   "y": 23256,
+   "w": 390,
+   "h": 844,
+   "title": "3 · New chore. The built-in picture is back",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Add-Reward-Photo.dc.html": {
+   "x": 0,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "1 · New reward with a photo. Tap Remove",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Reward-Photo-Remove-Confirm.dc.html": {
+   "x": 470,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Remove this photo? Tap Yes",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "R-Add-Reward-Plain.dc.html": {
+   "x": 940,
+   "y": 24480,
+   "w": 390,
+   "h": 844,
+   "title": "3 · New reward. The planet is back",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Stop-Photo-Loading.dc.html": {
+   "x": 0,
+   "y": 25704,
+   "w": 390,
+   "h": 844,
+   "title": "1 · Photo still loading. Tap I did it any time",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Stop-Photo-Fallback.dc.html": {
+   "x": 470,
+   "y": 25704,
+   "w": 390,
+   "h": 844,
+   "title": "2 · Photo missing. The built-in picture shows",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Photo-Fallback.dc.html": {
+   "x": 940,
+   "y": 25704,
+   "w": 390,
+   "h": 844,
+   "title": "3 · The trip. The built-in picture shows",
+   "is_interactive": true,
+   "radius": 28
+  },
+  "Space-Child-Idle.dc.html": {
+   "x": 0,
+   "y": 26928,
    "w": 390,
    "h": 844,
    "title": "1 · No one is touching it. Still there?",
@@ -696,7 +858,7 @@
   },
   "R-Main-Idle.dc.html": {
    "x": 470,
-   "y": 19584,
+   "y": 26928,
    "w": 390,
    "h": 844,
    "title": "2 · Back to Who’s flying",
@@ -705,7 +867,7 @@
   },
   "R-Main-Pass.dc.html": {
    "x": 940,
-   "y": 19584,
+   "y": 26928,
    "w": 390,
    "h": 844,
    "title": "3 · Mia has a picture passcode. Tap Mia",
@@ -714,7 +876,7 @@
   },
   "Passcode-Enter.dc.html": {
    "x": 1410,
-   "y": 19584,
+   "y": 26928,
    "w": 390,
    "h": 844,
    "title": "4 · Tap the 3 secret pictures",
@@ -723,7 +885,7 @@
   },
   "R-Space-Child.dc.html": {
    "x": 1880,
-   "y": 19584,
+   "y": 26928,
    "w": 390,
    "h": 844,
    "title": "5 · Mia’s trip opens",
@@ -732,7 +894,7 @@
   },
   "R-Stop-Waiting.dc.html": {
    "x": 0,
-   "y": 20808,
+   "y": 28152,
    "w": 390,
    "h": 844,
    "title": "1 · Check it. Tap That wasn’t Mia",
@@ -741,7 +903,7 @@
   },
   "Reassign.dc.html": {
    "x": 470,
-   "y": 20808,
+   "y": 28152,
    "w": 390,
    "h": 844,
    "title": "2 · Who really did it? Tap Leo",
@@ -750,7 +912,7 @@
   },
   "Parent-Stops-Moved.dc.html": {
    "x": 940,
-   "y": 20808,
+   "y": 28152,
    "w": 390,
    "h": 844,
    "title": "3 · Moved to Leo’s trip",
@@ -759,7 +921,7 @@
   },
   "R-Child-Edit.dc.html": {
    "x": 0,
-   "y": 22032,
+   "y": 29376,
    "w": 390,
    "h": 844,
    "title": "1 · Edit Leo. Tap Picture passcode",
@@ -768,7 +930,7 @@
   },
   "Passcode-Setup.dc.html": {
    "x": 470,
-   "y": 22032,
+   "y": 29376,
    "w": 390,
    "h": 844,
    "title": "2 · Pick 3 pictures. Tap Save",
@@ -777,7 +939,7 @@
   },
   "Home-Locking.dc.html": {
    "x": 0,
-   "y": 23256,
+   "y": 30600,
    "w": 390,
    "h": 844,
    "title": "1 · No one has touched it. Locking soon",
@@ -786,7 +948,7 @@
   },
   "Main-Locked.dc.html": {
    "x": 470,
-   "y": 23256,
+   "y": 30600,
    "w": 390,
    "h": 844,
    "title": "2 · Back to Who’s flying, locked",
@@ -795,7 +957,7 @@
   },
   "R-Ranks.dc.html": {
    "x": 0,
-   "y": 24480,
+   "y": 31824,
    "w": 390,
    "h": 844,
    "title": "1 · Ranks. Tap Star history",
@@ -804,7 +966,7 @@
   },
   "Star-History.dc.html": {
    "x": 470,
-   "y": 24480,
+   "y": 31824,
    "w": 390,
    "h": 844,
    "title": "2 · Star history. Newest first, scrolls",
@@ -813,7 +975,7 @@
   },
   "Star-History-Empty.dc.html": {
    "x": 940,
-   "y": 24480,
+   "y": 31824,
    "w": 390,
    "h": 844,
    "title": "3 · A child with no stars yet",
@@ -822,7 +984,7 @@
   },
   "Settings.dc.html": {
    "x": 0,
-   "y": 25704,
+   "y": 33048,
    "w": 390,
    "h": 844,
    "title": "1 · Settings. Tap Children",
@@ -831,7 +993,7 @@
   },
   "Settings-Children.dc.html": {
    "x": 470,
-   "y": 25704,
+   "y": 33048,
    "w": 390,
    "h": 844,
    "title": "2 · Children. Tap Leo",
@@ -840,7 +1002,7 @@
   },
   "Child-Edit.dc.html": {
    "x": 940,
-   "y": 25704,
+   "y": 33048,
    "w": 390,
    "h": 844,
    "title": "3 · Edit Leo. Tap Remove Leo",
@@ -849,7 +1011,7 @@
   },
   "Child-Remove.dc.html": {
    "x": 1410,
-   "y": 25704,
+   "y": 33048,
    "w": 390,
    "h": 844,
    "title": "4 · Are you sure? Tap Yes",
@@ -858,7 +1020,7 @@
   },
   "Children-Removed.dc.html": {
    "x": 1880,
-   "y": 25704,
+   "y": 33048,
    "w": 390,
    "h": 844,
    "title": "5 · Children. Leo removed",
@@ -867,7 +1029,7 @@
   },
   "R9-Settings.dc.html": {
    "x": 0,
-   "y": 26928,
+   "y": 34272,
    "w": 390,
    "h": 844,
    "title": "1 · Settings. Tap Notifications",
@@ -876,7 +1038,7 @@
   },
   "Notifications.dc.html": {
    "x": 470,
-   "y": 26928,
+   "y": 34272,
    "w": 390,
    "h": 844,
    "title": "2 · Notifications. Tap ntfy",
@@ -885,7 +1047,7 @@
   },
   "Ntfy.dc.html": {
    "x": 940,
-   "y": 26928,
+   "y": 34272,
    "w": 390,
    "h": 844,
    "title": "3 · Set up ntfy. Send a test",
@@ -894,7 +1056,7 @@
   },
   "R10-Parent-PIN.dc.html": {
    "x": 0,
-   "y": 28152,
+   "y": 35496,
    "w": 390,
    "h": 844,
    "title": "1 · Grown-up PIN. Tap Forgot PIN?",
@@ -903,7 +1065,7 @@
   },
   "PIN-Forgot.dc.html": {
    "x": 470,
-   "y": 28152,
+   "y": 35496,
    "w": 390,
    "h": 844,
    "title": "2 · Forgot PIN. Tap Send code",
@@ -912,7 +1074,7 @@
   },
   "Notif-Reset.dc.html": {
    "x": 940,
-   "y": 28152,
+   "y": 35496,
    "w": 390,
    "h": 844,
    "title": "3 · Grown-ups’ phones. ntfy alert",
@@ -921,7 +1083,7 @@
   },
   "PIN-Reset.dc.html": {
    "x": 1410,
-   "y": 28152,
+   "y": 35496,
    "w": 390,
    "h": 844,
    "title": "4 · Set a new PIN. Tap Save PIN",
@@ -930,7 +1092,7 @@
   },
   "Parent-PIN-After.dc.html": {
    "x": 1880,
-   "y": 28152,
+   "y": 35496,
    "w": 390,
    "h": 844,
    "title": "5 · Try the new PIN",
@@ -939,7 +1101,7 @@
   },
   "R-Parent-PIN-Try.dc.html": {
    "x": 0,
-   "y": 29376,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "1 · Grown-up PIN. Enter a wrong PIN",
@@ -948,7 +1110,7 @@
   },
   "Parent-PIN-Wrong.dc.html": {
    "x": 470,
-   "y": 29376,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "2 · Wrong PIN, try again. After 5 tries it locks",
@@ -957,7 +1119,7 @@
   },
   "Parent-PIN-Locked.dc.html": {
    "x": 940,
-   "y": 29376,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "3 · Locked, with a countdown. Tap Forgot PIN?",
@@ -966,7 +1128,7 @@
   },
   "Notif-PIN-Locked.dc.html": {
    "x": 1410,
-   "y": 29376,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "4 · Grown-ups’ phones. ntfy alert",
@@ -975,7 +1137,7 @@
   },
   "PIN-Reset-Wrong.dc.html": {
    "x": 1880,
-   "y": 29376,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "5 · Reset code is wrong. Tap Save PIN",
@@ -984,7 +1146,7 @@
   },
   "PIN-Reset-Expired.dc.html": {
    "x": 2350,
-   "y": 29376,
+   "y": 36720,
    "w": 390,
    "h": 844,
    "title": "6 · Code cancelled. Tap Send a new code",
@@ -993,7 +1155,7 @@
   },
   "R11-Settings.dc.html": {
    "x": 0,
-   "y": 30600,
+   "y": 37944,
    "w": 390,
    "h": 844,
    "title": "1 · Settings. Tap Recovery email",
@@ -1002,7 +1164,7 @@
   },
   "Recovery.dc.html": {
    "x": 470,
-   "y": 30600,
+   "y": 37944,
    "w": 390,
    "h": 844,
    "title": "2 · Recovery email. Tap Change email",
@@ -1011,7 +1173,7 @@
   },
   "Recovery-Edit.dc.html": {
    "x": 940,
-   "y": 30600,
+   "y": 37944,
    "w": 390,
    "h": 844,
    "title": "3 · New email and PIN. Tap Send link",
@@ -1020,7 +1182,7 @@
   },
   "Recovery-Sent.dc.html": {
    "x": 1410,
-   "y": 30600,
+   "y": 37944,
    "w": 390,
    "h": 844,
    "title": "4 · Check your inbox",
@@ -1029,7 +1191,7 @@
   },
   "R-Space-Child-Coming.dc.html": {
    "x": 0,
-   "y": 31824,
+   "y": 39168,
    "w": 390,
    "h": 844,
    "title": "1 · Mia’s trip. Tap Coming up",
@@ -1038,7 +1200,7 @@
   },
   "Child-Coming.dc.html": {
    "x": 470,
-   "y": 31824,
+   "y": 39168,
    "w": 390,
    "h": 844,
    "title": "2 · Chores due on other days",
@@ -1047,7 +1209,7 @@
   },
   "R-Stop-Parent2.dc.html": {
    "x": 0,
-   "y": 33048,
+   "y": 40392,
    "w": 390,
    "h": 844,
    "title": "1 · The chore. Tap Skip…",
@@ -1056,7 +1218,7 @@
   },
   "Skip-Options.dc.html": {
    "x": 470,
-   "y": 33048,
+   "y": 40392,
    "w": 390,
    "h": 844,
    "title": "2 · Skip for how long? Tap 3 days",
@@ -1065,7 +1227,7 @@
   },
   "Parent-Stops-SkippedLong.dc.html": {
    "x": 940,
-   "y": 33048,
+   "y": 40392,
    "w": 390,
    "h": 844,
    "title": "3 · Skipped until Tuesday",
@@ -1074,7 +1236,7 @@
   },
   "R-Parent-Stops-Done.dc.html": {
    "x": 0,
-   "y": 34272,
+   "y": 41616,
    "w": 390,
    "h": 844,
    "title": "1 · Checked. Tap Undo within a minute",
@@ -1083,7 +1245,7 @@
   },
   "Parent-Stops-Undone.dc.html": {
    "x": 470,
-   "y": 34272,
+   "y": 41616,
    "w": 390,
    "h": 844,
    "title": "2 · Waiting for a check again",
@@ -1092,7 +1254,7 @@
   },
   "R-Claim-Parent.dc.html": {
    "x": 0,
-   "y": 35496,
+   "y": 42840,
    "w": 390,
    "h": 844,
    "title": "1 · Hand out? Tap Not now",
@@ -1101,7 +1263,7 @@
   },
   "Claim-Decline.dc.html": {
    "x": 470,
-   "y": 35496,
+   "y": 42840,
    "w": 390,
    "h": 844,
    "title": "2 · Pick a message. Tap Send message",
@@ -1110,7 +1272,7 @@
   },
   "Rewards-Declined.dc.html": {
    "x": 940,
-   "y": 35496,
+   "y": 42840,
    "w": 390,
    "h": 844,
    "title": "3 · Rewards. Message sent",
@@ -1119,7 +1281,7 @@
   },
   "Child-Rewards-Declined.dc.html": {
    "x": 1410,
-   "y": 35496,
+   "y": 42840,
    "w": 390,
    "h": 844,
    "title": "4 · Mia sees the message",
@@ -1128,7 +1290,7 @@
   },
   "R-Settings-Grownups.dc.html": {
    "x": 0,
-   "y": 36720,
+   "y": 44064,
    "w": 390,
    "h": 844,
    "title": "1 · Settings. Tap Grown-ups",
@@ -1137,7 +1299,7 @@
   },
   "Grown-ups.dc.html": {
    "x": 470,
-   "y": 36720,
+   "y": 44064,
    "w": 390,
    "h": 844,
    "title": "2 · Grown-ups. Tap Invite",
@@ -1146,7 +1308,7 @@
   },
   "Invite.dc.html": {
    "x": 940,
-   "y": 36720,
+   "y": 44064,
    "w": 390,
    "h": 844,
    "title": "3 · Their Google email. Tap Send invite",
@@ -1155,7 +1317,7 @@
   },
   "Grown-ups-Invited.dc.html": {
    "x": 1410,
-   "y": 36720,
+   "y": 44064,
    "w": 390,
    "h": 844,
    "title": "4 · Invite sent",
@@ -1164,7 +1326,7 @@
   },
   "App-Icon.dc.html": {
    "x": 0,
-   "y": 37944,
+   "y": 45288,
    "w": 390,
    "h": 844,
    "title": "1 · App icon. Full size, maskable, small, on a home screen",
@@ -1173,7 +1335,7 @@
   },
   "Ranks.dc.html": {
    "x": 0,
-   "y": 39168,
+   "y": 46512,
    "w": 390,
    "h": 844,
    "title": "1 · Ranks",
@@ -1182,7 +1344,7 @@
   },
   "Auto-Lock.dc.html": {
    "x": 470,
-   "y": 39168,
+   "y": 46512,
    "w": 390,
    "h": 844,
    "title": "2 · Auto-lock",
@@ -1191,7 +1353,7 @@
   },
   "Auto-Return.dc.html": {
    "x": 940,
-   "y": 39168,
+   "y": 46512,
    "w": 390,
    "h": 844,
    "title": "3 · Back to Who’s flying",
@@ -1200,7 +1362,7 @@
   },
   "Devices.dc.html": {
    "x": 1410,
-   "y": 39168,
+   "y": 46512,
    "w": 390,
    "h": 844,
    "title": "4 · Devices",
@@ -1209,7 +1371,7 @@
   },
   "Daily-Reset.dc.html": {
    "x": 1880,
-   "y": 39168,
+   "y": 46512,
    "w": 390,
    "h": 844,
    "title": "5 · Daily reset and bonus",
@@ -1293,6 +1455,24 @@
   "Stop-Photo.dc.html",
   "Claim-Waiting-Photo.dc.html",
   "Claim-Parent-Photo.dc.html",
+  "R-My-Rocket.dc.html",
+  "My-Rocket-Camera-Blocked.dc.html",
+  "R-My-Rocket-Crop.dc.html",
+  "R-Photo-Choose.dc.html",
+  "Photo-Choose-Camera-Blocked.dc.html",
+  "R-Photo-Crop.dc.html",
+  "Child-Edit-Photo.dc.html",
+  "Child-Photo-Remove-Confirm.dc.html",
+  "R-Child-Edit-Plain.dc.html",
+  "R-Add-Stop-Photo.dc.html",
+  "Photo-Remove-Confirm.dc.html",
+  "R-Add-Stop-Plain.dc.html",
+  "R-Add-Reward-Photo.dc.html",
+  "Reward-Photo-Remove-Confirm.dc.html",
+  "R-Add-Reward-Plain.dc.html",
+  "Stop-Photo-Loading.dc.html",
+  "Stop-Photo-Fallback.dc.html",
+  "Space-Child-Photo-Fallback.dc.html",
   "Space-Child-Idle.dc.html",
   "R-Main-Idle.dc.html",
   "R-Main-Pass.dc.html",
@@ -1469,118 +1649,208 @@
   "t16": {
    "x": 0,
    "y": 19324,
-   "text": "Kids can’t mix up trips",
+   "text": "A child’s camera is turned off",
    "kind": "title1",
-   "maxW": 2270
+   "maxW": 1330
+  },
+  "w16": {
+   "x": 0,
+   "y": 19454,
+   "w": 1000,
+   "fill": "gray",
+   "size": "l",
+   "text": "My-Rocket-Camera-Blocked appears when a child taps Take a photo and the device won’t let the app use the camera."
   },
   "t17": {
    "x": 0,
    "y": 20548,
-   "text": "A grown-up fixes the wrong child",
+   "text": "A grown-up’s camera is turned off",
    "kind": "title1",
    "maxW": 1330
+  },
+  "w17": {
+   "x": 0,
+   "y": 20678,
+   "w": 1000,
+   "fill": "gray",
+   "size": "l",
+   "text": "Photo-Choose-Camera-Blocked appears when a grown-up taps Take a photo and the camera is blocked for this app."
   },
   "t18": {
    "x": 0,
    "y": 21772,
-   "text": "A grown-up sets a picture passcode",
+   "text": "A grown-up removes a rocket photo",
    "kind": "title1",
-   "maxW": 1250
+   "maxW": 1330
+  },
+  "w18": {
+   "x": 0,
+   "y": 21902,
+   "w": 1000,
+   "fill": "gray",
+   "size": "l",
+   "text": "Child-Edit-Photo appears when a grown-up opens a child who has a rocket photo. Child-Photo-Remove-Confirm appears when they tap Remove photo."
   },
   "t19": {
    "x": 0,
    "y": 22996,
-   "text": "Grown-up mode locks itself",
+   "text": "A grown-up removes a chore photo",
    "kind": "title1",
-   "maxW": 1250
+   "maxW": 1330
+  },
+  "w19": {
+   "x": 0,
+   "y": 23126,
+   "w": 1000,
+   "fill": "gray",
+   "size": "l",
+   "text": "Photo-Remove-Confirm appears when a grown-up taps Remove next to a chore’s photo."
   },
   "t20": {
    "x": 0,
    "y": 24220,
-   "text": "A grown-up looks at a child’s star history",
+   "text": "A grown-up removes a reward photo",
    "kind": "title1",
    "maxW": 1330
+  },
+  "w20": {
+   "x": 0,
+   "y": 24350,
+   "w": 1000,
+   "fill": "gray",
+   "size": "l",
+   "text": "Reward-Photo-Remove-Confirm appears when a grown-up taps Remove next to a reward’s photo."
   },
   "t21": {
    "x": 0,
    "y": 25444,
-   "text": "A grown-up manages children",
+   "text": "A chore photo is slow or missing",
    "kind": "title1",
-   "maxW": 2270
+   "maxW": 1330
+  },
+  "w21": {
+   "x": 0,
+   "y": 25574,
+   "w": 1000,
+   "fill": "gray",
+   "size": "l",
+   "text": "Stop-Photo-Loading appears while a chore’s photo has not arrived yet. Stop-Photo-Fallback and Space-Child-Photo-Fallback appear when the photo is missing or fails to load."
   },
   "t22": {
    "x": 0,
    "y": 26668,
-   "text": "A grown-up sets up ntfy",
+   "text": "Kids can’t mix up trips",
    "kind": "title1",
-   "maxW": 1330
+   "maxW": 2270
   },
   "t23": {
    "x": 0,
    "y": 27892,
-   "text": "A grown-up forgot the PIN",
+   "text": "A grown-up fixes the wrong child",
    "kind": "title1",
-   "maxW": 2270
+   "maxW": 1330
   },
   "t24": {
    "x": 0,
    "y": 29116,
-   "text": "A wrong PIN is entered",
+   "text": "A grown-up sets a picture passcode",
    "kind": "title1",
-   "maxW": 2740
+   "maxW": 1250
   },
   "t25": {
    "x": 0,
    "y": 30340,
-   "text": "A grown-up changes the recovery email",
+   "text": "Grown-up mode locks itself",
    "kind": "title1",
-   "maxW": 1800
+   "maxW": 1250
   },
   "t26": {
    "x": 0,
    "y": 31564,
-   "text": "A child sees what’s coming up",
+   "text": "A grown-up looks at a child’s star history",
    "kind": "title1",
-   "maxW": 1250
+   "maxW": 1330
   },
   "t27": {
    "x": 0,
    "y": 32788,
-   "text": "A grown-up skips a chore for several days",
+   "text": "A grown-up manages children",
    "kind": "title1",
-   "maxW": 1330
+   "maxW": 2270
   },
   "t28": {
    "x": 0,
    "y": 34012,
-   "text": "A grown-up undoes an accepted chore",
+   "text": "A grown-up sets up ntfy",
    "kind": "title1",
-   "maxW": 1250
+   "maxW": 1330
   },
   "t29": {
    "x": 0,
    "y": 35236,
-   "text": "A grown-up declines a reward claim",
+   "text": "A grown-up forgot the PIN",
    "kind": "title1",
-   "maxW": 1800
+   "maxW": 2270
   },
   "t30": {
    "x": 0,
    "y": 36460,
-   "text": "A grown-up invites another grown-up",
+   "text": "A wrong PIN is entered",
    "kind": "title1",
-   "maxW": 1800
+   "maxW": 2740
   },
   "t31": {
    "x": 0,
    "y": 37684,
-   "text": "App icon for the home screen",
+   "text": "A grown-up changes the recovery email",
    "kind": "title1",
-   "maxW": 1250
+   "maxW": 1800
   },
   "t32": {
    "x": 0,
    "y": 38908,
+   "text": "A child sees what’s coming up",
+   "kind": "title1",
+   "maxW": 1250
+  },
+  "t33": {
+   "x": 0,
+   "y": 40132,
+   "text": "A grown-up skips a chore for several days",
+   "kind": "title1",
+   "maxW": 1330
+  },
+  "t34": {
+   "x": 0,
+   "y": 41356,
+   "text": "A grown-up undoes an accepted chore",
+   "kind": "title1",
+   "maxW": 1250
+  },
+  "t35": {
+   "x": 0,
+   "y": 42580,
+   "text": "A grown-up declines a reward claim",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t36": {
+   "x": 0,
+   "y": 43804,
+   "text": "A grown-up invites another grown-up",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "t37": {
+   "x": 0,
+   "y": 45028,
+   "text": "App icon for the home screen",
+   "kind": "title1",
+   "maxW": 1250
+  },
+  "t38": {
+   "x": 0,
+   "y": 46252,
    "text": "Other grown-up screens",
    "kind": "title1",
    "maxW": 2270

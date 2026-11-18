@@ -189,6 +189,9 @@ Settings is a grown-up-only tab. Rows:
 - A reward always keeps its planet: the photo shows as a small round badge on the planet's corner in lists, and large on the claim screens.
 - Photos are resized on upload and deleted with the chore, reward or child. If a photo is missing or fails to load, the built-in icon or planet shows instead.
 - "Take a photo" should use the device camera (file picker with the camera hint). Camera permission needs https.
+- **Camera is off** (designed in #35): when the device reports that the camera is blocked, the child sees "The camera is off" with Pick a photo, and a grown-up sees how to allow it, with Try the camera again and Pick a photo. Where the browser cannot report it, the device's own message shows.
+- **Removing a photo** (designed in #35): a grown-up removes a rocket, chore or reward photo after a confirm screen. The plain window, built-in picture or planet comes back.
+- **A chore photo that has not loaded** (designed in #35): the stop shows "Getting the photo…" while it loads. If it is missing or fails, the built-in picture shows, with no error message.
 - **Rocket photos** (decided in #34): My-Rocket says "Take a photo of yourself. Only your family can see it.", because photos show on every signed-in device. A child with a picture passcode taps it before changing their photo. Until #35, a grown-up can use Remove photo on Edit child.
 
 ## Accessibility
@@ -201,6 +204,4 @@ Settings is a grown-up-only tab. Rows:
 ## Not designed yet (decide while building)
 
 - Leo's own trip (every child tile opens the sample trip).
-- A "camera is blocked" message and a "Remove photo" action.
-- A fallback look for a chore photo that has not loaded.
 - A "Coming up" screen for each child beyond the sample.

@@ -186,6 +186,42 @@ Each flow is one row on the design canvas, read left to right. Board files are i
 - `PIN-Reset-Wrong.dc.html`: 5 · Reset code is wrong. Tap Save PIN
 - `PIN-Reset-Expired.dc.html`: 6 · Code cancelled. Tap Send a new code
 
+## A child’s camera is turned off
+
+- `R-My-Rocket.dc.html`: 1 · Put your face in the window. Tap Take a photo
+- `My-Rocket-Camera-Blocked.dc.html`: 2 · The camera is off. Tap Pick a photo. Appears when a child taps Take a photo and the device won’t let the app use the camera.
+- `R-My-Rocket-Crop.dc.html`: 3 · Move and zoom
+
+## A grown-up’s camera is turned off
+
+- `R-Photo-Choose.dc.html`: 1 · Take or pick a photo. Tap Take a photo
+- `Photo-Choose-Camera-Blocked.dc.html`: 2 · The camera is off. Tap Pick a photo. Appears when a grown-up taps Take a photo and the camera is blocked for this app.
+- `R-Photo-Crop.dc.html`: 3 · Move and zoom
+
+## A grown-up removes a rocket photo
+
+- `Child-Edit-Photo.dc.html`: 1 · Edit Leo. Tap Remove photo. Appears when a grown-up opens a child who has a rocket photo.
+- `Child-Photo-Remove-Confirm.dc.html`: 2 · Remove Leo’s photo? Tap Yes. Appears when a grown-up taps Remove photo on a child.
+- `R-Child-Edit-Plain.dc.html`: 3 · Edit Leo. The rocket is plain again
+
+## A grown-up removes a chore photo
+
+- `R-Add-Stop-Photo.dc.html`: 1 · New chore with a photo. Tap Remove
+- `Photo-Remove-Confirm.dc.html`: 2 · Remove this photo? Tap Yes. Appears when a grown-up taps Remove next to a chore’s photo.
+- `R-Add-Stop-Plain.dc.html`: 3 · New chore. The built-in picture is back
+
+## A grown-up removes a reward photo
+
+- `R-Add-Reward-Photo.dc.html`: 1 · New reward with a photo. Tap Remove
+- `Reward-Photo-Remove-Confirm.dc.html`: 2 · Remove this photo? Tap Yes. Appears when a grown-up taps Remove next to a reward’s photo.
+- `R-Add-Reward-Plain.dc.html`: 3 · New reward. The planet is back
+
+## A chore photo is slow or missing
+
+- `Stop-Photo-Loading.dc.html`: 1 · Photo still loading. Tap I did it any time. Appears while a chore’s photo has not arrived yet.
+- `Stop-Photo-Fallback.dc.html`: 2 · Photo missing. The built-in picture shows. Appears when a chore’s photo is missing or fails to load.
+- `Space-Child-Photo-Fallback.dc.html`: 3 · The trip. The built-in picture shows. Appears on the trip when the photo is missing or fails to load.
+
 ## A grown-up changes the recovery email
 
 - `R11-Settings.dc.html`: 1 · Settings. Tap Recovery email
