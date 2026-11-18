@@ -14,7 +14,7 @@ export const variables = defineEnvVars({
 		schema: (value) => value || undefined
 	},
 	ALLOWED_EMAILS: {
-		description: 'Google emails that may sign in, separated by commas or spaces',
+		description: 'Google emails that may start the first family, separated by commas or spaces',
 		schema: (value) => value || undefined
 	},
 	// Gmail for the recovery email link and PIN reset codes (ADR 0008).
