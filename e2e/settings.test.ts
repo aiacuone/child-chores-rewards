@@ -146,7 +146,10 @@ test('a shorter return time sends a trip back sooner', async ({ page }) => {
 		data: { autoReturnSeconds: 30 }
 	});
 	expect(res.status()).toBe(200);
-	await page.goto(`/trip/${mia}`);
+	// Through the app, so the page is ready and its timer has started.
+	await page.goto('/');
+	await page.getByRole('link', { name: /^Mia/ }).click();
+	await expect(page).toHaveURL(new RegExp(`/trip/${mia}$`));
 	await expect(page.getByRole('heading', { name: 'Mia’s space trip' })).toBeVisible();
 	await page.clock.runFor(19_000);
 	await expect(page.getByRole('alertdialog')).toHaveCount(0);
