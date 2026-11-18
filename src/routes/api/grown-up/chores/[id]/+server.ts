@@ -1,11 +1,12 @@
-// One chore: read, change or remove it. Grown-up token required; a chore from
-// another family, or an id that is not a whole number, is "not found".
+// One chore: read, change, skip, hide or remove it. Grown-up token required; a
+// chore from another family, or an id that is not a whole number, is "not found".
 import { error, json } from '@sveltejs/kit';
 import { settleFamilyBonuses } from '#lib/server/bonus.ts';
+import { applyChoreAction, BadSkip, choreToday } from '#lib/server/chore-state.ts';
 import { BadRepeat, getChore, removeChore, updateChore } from '#lib/server/chores.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { forFamily, NotInFamily } from '#lib/server/family.ts';
-import { parseChore } from '#lib/server/forms/chores.ts';
+import { parseChore, parseChoreAction } from '#lib/server/forms/chores.ts';
 import { requireGrownUp } from '#lib/server/grownup.ts';
 import { readJson } from '#lib/server/read-json.ts';
 import type { RequestEvent } from './$types';
@@ -21,7 +22,21 @@ export const GET = (event: RequestEvent) => {
 	const { scope, id } = setup(event);
 	const chore = getChore(scope, id);
 	if (!chore) error(404, 'Not found');
-	return json(chore);
+	return json({ ...chore, today: choreToday(scope, id) });
+};
+
+/** Skip, hide or turn back on. */
+export const POST = async (event: RequestEvent) => {
+	const { scope, id } = setup(event);
+	const action = parseChoreAction(await readJson(event.request));
+	if (!action) error(400, 'Bad request');
+	try {
+		if (!applyChoreAction(scope, id, action)) error(404, 'Not found');
+	} catch (e) {
+		if (e instanceof BadSkip) error(400, 'Bad request');
+		throw e;
+	}
+	return new Response(null, { status: 204 });
 };
 
 export const PUT = async (event: RequestEvent) => {

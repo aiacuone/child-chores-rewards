@@ -6,6 +6,7 @@ import { schema } from './db';
 import { NotInFamily, type FamilyScope } from './family';
 import type { ChoreInput } from './forms/chores';
 import { choreDay, daysBetween, REPEAT_LIMITS, type Repeat } from '../repeat';
+import { activeSkip, type Skip } from '../skip';
 
 /** A Once date outside the coming week (and not the chore's saved date). */
 export class BadRepeat extends Error {}
@@ -21,6 +22,9 @@ export type ChoreSummary = {
 	expectations: string;
 	repeat: Repeat;
 	childIds: number[];
+	hidden: boolean;
+	/** The skip in force on today's chore day, or null. */
+	skip: Skip | null;
 };
 
 /** The repeat stored in a chore row's columns. */
@@ -72,7 +76,8 @@ function savedRepeat(input: ChoreInput['repeat'], today: string, old: Repeat | n
 }
 
 /** Every chore in the family, newest first, with who it is assigned to. */
-export function listChores(scope: FamilyScope): ChoreSummary[] {
+export function listChores(scope: FamilyScope, now = new Date()): ChoreSummary[] {
+	const day = choreDay(now);
 	const chores = scope.db
 		.select()
 		.from(schema.chore)
@@ -92,12 +97,14 @@ export function listChores(scope: FamilyScope): ChoreSummary[] {
 		stars: c.stars,
 		expectations: c.expectations,
 		repeat: toRepeat(c),
-		childIds: copies.filter((k) => k.choreId === c.id).map((k) => k.childId)
+		childIds: copies.filter((k) => k.choreId === c.id).map((k) => k.childId),
+		hidden: c.hidden,
+		skip: activeSkip(c, day)
 	}));
 }
 
 /** One chore with each child's copy, or null when it is not in this family. */
-export function getChore(scope: FamilyScope, choreId: number) {
+export function getChore(scope: FamilyScope, choreId: number, now = new Date()) {
 	if (!Number.isSafeInteger(choreId) || choreId <= 0) return null;
 	const [c] = scope.db
 		.select()
@@ -119,6 +126,8 @@ export function getChore(scope: FamilyScope, choreId: number) {
 		expectations: c.expectations,
 		repeat: toRepeat(c),
 		childIds: copies.map((k) => k.childId),
+		hidden: c.hidden,
+		skip: activeSkip(c, choreDay(now)),
 		copies
 	};
 }

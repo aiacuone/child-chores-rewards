@@ -5,7 +5,7 @@ A child earns a bonus (+20 stars by default) once per chore day, when every stop
 ## The idea
 
 - **Done means accepted by a grown-up.** A stop that is still "Grown-up checking" does not count yet ([checking.md](checking.md)).
-- **Skipped and not-due chores are not on the trip**, so they never block it. A trip with no stops never earns a bonus.
+- **Skipped, hidden and not-due chores are not on the trip**, so they never block it. A trip with no stops never earns a bonus.
 - **It is one `star_event` row** of kind `bonus` ([database.md](database.md)). Its `source_id` is the chore day as a number (2026-11-17 is `20261117`), so looking for "today's row" is how the code knows the bonus was already earned.
 - **It is never taken away** by anything except undoing the accept that finished the trip. A chore added later in the day leaves it alone, because children never see a loss of stars.
 - **The row keeps its amount** from the day it was earned, so changing `DAILY_BONUS` later does not change past bonuses.
@@ -70,7 +70,7 @@ Helpers inside the file:
 
 ## Known gaps
 
-- **Skip and hide (#29)** change who is on the trip, so they must call `settleFamilyBonuses` too, as the chore edit does. So must removing a child (#32).
+- **Skip and hide** change what is on the trip, so `applyChoreAction` calls `settleFamilyBonuses`, as the chore edit does ([skip-hide.md](skip-hide.md)). Removing a child (#32) must do the same.
 - **Undo across 6:00 am:** `undoBonus` looks for the bonus of the chore day at the moment of the undo. An accept at 5:59 am undone at 6:00 am, for a chore not due that day, would remove the accept's stars but leave the earlier day's bonus. The reset would normally have put a due chore back to Pending first, which makes the undo refuse. It is a one-minute window and is left as it is.
 
 ## Tests

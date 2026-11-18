@@ -28,7 +28,7 @@ All three functions start from `copies`: the child's copies of chores, joined to
 
 | Function | Used by | What it does |
 | --- | --- | --- |
-| `tripStops(scope, child)` | the trip | The child's copies that are due on today's chore day and not skipped, in path order, each with a state. |
+| `tripStops(scope, child)` | the trip | The child's copies that are due on today's chore day and not skipped or hidden ([skip-hide.md](skip-hide.md)), in path order, each with a state. |
 | `comingUp(scope, child)` | the trip (for the count), Coming up | The child's chores that are not due today but are due in the next 6 days, soonest first, with the day name. |
 | `openStop(scope, child, chore)` | the stop page | The stop's details, or `null` unless it is the child's own, due today and still pending. The page then goes back to the trip. |
 
@@ -45,7 +45,7 @@ From the start of the path:
 | pending (the first one) | `next` | Orange with a halo. "Up next · +10 stars" |
 | pending (the rest) | `open` | Plain. "+10 stars" |
 
-Skipped copies are left out. Within each group, the oldest chore comes first.
+Skipped and hidden chores are left out. Within each group, the oldest chore comes first.
 
 Only `next` and `open` stops are links. Done and waiting stops cannot be opened, and their stop address goes back to the trip.
 
@@ -65,7 +65,7 @@ The +20 is `DAILY_BONUS` in `src/lib/bonus.ts`, until Settings makes it adjustab
 
 1. Work out the chore day with `choreDay(now)`.
 2. Read the child's copies with `copies`, each with its repeat (`toRepeat`).
-3. Keep the copies that are not skipped and are due on the chore day (`isDue`).
+3. Keep the copies that are not skipped or hidden and are due on the chore day (`isDue`).
 4. Sort by status: completed, then waiting, then pending (`ORDER`). The sort is stable, so the oldest chore stays first within each group.
 5. Give each a state. The first pending copy becomes `next`, and the rest become `open`.
 
@@ -89,9 +89,10 @@ The +20 is `DAILY_BONUS` in `src/lib/bonus.ts`, until Settings makes it adjustab
 | The child has no copies due today, or they are all skipped | `tripStops` is empty and the page shows "Nothing to do today!" |
 | It is before 6:00 am | The chore day is still yesterday, so yesterday's stops show until the reset ([reset.md](reset.md)) |
 | A chore due today was skipped | It is on neither the trip nor Coming up, because Coming up only lists chores not due today |
+| A chore due later is skipped or hidden | Coming up gives the first due day after the skip, and leaves out a hidden chore |
 | A Weekly chore is due today and again on Thursday | It is on the trip only |
 | Coming up has nothing | The trip hides the Coming up button. The page at `/coming-up` still works, with an empty list |
-| A child opens the address of a done, waiting, skipped or not-due stop | `openStop` returns `null` and the page goes back to the trip |
+| A child opens the address of a done, waiting, skipped, hidden or not-due stop | `openStop` returns `null` and the page goes back to the trip |
 | A chore id in the address is not a number, or is another child's chore | The same: back to the trip |
 
 ### Family scope

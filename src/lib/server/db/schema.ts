@@ -158,6 +158,15 @@ export const chore = sqliteTable(
 		repeatUnit: text('repeat_unit', { enum: ['days', 'weeks'] }),
 		/** A Melbourne date, 'YYYY-MM-DD'. */
 		repeatDate: text('repeat_date'),
+		/** Hidden from children's screens until a grown-up unhides it. Grown-ups still see it. */
+		hidden: integer('hidden', { mode: 'boolean' }).notNull().default(false),
+		/**
+		 * Skipped: the first chore day it is back, a Melbourne date. It ends by itself,
+		 * so nothing has to run when the day comes (src/lib/skip.ts).
+		 */
+		skipUntil: text('skip_until'),
+		/** Skipped until a grown-up turns it back on. */
+		skipOpen: integer('skip_open', { mode: 'boolean' }).notNull().default(false),
 		createdAt: createdAt()
 	},
 	(t) => [index('chore_family_idx').on(t.familyId)]

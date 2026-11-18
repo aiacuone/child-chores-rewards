@@ -87,7 +87,7 @@
 							>
 								<span
 									aria-hidden="true"
-									class="flex size-[38px] flex-none items-center justify-center rounded-xl bg-track"
+									class="flex size-[38px] flex-none items-center justify-center rounded-xl bg-label"
 								>
 									{#if spent}
 										<svg

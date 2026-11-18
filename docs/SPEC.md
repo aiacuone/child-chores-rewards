@@ -28,6 +28,7 @@ The Chores tab is a library of every chore, including ones nobody is assigned to
 - **Assigning:** a grown-up assigns or unassigns each child from the chore itself.
 - **Hide:** a hidden chore disappears from children's screens. Grown-ups still see it (marked Hidden) and can unhide it.
 - **Skip:** a grown-up can excuse a chore for today, or for several days (today only, 2 days, 3 days, a chosen date, or until turned back on). It reads Skipped and does not count as missed.
+- **Skip and hide details** (decided in #29): both apply to the whole chore. "Today only" lasts until the next reset; 2 and 3 days count from today's chore day; a picked date is from the day after tomorrow to a year ahead. A skip ends by itself. While a chore is skipped or hidden, its screen shows "Turn back on" or "Unhide" and the Today row says so. A stop already done or waiting leaves the trip too: stars stay, and a waiting chore can still be checked. The Chores tab lists hidden chores under All, with a Hidden pill, and under the Hidden chip.
 - **Chore actions:** Complete for the child; Edit, Remove, Skip and Hide for grown-ups.
 - **Compact rows:** the chore list uses compact rows so a long list scrolls less.
 

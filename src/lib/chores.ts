@@ -1,6 +1,7 @@
 // Types and wording shared by the grown-up chore pages.
 import type { ChoreIconId } from './chore-icons';
 import type { Repeat, RepeatInput } from './repeat';
+import type { Skip } from './skip';
 
 export type Kid = { id: number; name: string; colour: string };
 export type ChoreRow = {
@@ -11,9 +12,13 @@ export type ChoreRow = {
 	expectations: string;
 	repeat: Repeat;
 	childIds: number[];
+	hidden: boolean;
+	skip: Skip | null;
 };
 /** What the chore form sends: a custom repeat's start is added by the server. */
-export type ChoreFields = Omit<ChoreRow, 'id' | 'repeat'> & { repeat: RepeatInput };
+export type ChoreFields = Omit<ChoreRow, 'id' | 'repeat' | 'hidden' | 'skip'> & {
+	repeat: RepeatInput;
+};
 
 /** The form's fields from a saved chore. */
 export function choreFields(c: ChoreRow): ChoreFields {

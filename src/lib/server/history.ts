@@ -5,7 +5,7 @@
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { schema } from './db';
 import type { FamilyScope } from './family';
-import { melbourne, weekday, WEEKDAYS } from '../repeat';
+import { melbourne, shortDate } from '../repeat';
 
 /** The newest rows shown. A family would need years of chores to pass it. */
 export const HISTORY_LIMIT = 500;
@@ -28,11 +28,6 @@ export type HistoryDay = {
 	label: string;
 	items: HistoryItem[];
 };
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-const dayLabel = (date: string) =>
-	`${WEEKDAYS[weekday(date)].short} ${Number(date.slice(8))} ${MONTHS[Number(date.slice(5, 7)) - 1]}`;
 
 const clock = (minutes: number) =>
 	`${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, '0')}`;
@@ -103,7 +98,7 @@ export function starHistory(scope: FamilyScope, childId: number): HistoryDay[] {
 					? (chores.get(r.sourceId ?? 0) ?? 'A removed chore')
 					: `${rewards.get(r.sourceId ?? 0) ?? 'A removed reward'} handed out`;
 		let day = days.at(-1);
-		if (day?.date !== date) days.push((day = { date, label: dayLabel(date), items: [] }));
+		if (day?.date !== date) days.push((day = { date, label: shortDate(date), items: [] }));
 		day.items.push({ id: r.id, kind: r.kind, amount: r.amount, name, time: clock(minutes) });
 	}
 	return days;

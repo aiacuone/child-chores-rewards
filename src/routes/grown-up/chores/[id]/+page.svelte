@@ -1,6 +1,6 @@
 <script lang="ts">
-	// One chore (Stop-Parent.dc.html, Stop-Parent-Saved.dc.html).
-	// Temporary fixes: no "Today" row until #22, and no Skip and Hide until #29.
+	// One chore (Stop-Parent.dc.html, Stop-Parent-Saved.dc.html). While it is
+	// skipped or hidden, Skip… and Hide become Turn back on and Unhide.
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -15,12 +15,12 @@
 
 	const id = $derived(page.params.id);
 	let kids = $state<Kid[]>([]);
-	let chore = $state<ChoreRow | null>(null);
+	let chore = $state<(ChoreRow & { today: string }) | null>(null);
 	let missing = $state(false);
 	let confirming = $state(false);
 	let failed = $state(false);
 
-	onMount(async () => {
+	async function load() {
 		const [one, all] = await Promise.all([
 			grownupFetch(`/api/grown-up/chores/${id}`),
 			grownupFetch('/api/grown-up/chores')
@@ -29,9 +29,22 @@
 			missing = true;
 			return;
 		}
-		chore = (await one.json()) as ChoreRow;
+		chore = (await one.json()) as ChoreRow & { today: string };
 		if (all.ok) kids = ((await all.json()) as { children: Kid[] }).children;
-	});
+	}
+	onMount(load);
+
+	async function act(action: 'hide' | 'unhide' | 'unskip') {
+		failed = false;
+		const res = await grownupFetch(`/api/grown-up/chores/${id}`, {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ action })
+		});
+		if (!res.ok) failed = true;
+		else if (action === 'hide') await goto(`/grown-up/chores?who=hidden&hid=${id}`);
+		else await load();
+	}
 
 	async function remove() {
 		confirming = false;
@@ -70,15 +83,15 @@
 	</div>
 
 	<dl class="m-0 overflow-hidden rounded-[18px] bg-card">
-		{#each [['Who', whoDoesIt(chore.childIds, kids)], ['Repeats', repeats], ['Stars', `+${chore.stars}`]] as [term, value], i (term)}
+		{#each [['Who', whoDoesIt(chore.childIds, kids)], ['Repeats', repeats], ['Stars', `+${chore.stars}`], ['Today', chore.today]] as [term, value], i (term)}
 			<div
 				class={[
-					'flex min-h-[52px] items-center justify-between px-4 text-[15px]',
+					'flex min-h-[52px] items-center justify-between gap-3 px-4 text-[15px]',
 					i > 0 && 'border-t border-line'
 				]}
 			>
 				<dt class="font-extrabold text-muted">{term}</dt>
-				<dd class="m-0 font-black">{value}</dd>
+				<dd class="m-0 text-right font-black">{value}</dd>
 			</div>
 		{/each}
 	</dl>
@@ -88,6 +101,25 @@
 		class="flex min-h-14 items-center justify-center rounded-[20px] bg-hi font-heading text-[19px] text-ink-on-orange shadow-[0_5px_0_#8c5731]"
 		>Edit chore</a
 	>
+
+	<div class="grid grid-cols-2 gap-2.5">
+		{#if chore.skip}
+			<button type="button" onclick={() => act('unskip')} class="flex min-h-14 items-center justify-center rounded-[20px] border-2 border-line bg-card font-heading text-[19px]"
+				>Turn back on</button
+			>
+		{:else}
+			<a href="/grown-up/chores/{chore.id}/skip" class="flex min-h-14 items-center justify-center rounded-[20px] border-2 border-line bg-card font-heading text-[19px]">Skip…</a>
+		{/if}
+		<button
+			type="button"
+			onclick={() => act(chore?.hidden ? 'unhide' : 'hide')}
+			class="flex min-h-14 items-center justify-center rounded-[20px] border-2 border-line bg-card font-heading text-[19px]">{chore.hidden ? 'Unhide' : 'Hide'}</button
+		>
+	</div>
+	<p class="m-0 text-[16px] leading-[1.45] font-bold text-muted">
+		Skip: no one has to do it for the days you pick. Hide: children won’t see it until you unhide
+		it.
+	</p>
 
 	{#if failed}
 		<p role="alert" class="m-0 text-[16px] font-black text-amber">{SAVE_FAILED}</p>

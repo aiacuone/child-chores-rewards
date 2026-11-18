@@ -97,6 +97,10 @@ export function weekday(date: string) {
 	return (new Date(toUtc(date)).getUTCDay() + 6) % 7;
 }
 
+/** "Sun 15 Nov". */
+export const shortDate = (date: string) =>
+	`${WEEKDAYS[weekday(date)].short} ${Number(date.slice(8))} ${MONTHS[Number(date.slice(5, 7)) - 1]}`;
+
 function daysInMonth(date: string) {
 	return new Date(Date.UTC(+date.slice(0, 4), +date.slice(5, 7), 0)).getUTCDate();
 }

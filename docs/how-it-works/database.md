@@ -129,6 +129,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0013` adds the triggers that bump `family.version` for them. Written by hand, like `0010`.
 - `0014` adds the `reward_claim` table, with a partial unique index so a child has one waiting claim per reward.
 - `0015` adds the version triggers for it. Written by hand, like `0010`.
+- `0016` adds `hidden`, `skip_until` and `skip_open` to `chore` ([skip-hide.md](skip-hide.md)).
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

@@ -7,7 +7,7 @@ The chores library is the family's list of chores, managed from the Chores tab i
 | Table | Holds |
 | --- | --- |
 | `chore` | The chore itself: name, picture (`icon`), stars and when it repeats ([repeats.md](repeats.md)). One row per chore in the family. |
-| `chore_copy` | One row per child the chore is assigned to, with that child's own `status` (pending, waiting, completed, skipped). |
+| `chore_copy` | One row per child the chore is assigned to, with that child's own `status` (pending, waiting, completed). |
 
 - Ticking Mia and Leo under "Who does it?" gives the chore two copies, so Mia finishing hers does not finish Leo's.
 - A chore with no copies is still in the library. The list shows it as "Nobody yet".
@@ -31,6 +31,8 @@ Helpers inside the file:
   - a child who is ticked and has no copy gets a new one, starting as pending,
   - a child who is unticked loses their copy,
   - a child who stays ticked keeps their copy and its status, so editing the name or stars does not reset a chore someone has already done.
+
+Skipping and hiding a chore are in [skip-hide.md](skip-hide.md).
 
 ## Removing a chore keeps earned stars
 
@@ -71,8 +73,9 @@ All of them need the device to be signed in and a working grown-up token (`requi
 | --- | --- |
 | `GET /api/grown-up/chores` | `{ children, chores }`: the family's children (for the chips and "Who does it?") and `listChores`. |
 | `POST /api/grown-up/chores` | 201 `{ id }`, or 400 for bad input or another family's child. |
-| `GET /api/grown-up/chores/<id>` | The chore from `getChore`, or 404. |
+| `GET /api/grown-up/chores/<id>` | The chore from `getChore` with its Today row, or 404. |
 | `PUT /api/grown-up/chores/<id>` | 204, 400 for bad input or another family's child, or 404. |
+| `POST /api/grown-up/chores/<id>` | Skip, hide or turn back on ([skip-hide.md](skip-hide.md)): 204, 400 for bad input, or 404. |
 | `DELETE /api/grown-up/chores/<id>` | 204, or 404. |
 
 An `<id>` that is not 1 to 9 digits is treated as not found.

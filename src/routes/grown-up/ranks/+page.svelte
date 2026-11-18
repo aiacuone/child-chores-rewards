@@ -85,7 +85,7 @@
 			href="/grown-up/ranks/{chosen.id}/history"
 			class="flex min-h-[60px] items-center gap-3 rounded-[18px] bg-card py-0 pr-3.5 pl-2.5"
 		>
-			<span class="flex size-10 flex-none items-center justify-center rounded-xl bg-track text-amber">
+			<span class="flex size-10 flex-none items-center justify-center rounded-xl bg-label text-amber">
 				<svg
 					aria-hidden="true"
 					width="24"

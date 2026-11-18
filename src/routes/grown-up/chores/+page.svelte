@@ -1,8 +1,8 @@
 <script lang="ts">
 	// The Chores tab (Parent-Stops.dc.html, Parent-Stops-Added.dc.html), with
 	// TO CHECK and the notices after a check (Parent-Stops-Done,
-	// Parent-Stops-Undone, Parent-Stops-SentBack, Parent-Stops-Moved).
-	// Temporary fix: no Hidden chip until #29.
+	// Parent-Stops-Undone, Parent-Stops-SentBack, Parent-Stops-Moved), and skipped
+	// and hidden chores (Parent-Stops-Skipped, -SkippedLong, -Hidden).
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -14,6 +14,7 @@
 	import { answer, fetchCheck, type CheckView } from '#lib/check-client.ts';
 	import { choreDay, repeatLabel } from '#lib/repeat.ts';
 	import { grownupFetch } from '#lib/grownup.svelte.ts';
+	import { skipNotice, skipPill } from '#lib/skip.ts';
 	import type { toCheck } from '#lib/server/check.ts';
 
 	const today = choreDay(new Date());
@@ -31,12 +32,19 @@
 			: who === 'nobody'
 				? childIds.length === 0
 				: childIds.includes(Number(who));
-	const shown = $derived((chores ?? []).filter((c) => forWho(c.childIds)));
+	const shown = $derived(
+		(chores ?? []).filter((c) => (who === 'hidden' ? c.hidden : forWho(c.childIds)))
+	);
+	const byParam = (name: string) =>
+		chores?.find((c) => String(c.id) === page.url.searchParams.get(name)) ?? null;
+	const skipped = $derived(byParam('skipped'));
+	const hid = $derived(byParam('hid'));
 	const checksShown = $derived(checks.filter((c) => forWho([c.childId])));
 	const chips = $derived([
 		{ key: 'all', label: 'All' },
 		...kids.map((k) => ({ key: String(k.id), label: k.name })),
-		{ key: 'nobody', label: 'Nobody' }
+		{ key: 'nobody', label: 'Nobody' },
+		{ key: 'hidden', label: 'Hidden' }
 	]);
 
 	// The notice after a check: ?checked, ?undone, ?sent or ?moved=<copy>&to=<child>.
@@ -127,6 +135,10 @@
 
 {#if added}
 	<DoneNotice text="{added.name} added" />
+{:else if skipped?.skip}
+	<DoneNotice text={skipNotice(skipped.name, skipped.skip, today)} />
+{:else if hid?.hidden}
+	<DoneNotice text="{hid.name} is hidden from children" />
 {:else if noticeKind === 'checked' && noticeCopy}
 	<div
 		role="status"
@@ -234,6 +246,11 @@
 							class="inline-flex h-[26px] flex-none items-center rounded-full bg-ok/20 px-2.5 text-[13px] font-black text-ok"
 							>New</span
 						>
+					{/if}
+					{#if chore.hidden}
+						<span class="inline-flex h-[26px] flex-none items-center rounded-full px-2.5 text-[13px] font-black bg-muted/20 text-muted">Hidden</span>
+					{:else if chore.skip}
+						<span class="inline-flex h-[26px] flex-none items-center rounded-full px-2.5 text-[13px] font-black bg-amber/20 text-amber">{skipPill(chore.skip, today)}</span>
 					{/if}
 					<span class="font-heading text-[17px] text-amber"
 						>+{chore.stars}<span class="sr-only"> stars</span></span

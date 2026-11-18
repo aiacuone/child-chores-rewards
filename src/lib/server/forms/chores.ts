@@ -51,6 +51,24 @@ export const choreInput = z.object({
 
 export type ChoreInput = z.infer<typeof choreInput>;
 
+// Skip, hide and turn back on (Skip-Options, Stop-Parent). Whether a picked date
+// is in range is checked in chore-state.ts, which knows today's chore day.
+const choreAction = z.discriminatedUnion('action', [
+	z.object({ action: z.literal('skip'), length: z.enum(['today', '2', '3', 'open']) }),
+	z.object({ action: z.literal('skipUntil'), date: z.string().refine(isDate) }),
+	z.object({ action: z.literal('unskip') }),
+	z.object({ action: z.literal('hide') }),
+	z.object({ action: z.literal('unhide') })
+]);
+
+export type ChoreAction = z.infer<typeof choreAction>;
+
+/** Read a skip or hide action from a JSON body. Null when it is not valid. */
+export function parseChoreAction(body: unknown): ChoreAction | null {
+	const parsed = choreAction.safeParse(body);
+	return parsed.success ? parsed.data : null;
+}
+
 /** Read a chore from a JSON body. Null when it is not a valid chore. */
 export function parseChore(body: unknown): ChoreInput | null {
 	const parsed = choreInput.safeParse(body);
