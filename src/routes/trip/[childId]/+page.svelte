@@ -5,9 +5,9 @@
 	// to do today!" when no stops are
 	// due (Space-Child-Empty.dc.html). The empty day keeps the name header, because
 	// the spec keeps each child's name and "Not Mia? Switch" on their trip screens.
-	// Temporary fixes: the bonus planet opens nothing until #25, the star count
-	// opens nothing and "See my rewards" is left out until #26, and once every
-	// stop is finished the count shows only "5 of 5 stops" until #25.
+	// The bonus planet opens the bonus page. Once every stop is finished the
+	// count reads "5 of 5 stops", as on Trip complete. Temporary fix: the star
+	// count opens nothing and "See my rewards" is left out until #26.
 	import { enhance } from '$app/forms';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
 	import Planet from '#lib/components/Planet.svelte';
@@ -177,7 +177,8 @@
 			<Planet size={48} body="#5BB58A" spots="#4a9471" />
 		</div>
 
-		<div
+		<a
+			href="/trip/{child.id}/bonus"
 			class="absolute top-0 z-[2] flex w-[120px] -translate-x-1/2 flex-col items-center"
 			style="left:{pct(board.bonus.x)}"
 		>
@@ -199,7 +200,7 @@
 					><path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.2 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z" /></svg
 				>+{DAILY_BONUS} bonus
 			</span>
-		</div>
+		</a>
 
 		<div
 			class="absolute z-[3] -translate-x-1/2 -translate-y-1/2"

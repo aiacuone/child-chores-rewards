@@ -1,6 +1,7 @@
 // One chore: read, change or remove it. Grown-up token required; a chore from
 // another family, or an id that is not a whole number, is "not found".
 import { error, json } from '@sveltejs/kit';
+import { settleFamilyBonuses } from '#lib/server/bonus.ts';
 import { BadRepeat, getChore, removeChore, updateChore } from '#lib/server/chores.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { forFamily, NotInFamily } from '#lib/server/family.ts';
@@ -29,6 +30,8 @@ export const PUT = async (event: RequestEvent) => {
 	if (!input) error(400, 'Bad request');
 	try {
 		if (!updateChore(scope, id, input)) error(404, 'Not found');
+		// Removing a child or changing the repeat can leave a trip all Done.
+		settleFamilyBonuses(scope);
 	} catch (e) {
 		if (e instanceof NotInFamily || e instanceof BadRepeat) error(400, 'Bad request');
 		throw e;
@@ -39,5 +42,6 @@ export const PUT = async (event: RequestEvent) => {
 export const DELETE = (event: RequestEvent) => {
 	const { scope, id } = setup(event);
 	if (!removeChore(scope, id)) error(404, 'Not found');
+	settleFamilyBonuses(scope);
 	return new Response(null, { status: 204 });
 };

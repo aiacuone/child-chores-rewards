@@ -9,6 +9,7 @@ import { schema } from './db';
 import type { FamilyScope } from './family';
 import { toRepeat } from './chores';
 import { addStars } from './stars';
+import { settleBonus, undoBonus } from './bonus';
 import { colourValue } from '../colours';
 import { UNDO_CHECK_SECONDS } from '../check';
 import { choreDay, repeatLabel } from '../repeat';
@@ -126,14 +127,16 @@ export function accept(scope: FamilyScope, copyId: number, now = new Date()) {
 			sourceId: row.copy.id
 		});
 		complete(scope, row.copy.id, row.child.id, row.chore.stars, star.id, now);
+		settleBonus(scope, row.child.id, now);
 		return true;
 	});
 }
 
 /**
  * Undo an accept within the minute: the star row it added goes (only that row,
- * so stars from other days or moved to another child stay), and the chore waits
- * for a check again.
+ * so stars from other days or moved to another child stay), along with the
+ * daily bonus if this accept finished the trip, and the chore waits for a
+ * check again.
  */
 export function undoAccept(scope: FamilyScope, copyId: number, now = new Date()) {
 	return scope.db.transaction(() => {
@@ -158,6 +161,8 @@ export function undoAccept(scope: FamilyScope, copyId: number, now = new Date())
 			.set({ status: 'waiting', checkedAt: null, starEventId: null })
 			.where(scope.where(schema.choreCopy, eq(schema.choreCopy.id, copy.id)))
 			.run();
+		// If this accept finished the trip, its daily bonus goes too (ADR 0003).
+		undoBonus(scope, row.child.id, now);
 		scope.db
 			.delete(schema.checkedNotice)
 			.where(scope.where(schema.checkedNotice, eq(schema.checkedNotice.copyId, copy.id)))
@@ -211,7 +216,10 @@ export function moveTo(scope: FamilyScope, copyId: number, toChildId: number, no
 			amount: row.chore.stars,
 			sourceId: earnsOnCopy?.id ?? row.copy.id
 		});
-		if (earnsOnCopy) complete(scope, earnsOnCopy.id, toChildId, row.chore.stars, star.id, now);
+		if (earnsOnCopy) {
+			complete(scope, earnsOnCopy.id, toChildId, row.chore.stars, star.id, now);
+			settleBonus(scope, toChildId, now);
+		}
 		scope.db
 			.update(schema.choreCopy)
 			.set({ status: 'pending', doneAt: null })

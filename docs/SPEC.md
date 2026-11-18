@@ -125,6 +125,7 @@ Settings is a grown-up-only tab. Rows:
 - Finished stops move to the front of the path. Stops waiting for a grown-up come next, then unfinished ones. The orange "Up next" is only a suggestion.
 - Skipped, hidden and not-due chores leave the path, so the count (for example "2 of 4") shrinks with them. A skipped or hidden chore does not stop a child earning the bonus for the rest.
 - Finishing every stop for the day earns a daily bonus (default +20 stars, set by a grown-up). The end of the trip is a bonus planet, not a reward.
+- **The bonus** (decided in #25): it is earned once per day, when every stop on the trip is Done, meaning accepted by a grown-up. Once earned it stays, even if a chore is added later that day; only undoing the accept that finished the trip takes it back. Tapping the bonus planet shows "Finish the whole trip" until then, and "Trip complete!" after.
 - With no chores due, the child sees "Nothing to do today".
 - Stars only go down when a reward is claimed. There are no penalties.
 - **Ranks** (Cadet 0, Pilot 50, Explorer 100, Captain 250, Commander 500) use the child's current star balance, so a rank can drop after a reward is handed out. Rank shows on the child's rocket, which keeps the child's colour: Cadet plain, Pilot wing and hull stripes, Explorer side boosters, Captain gold collar and wing tips, Commander gold star and glow. The rocket upgrades everywhere it appears at 40 px or taller.

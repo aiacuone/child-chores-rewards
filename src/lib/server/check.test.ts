@@ -67,7 +67,8 @@ describe('accepting', () => {
 		]);
 		expect(accept(ours, copy, now)).toBe(true);
 		expect(accept(ours, copy, now)).toBe(false);
-		expect(balance(ours, mia)).toBe(15);
+		// 15 for the chore, and the daily bonus: it was Mia's only stop.
+		expect(balance(ours, mia)).toBe(35);
 		expect(state(mia)).toEqual([['Feed Biscuit the dog', 'done']]);
 		expect(toCheck(ours)).toEqual([]);
 		expect(checkedNotice(ours, mia)).toMatchObject({ name: 'Feed Biscuit the dog', stars: 15 });
@@ -90,7 +91,7 @@ describe('accepting', () => {
 		const copy = done(chore('Feed Biscuit the dog', [mia]), mia);
 		accept(ours, copy, now);
 		expect(undoAccept(ours, copy, later(75))).toBe(false);
-		expect(balance(ours, mia)).toBe(15);
+		expect(balance(ours, mia)).toBe(35);
 	});
 
 	it('shows "checked!" once', () => {
@@ -135,7 +136,7 @@ describe('sending back', () => {
 		// 7:00 am Wednesday: nothing is due.
 		expect(resetFamily(ours, new Date('2026-11-17T20:00:00Z'))).toBe(0);
 		expect(checkedNotice(ours, mia)).toBeNull();
-		expect(balance(ours, mia)).toBe(15);
+		expect(balance(ours, mia)).toBe(35);
 	});
 
 	it('the daily reset clears old messages', () => {
@@ -199,6 +200,6 @@ describe('one family cannot check another’s chores', () => {
 		expect(tripStops(theirs, sam, now)[0].state).toBe('waiting');
 		accept(theirs, theirCopy, now);
 		expect(undoAccept(ours, theirCopy, now)).toBe(false);
-		expect(balance(theirs, sam)).toBe(10);
+		expect(balance(theirs, sam)).toBe(30);
 	});
 });

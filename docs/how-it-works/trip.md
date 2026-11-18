@@ -15,6 +15,7 @@ A child's trip is the path of today's chores, from the home planet to the bonus 
 | `/trip/<child>/stop/<chore>` | Stop | One unfinished stop: picture, name, stars, repeat, expectations and "I did it!". |
 | `/trip/<child>/stop/<chore>/confirm` | Confirm-Who | "Are you Mia?" before the stop is sent. |
 | `/trip/<child>/coming-up` | Child-Coming | Chores due on the next 6 days instead of today. |
+| `/trip/<child>/bonus` | Child-Bonus, Space-Child-AllDone | "Finish the whole trip" with a progress bar, or "Trip complete!" once the bonus is earned. |
 
 `src/routes/trip/[childId]/+layout.server.ts` finds the child for all of them. It refuses with 404 when the id is not a whole number or the child is not in the signed-in family, so a page below it never runs for another family's child. `+layout.svelte` adds the stars background, the child's colour along the top, the return to Who's flying when nobody touches the screen (`StillThere`), and live updates (`LiveUpdates`).
 
@@ -53,7 +54,7 @@ Only `next` and `open` stops are links. Done and waiting stops cannot be opened,
 | --- | --- |
 | None | "5 stops today · do them in any order!" |
 | Some | "2 of 5 stops · 3 more for +20 bonus stars" |
-| All | "5 of 5 stops" (temporary fix until the bonus, #25) |
+| All | "5 of 5 stops", as on Trip complete |
 
 The +20 is `DAILY_BONUS` in `src/lib/bonus.ts`, until Settings makes it adjustable (#31).
 
@@ -114,6 +115,10 @@ The flow (design/FLOWS.md, "A child does a chore" and "A child does chores in an
 
 The daily reset clears `done_at` along with the status ([reset.md](reset.md)).
 
+## The daily bonus
+
+Finishing every stop earns +20 stars once a day, and the bonus planet at the end of the path opens "Finish the whole trip" or "Trip complete!". How the bonus is earned and taken back: [daily-bonus.md](daily-bonus.md).
+
 ## Messages from a grown-up
 
 The trip also shows "Feed Biscuit the dog checked! +15 stars" once after a grown-up accepts, and "Grown-up says: “…”" after "Not done yet", until the child taps "I did it!" again. How they work: [checking.md](checking.md).
@@ -146,4 +151,5 @@ Until the grown-up check (#24) exists, nothing in the app can mark a copy done. 
 - `src/lib/trip-path.test.ts`: the layout against the design.
 - `e2e/trip.test.ts`: the trip with done and waiting stops, opening a stop, Coming up, the "any order" count, and another family getting 404 on every trip page.
 - `src/lib/server/trip.test.ts` also checks "I did it!" (once only, moved or not, only open stops), Undo (within the minute, not after a grown-up checks it), another family's chores, and that only the changed family's version goes up.
+- `e2e/bonus.test.ts`: the bonus planet before and after finishing every stop ([daily-bonus.md](daily-bonus.md)).
 - `e2e/i-did-it.test.ts`: the whole flow with a second device following within seconds, the alert with no names, Undo, "No, that's not me", and a second confirm doing nothing.

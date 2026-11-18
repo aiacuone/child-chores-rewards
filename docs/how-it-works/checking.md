@@ -43,11 +43,11 @@ Each answer runs in one transaction and starts by checking the copy is still wai
 
 ## Accept and undo
 
-1. **Accept** adds the star row (`addStars`, source: the copy), sets the copy to `completed`, records `checked_at` and `star_event_id`, and clears any old message.
+1. **Accept** adds the star row (`addStars`, source: the copy), sets the copy to `completed`, records `checked_at` and `star_event_id`, and clears any old message. If that was the last stop, `settleBonus` adds the daily bonus ([daily-bonus.md](daily-bonus.md)).
 2. It also adds a `checked_notice` row for the child.
 3. The Chores tab shows "Checked! Mia's rocket flew on (+15 stars)" with "Undo 0:52" counting down from the server's undo seconds.
 4. **Undo** works for `UNDO_CHECK_SECONDS` (60) plus 10 seconds' grace. It deletes the star row by its id, and only for the copy's own child. A daily chore's copy collects one star row per day, and a moved chore's stars can share the copy as their source. Deleting by id never touches those.
-5. The copy goes back to waiting, and the notice goes.
+5. The copy goes back to waiting, and the notice goes. If the accept had finished the trip, the daily bonus goes too (`undoBonus`, [daily-bonus.md](daily-bonus.md)).
 
 ## Send back
 
@@ -87,7 +87,6 @@ Mission control, the Chores tab and the check screen pass `onchange={load}` to `
 ## Temporary fixes
 
 - "1 reward to hand out" and "Add reward" (#26, #27), and "· reached Park trip" (#26).
-- The daily bonus is not added or undone yet (#25).
 
 ## Tests
 
