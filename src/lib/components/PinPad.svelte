@@ -59,6 +59,10 @@
 
 <svelte:window {onkeydown} />
 
+<svelte:head>
+	<title>Rocket Rewards: Grown-up PIN</title>
+</svelte:head>
+
 <div class="flex flex-col gap-[18px]">
 	<div class="flex items-center gap-3">
 		<a
