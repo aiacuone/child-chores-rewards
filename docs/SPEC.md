@@ -176,6 +176,9 @@ Settings is a grown-up-only tab. Rows:
 - Each child's colour and name stay on their trip screens, with a "Not Mia? Switch" link.
 - A child's trip returns to Who's flying after no touches for 30 seconds, 1 minute (default) or 2 minutes, with a 10-second "Still there?" warning.
 - A picture passcode (three pictures) is an optional setting per child, off by default.
+- **Using a passcode** (decided in #32): a child taps three different pictures from nine, in order. It is asked each time the child comes through Who's flying. Wrong pictures show "Those aren't your pictures. Try again."; after 5 wrong tries in a row there is a 30-second wait.
+- **Changing a passcode** (decided in #32): Child-Edit reads "On · tap to change". That screen sets 3 new pictures or has **Turn off passcode**, which is also the answer to a forgotten passcode.
+- **Managing children** (decided in #32): a family has 1 to 4 children, each with their own name and one of the four setup colours. The last child cannot be removed. "Remove Leo?" names the child without pronouns: "Leo's trip, 96 stars and rank will be deleted. The chores stay in the list. This can't be undone."
 
 ## Photos
 

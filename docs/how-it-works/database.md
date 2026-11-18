@@ -10,6 +10,8 @@ The app keeps everything in one SQLite file ([ADR 0002](../adr/0002-database.md)
 | `user` | A grown-up who signs in with Google. |
 | `session` | One signed-in device (the id is a hash of the cookie token). |
 | `child` | A child in a family. |
+| `child_passcode` | A child's optional picture passcode, as a hash ([children.md](children.md)). |
+| `child_unlock` | A passcode trip open on one device. |
 | `star_event` | One change to a child's stars. |
 | `chore` | A chore in the family's library. |
 | `chore_copy` | One child's copy of a chore, with its own status. |
@@ -106,7 +108,7 @@ The family's shared PIN is in `family.pin_hash`, never as the PIN itself ([ADR 0
 
 Screens on other devices refresh when the family's data changes (ADR 0006). The signal is one number, `family.version`:
 
-- **Triggers bump it.** Every insert, update or delete on `child`, `chore`, `chore_copy`, `star_event`, `reward`, `reward_child` or `reward_claim` adds 1 to that row's family's `version` (migrations `0010`, `0013` and `0015`). No code has to remember to do it, so new features get live updates for free.
+- **Triggers bump it.** Every insert, update or delete on `child`, `chore`, `chore_copy`, `star_event`, `reward`, `reward_child` or `reward_claim` adds 1 to that row's family's `version` (migrations `0010`, `0013` and `0015`). Adding or removing a `child_passcode` does too (`0019`). No code has to remember to do it, so new features get live updates for free.
 - **Screens poll it.** `GET /api/changes` returns the signed-in family's version (`src/lib/server/live.ts`). Details are in [live-updates.md](live-updates.md).
 - Only the changed family's number moves, so one family's activity never makes another family's screens reload.
 
@@ -133,6 +135,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0016` adds `hidden`, `skip_until` and `skip_open` to `chore` ([skip-hide.md](skip-hide.md)).
 - `0017` adds the `pin_reset` table ([recovery-email.md](recovery-email.md)).
 - `0018` adds the family's settings ([settings.md](settings.md)).
+- `0019` adds `child_passcode` and `child_unlock`, with triggers so turning a passcode on or off bumps the family's version ([children.md](children.md)).
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

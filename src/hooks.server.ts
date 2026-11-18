@@ -8,6 +8,8 @@ import {
 	validateSession
 } from '#lib/server/auth.ts';
 import { getDb } from '#lib/server/db/app.ts';
+import { forFamily } from '#lib/server/family.ts';
+import { childIdFrom, tripOpen } from '#lib/server/passcode.ts';
 import { startResetJob } from '#lib/server/reset.ts';
 import { addSecurityHeaders } from '#lib/server/security-headers.ts';
 import { testRoutesAllowed } from '#lib/server/test-routes.ts';
@@ -62,6 +64,20 @@ const guard: Handle = async ({ event, resolve }) => {
 	if (!event.locals.user && !isPublic) {
 		if (path.startsWith('/api/')) return new Response('Not signed in', { status: 401 });
 		redirect(303, '/login');
+	}
+
+	// A passcode guards every page and form action of a child's trip. This uses
+	// the matched route, not the address text, so /trip/%31 cannot slip past it.
+	const routeId = event.route.id;
+	if (
+		event.locals.user &&
+		event.locals.sessionId &&
+		(routeId === '/trip/[childId]' || routeId?.startsWith('/trip/[childId]/'))
+	) {
+		const childId = childIdFrom(event.params.childId);
+		const scope = forFamily(getDb(), event.locals.user.familyId);
+		if (childId && !tripOpen(scope, event.locals.sessionId, childId))
+			redirect(303, `/passcode/${childId}`);
 	}
 
 	return resolve(event);

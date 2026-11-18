@@ -3,6 +3,7 @@ import { forFamily } from '#lib/server/family.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { childCards } from '#lib/server/flying.ts';
 import { familyVersion } from '#lib/server/live.ts';
+import { passcodeChildIds } from '#lib/server/passcode.ts';
 import { setupStep } from '#lib/server/setup.ts';
 import type { PageServerLoad } from './$types';
 
@@ -12,5 +13,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const version = familyVersion(scope);
 	const step = setupStep(scope);
 	if (step !== 'done') redirect(303, `/setup/${step}`);
-	return { children: childCards(scope), version };
+	const guarded = passcodeChildIds(scope);
+	const children = childCards(scope).map((c) => ({ ...c, passcode: guarded.has(c.id) }));
+	return { children, version };
 };

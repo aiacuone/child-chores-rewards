@@ -20,7 +20,8 @@ export const GET: RequestHandler = (event) => {
 		settings: getSettings(scope),
 		signedInAs: maskEmail(event.locals.user!.email),
 		recovery: recovery ? maskEmail(recovery) : null,
-		topic: ensureTopic(scope)
+		topic: ensureTopic(scope),
+		children: scope.children().map((c) => c.name)
 	});
 };
 

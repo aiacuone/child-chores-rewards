@@ -20,7 +20,7 @@ A child's trip is the path of today's chores, from the home planet to the bonus 
 
 `src/routes/trip/[childId]/+layout.server.ts` finds the child for all of them. It refuses with 404 when the id is not a whole number or the child is not in the signed-in family, so a page below it never runs for another family's child. `+layout.svelte` adds the stars background, the child's colour along the top, the return to Who's flying when nobody touches the screen (`StillThere`), and live updates (`LiveUpdates`).
 
-These pages need a signed-in device, not grown-up mode: children use them.
+These pages need a signed-in device, not grown-up mode: children use them. A child with a picture passcode must tap it first, which `src/hooks.server.ts` enforces on every trip page and action ([children.md](children.md)).
 
 ## What is on the trip (`trip.ts`)
 

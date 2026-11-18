@@ -7,6 +7,7 @@ export type SettingsView = {
 	signedInAs: string;
 	recovery: string | null;
 	topic: string;
+	children: string[];
 };
 
 export async function fetchSettings() {

@@ -17,7 +17,9 @@ export const MESSAGES = {
 	badEmail: 'Check the email address.',
 	emailNotSent: "The email didn't send. Try again.",
 	tooManyEmails: 'Too many emails. Try again in an hour.',
-	alertNotSent: "The test alert didn't send. Try again."
+	alertNotSent: "The test alert didn't send. Try again.",
+	tooManyChildren: `You can add up to ${MAX_CHILDREN} children.`,
+	lastChild: 'Keep at least one child.'
 } as const;
 
 // Letters in any language, with spaces, hyphens, apostrophes and full stops
@@ -69,6 +71,21 @@ export function parseChildren(form: FormData): Result<ChildInput[]> {
 	if (new Set(rows.map((r) => r.colour)).size !== rows.length)
 		return { ok: false, message: MESSAGES.sameColour };
 	return { ok: true, value: rows };
+}
+
+/** Read one child from a grown-up's form. Bad input is refused, never tidied up. */
+export function parseChild(raw: unknown): Result<ChildInput> {
+	const shape = z
+		.object({ name: z.string().max(200), colour: z.unknown() })
+		.strict()
+		.safeParse(raw);
+	if (!shape.success) return { ok: false, message: MESSAGES.noName };
+	const name = shape.data.name.trim();
+	if (name === '') return { ok: false, message: MESSAGES.noName };
+	const parsed = child.safeParse({ name, colour: shape.data.colour });
+	if (parsed.success) return { ok: true, value: parsed.data };
+	const colourBad = parsed.error.issues.some((i) => i.path[0] === 'colour');
+	return { ok: false, message: colourBad ? MESSAGES.sameColour : MESSAGES.badName };
 }
 
 const pinForm = z.object({ pin: z.string(), again: z.string() });

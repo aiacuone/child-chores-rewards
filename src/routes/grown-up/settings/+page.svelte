@@ -1,6 +1,6 @@
 <script lang="ts">
-	// Settings (Settings.dc.html). Temporary fix: Children and Grown-ups say
-	// "Coming soon" until #32 and #33 build them.
+	// Settings (Settings.dc.html). Temporary fix: Grown-ups says "Coming soon"
+	// until #33 builds it.
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import DoneNotice from '#lib/components/DoneNotice.svelte';
@@ -28,7 +28,13 @@
 		if (!view) return [];
 		const s = view.settings;
 		return [
-			{ label: 'Children', hint: 'Coming soon', icon: ICONS.person, colour: TEAL },
+			{
+				label: 'Children',
+				hint: view.children.join(', '),
+				icon: ICONS.person,
+				colour: TEAL,
+				href: 'children'
+			},
 			{ label: 'Grown-ups', hint: 'Coming soon', icon: ICONS.person, colour: GOLD },
 			{
 				label: 'Grown-up PIN',

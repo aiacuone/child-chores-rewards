@@ -26,7 +26,7 @@ test('each row saves and takes effect', async ({ page, browser }) => {
 	await signIn(page, { as });
 	const { mia, ids } = await addChores(page, [{ name: 'Tidy the toy box' }]);
 	await openSettings(page);
-	await expect(page.getByText('Children').locator('..')).toContainText('Coming soon');
+	await expect(row(page, /Children\s*Mia, Leo/)).toBeVisible();
 	await expect(row(page, /Auto-lock\s*After 2 minutes/)).toBeVisible();
 	await expect(row(page, /Back to Who’s flying\s*After 1 minute/)).toBeVisible();
 	await expect(row(page, /Daily reset and bonus\s*6:00 am · \+20 stars bonus/)).toBeVisible();

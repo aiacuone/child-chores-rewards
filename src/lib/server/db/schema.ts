@@ -1,5 +1,12 @@
 import { sql } from 'drizzle-orm';
-import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import {
+	index,
+	integer,
+	primaryKey,
+	sqliteTable,
+	text,
+	uniqueIndex
+} from 'drizzle-orm/sqlite-core';
 
 const createdAt = () =>
 	integer('created_at', { mode: 'timestamp' })
@@ -139,7 +146,7 @@ export const grownupToken = sqliteTable(
 	(t) => [index('grownup_token_session_idx').on(t.sessionId)]
 );
 
-/** A child in the family. Settings adds the rest later (photo, passcode). */
+/** A child in the family. Their photo comes with #34; a passcode is in child_passcode. */
 export const child = sqliteTable(
 	'child',
 	{
@@ -155,6 +162,51 @@ export const child = sqliteTable(
 		createdAt: createdAt()
 	},
 	(t) => [index('child_family_idx').on(t.familyId)]
+);
+
+/**
+ * A child's optional picture passcode (passcode.ts). Wrong tries live here and
+ * not on `child`, so a wrong tap does not make every screen in the family reload.
+ */
+export const childPasscode = sqliteTable(
+	'child_passcode',
+	{
+		childId: integer('child_id')
+			.primaryKey()
+			.references(() => child.id, { onDelete: 'cascade' }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		/** The three pictures, in order, as a salted scrypt hash (pin.ts). */
+		hash: text('hash').notNull(),
+		/** Wrong tries in a row since the last wait. */
+		fails: integer('fails').notNull().default(0),
+		/** No tries are checked until this time. */
+		lockedUntil: integer('locked_until', { mode: 'timestamp_ms' })
+	},
+	(t) => [index('child_passcode_family_idx').on(t.familyId)]
+);
+
+/** A trip opened with its passcode on one device. Who's flying ends it. */
+export const childUnlock = sqliteTable(
+	'child_unlock',
+	{
+		sessionId: text('session_id')
+			.notNull()
+			.references(() => session.id, { onDelete: 'cascade' }),
+		childId: integer('child_id')
+			.notNull()
+			.references(() => child.id, { onDelete: 'cascade' }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull()
+	},
+	(t) => [
+		primaryKey({ columns: [t.sessionId, t.childId] }),
+		index('child_unlock_child_idx').on(t.childId),
+		index('child_unlock_family_idx').on(t.familyId)
+	]
 );
 
 /**

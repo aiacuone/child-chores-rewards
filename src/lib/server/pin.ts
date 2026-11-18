@@ -3,6 +3,7 @@
 // so the hash slows down guessing from a stolen database copy; the wrong-PIN
 // lockout (#19) is what protects the live app.
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
+import type { PictureId } from '../passcode';
 
 const KEY_LENGTH = 32;
 // N=2^15 takes about 50 ms per check, slow for guessing but fine for one tap.
@@ -46,3 +47,11 @@ export function hashResetCode(code: string) {
 
 export const verifyResetCode = (code: string, stored: string) =>
 	isResetCode(code) && verifySecret(code, stored);
+
+const passcodeText = (pictures: readonly PictureId[]) => pictures.join(',');
+
+/** Hash a child's three pictures, in order, the same way. */
+export const hashPasscode = (pictures: readonly PictureId[]) => hashSecret(passcodeText(pictures));
+
+export const verifyPasscode = (pictures: readonly PictureId[], stored: string) =>
+	verifySecret(passcodeText(pictures), stored);

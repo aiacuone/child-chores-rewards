@@ -21,6 +21,11 @@
 	let showTip = $state(false);
 
 	onMount(() => {
+		// Back here, a trip with a passcode needs its pictures again. This runs on
+		// arrival and not in `load`, which also runs when a link is only hovered.
+		if (data.children.some((c) => c.passcode))
+			fetch('/api/passcode/close', { method: 'POST' }).catch(() => {});
+
 		lockedNote = grownup.justLocked;
 		grownup.clearJustLocked();
 
@@ -54,7 +59,7 @@
 
 		{#each data.children as child (child.id)}
 			<a
-				href="/trip/{child.id}"
+				href={child.passcode ? `/passcode/${child.id}` : `/trip/${child.id}`}
 				class="flex items-center gap-1.5 rounded-[26px] border-[3px] bg-card py-4 pr-4 pl-3"
 				style="border-color:{child.colour}"
 			>
