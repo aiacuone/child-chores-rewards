@@ -10,6 +10,17 @@ type Outbox = {
 const outbox = async (page: Page): Promise<Outbox> =>
 	(await page.request.get('/test/outbox')).json();
 
+// A tap in the moment before the page comes alive does nothing, so tap again until
+// the new row is there. Only tapped while that row is missing, so none are added twice.
+async function addChildRow(page: Page, number: number) {
+	const row = page.getByLabel(`Child ${number}`, { exact: true });
+	await expect(async () => {
+		if (!(await row.isVisible()))
+			await page.getByRole('button', { name: 'Add another child' }).click();
+		await expect(row).toBeVisible({ timeout: 500 });
+	}).toPass();
+}
+
 // Grown-up setup (#16, #17): children, PIN, recovery email, alerts, then all set.
 
 test('a new family goes through all four setup steps', async ({ page }) => {
@@ -25,7 +36,7 @@ test('a new family goes through all four setup steps', async ({ page }) => {
 	await expect(page.getByRole('alert')).toHaveText('Add a name for each child.');
 
 	await page.getByLabel('Child 1', { exact: true }).fill('Mia');
-	await page.getByRole('button', { name: 'Add another child' }).click();
+	await addChildRow(page, 2);
 	await page.getByLabel('Child 2', { exact: true }).fill('Leo');
 	// The second child starts on the next free colour.
 	await expect(
@@ -147,7 +158,7 @@ test('the recovery email is used only after its link is confirmed', async ({ pag
 test('two children cannot share a name or a colour', async ({ page }) => {
 	await signIn(page, { as: 'setup-same', newFamily: true });
 	await page.getByLabel('Child 1', { exact: true }).fill('Mia');
-	await page.getByRole('button', { name: 'Add another child' }).click();
+	await addChildRow(page, 2);
 	await page.getByLabel('Child 2', { exact: true }).fill('mia');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await expect(page.getByRole('alert')).toHaveText('Each child needs their own name.');
@@ -164,8 +175,7 @@ test('two children cannot share a name or a colour', async ({ page }) => {
 test('at most 4 children', async ({ page }) => {
 	await signIn(page, { as: 'setup-four', newFamily: true });
 	const add = page.getByRole('button', { name: 'Add another child' });
-	for (let i = 0; i < 3; i++) await add.click();
-	await expect(page.getByLabel('Child 4', { exact: true })).toBeVisible();
+	for (const number of [2, 3, 4]) await addChildRow(page, number);
 	await expect(add).toHaveCount(0);
 });
 

@@ -5,7 +5,7 @@ import { defineConfig, devices } from '@playwright/test';
 // - port 4174 without it, like the live site, to prove the test pages are refused.
 // Each run starts from an empty database in data/ (git-ignored).
 const server = (port: number, extra: string) => ({
-	command: `rm -f data/e2e-${port}.db* && ${extra} PORT=${port} HOST=127.0.0.1 ORIGIN=http://localhost:${port} DATABASE_FILE=data/e2e-${port}.db node build`,
+	command: `rm -f data/e2e-${port}.db* && ${extra} PORT=${port} HOST=127.0.0.1 ORIGIN=http://localhost:${port} DATABASE_FILE=data/e2e-${port}.db node --require ./e2e/long-keep-alive.cjs build`,
 	url: `http://localhost:${port}/login`,
 	reuseExistingServer: false,
 	timeout: 30_000

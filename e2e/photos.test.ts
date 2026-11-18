@@ -35,10 +35,9 @@ async function addPhoto(page: Page) {
 	await expect(page.getByRole('heading', { name: 'Move and zoom' })).toBeVisible();
 }
 
-// The server drops the connection on a body it refuses unread, so nothing reuses it.
 const upload = (page: Page, id: number, type: string, data: Buffer) =>
 	page.request.put(`/api/rocket/${id}/photo`, {
-		headers: { origin: BASE, 'content-type': type, connection: 'close' },
+		headers: { origin: BASE, 'content-type': type },
 		data
 	});
 
@@ -291,7 +290,7 @@ test('chore and reward photos are checked and stay in the family', async ({ page
 	const url = `/api/grown-up/photos/reward/${id}`;
 	const good = (await photoFile()).buffer;
 	const put = (p: Page, h: Record<string, string>, type: string, data: Buffer, to = url) =>
-		p.request.put(to, { headers: { ...h, 'content-type': type, connection: 'close' }, data });
+		p.request.put(to, { headers: { ...h, 'content-type': type }, data });
 
 	expect((await put(page, { origin: BASE }, 'image/png', good)).status()).toBe(401);
 	expect((await put(page, headers, 'text/plain', good)).status()).toBe(415);
