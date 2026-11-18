@@ -1,4 +1,4 @@
-/** Who may sign in: the emails in ALLOWED_EMAILS, separated by commas or spaces. */
+/** Who may start the first family: ALLOWED_EMAILS, separated by commas or spaces. */
 export function parseAllowedEmails(raw: string | undefined) {
 	return new Set(
 		(raw ?? '')

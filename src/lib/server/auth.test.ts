@@ -23,7 +23,7 @@ describe('signing in', () => {
 	it('creates a family with the first account as its owner', () => {
 		const { db } = opened;
 		expect(isFirstRun(db)).toBe(true);
-		const result = signInGoogleUser(db, mum);
+		const result = signInGoogleUser(db, mum, 'always')!;
 		expect(result.created).toBe(true);
 		expect(isFirstRun(db)).toBe(false);
 		const [user] = db.select().from(schema.user).all();
@@ -32,16 +32,16 @@ describe('signing in', () => {
 
 	it('finds the same grown-up again without a new family', () => {
 		const { db } = opened;
-		const first = signInGoogleUser(db, mum);
-		const again = signInGoogleUser(db, mum);
+		const first = signInGoogleUser(db, mum, 'always')!;
+		const again = signInGoogleUser(db, mum, 'always')!;
 		expect(again).toEqual({ id: first.id, created: false });
 		expect(db.select().from(schema.family).all()).toHaveLength(1);
 	});
 
 	it('gives an account that was not invited its own family', () => {
 		const { db } = opened;
-		signInGoogleUser(db, mum);
-		signInGoogleUser(db, dad);
+		signInGoogleUser(db, mum, 'always')!;
+		signInGoogleUser(db, dad, 'always')!;
 		const users = db.select().from(schema.user).all();
 		expect(new Set(users.map((u) => u.familyId)).size).toBe(2);
 		expect(users.every((u) => u.role === 'owner')).toBe(true);
@@ -49,8 +49,8 @@ describe('signing in', () => {
 
 	it('follows a changed Google email', () => {
 		const { db } = opened;
-		const { id } = signInGoogleUser(db, mum);
-		signInGoogleUser(db, { ...mum, email: 'mum@new.example.com' });
+		const { id } = signInGoogleUser(db, mum, 'always')!;
+		signInGoogleUser(db, { ...mum, email: 'mum@new.example.com' }, 'always')!;
 		const [user] = db.select().from(schema.user).all();
 		expect(user).toMatchObject({ id, email: 'mum@new.example.com' });
 	});
@@ -61,7 +61,7 @@ describe('sessions', () => {
 
 	it('keeps a grown-up signed in with a token stored only as a hash', () => {
 		const { db } = opened;
-		const { id } = signInGoogleUser(db, mum);
+		const { id } = signInGoogleUser(db, mum, 'always')!;
 		const { token } = createSession(db, id, now);
 		const [row] = db.select().from(schema.session).all();
 		expect(row.id).not.toBe(token);
@@ -70,7 +70,7 @@ describe('sessions', () => {
 
 	it('rejects and removes an expired session', () => {
 		const { db } = opened;
-		const { id } = signInGoogleUser(db, mum);
+		const { id } = signInGoogleUser(db, mum, 'always')!;
 		const { token } = createSession(db, id, now);
 		expect(validateSession(db, token, now + SESSION_TTL)).toBeNull();
 		expect(db.select().from(schema.session).all()).toHaveLength(0);
@@ -78,7 +78,7 @@ describe('sessions', () => {
 
 	it('renews a session once it is more than half used', () => {
 		const { db } = opened;
-		const { id } = signInGoogleUser(db, mum);
+		const { id } = signInGoogleUser(db, mum, 'always')!;
 		const { token, expiresAt } = createSession(db, id, now);
 		const early = validateSession(db, token, now + SESSION_TTL / 4);
 		expect(early?.expiresAt.getTime()).toBe(expiresAt.getTime());
@@ -88,7 +88,7 @@ describe('sessions', () => {
 
 	it('signs out this device', () => {
 		const { db } = opened;
-		const { id } = signInGoogleUser(db, mum);
+		const { id } = signInGoogleUser(db, mum, 'always')!;
 		const { token } = createSession(db, id, now);
 		invalidateSession(db, token);
 		expect(validateSession(db, token, now)).toBeNull();

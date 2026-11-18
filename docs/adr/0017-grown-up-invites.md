@@ -63,4 +63,4 @@ The strongest alternative was Option 3, keeping the server list as a second lock
 - The invite email is only a notice; losing it does not matter. It contains no names of children.
 - A grown-up in grown-up mode can invite anyone, so the PIN protects this as it protects the rest of the grown-up screens.
 - Matching is on the verified email Google returns, compared without regard to case. A typo in the email invites nobody, and the invite stays "Waiting".
-- How long an invite stays open, cancelling an invite and removing a grown-up (and ending their sessions) are not designed yet, and are decided when invites are built.
+- How long an invite stays open, cancelling an invite and removing a grown-up (and ending their sessions) were decided when invites were built: see "Invites" and "Removing a grown-up" in the spec.

@@ -6,6 +6,7 @@ import type { PictureId } from '../passcode';
 import { schema } from './db';
 import type { FamilyScope } from './family';
 import { hashPasscode, verifyPasscode } from './pin';
+import { rowId } from './row-id';
 
 export const WRONG_BEFORE_WAIT = 5;
 export const WAIT_MS = 30_000;
@@ -16,8 +17,7 @@ export type PasscodeAnswer =
 	{ result: 'ok' } | { result: 'wrong' } | { result: 'wait'; seconds: number };
 
 /** The child id in an address, or null when it is not a whole number. */
-export const childIdFrom = (raw: string | undefined) =>
-	raw && /^\d{1,9}$/.test(raw) && Number(raw) > 0 ? Number(raw) : null;
+export const childIdFrom = rowId;
 
 function row(scope: FamilyScope, childId: number) {
 	const [found] = scope.db

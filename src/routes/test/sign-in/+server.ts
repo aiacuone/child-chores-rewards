@@ -4,6 +4,8 @@
 //   /test/sign-in                    the shared test grown-up, setup finished
 //   /test/sign-in?as=new-family-1    a separate grown-up and family
 //   ...&setup=new                    leave setup unfinished (no children, no PIN)
+//   ...&invited=1                    sign in as the live site would: only a known
+//                                    or invited account gets in
 import { error, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { createSession, setSessionCookie, signInGoogleUser } from '#lib/server/auth.ts';
@@ -21,11 +23,17 @@ export const GET: RequestHandler = ({ cookies, url }) => {
 	const as = url.searchParams.get('as') ?? 'grown-up';
 	if (!/^[a-z0-9-]{1,30}$/.test(as)) error(400, 'bad as');
 	const db = getDb();
-	const { id } = signInGoogleUser(db, {
-		sub: `test-${as}`,
-		email: `${as}@example.test`,
-		name: as === 'grown-up' ? 'Test grown-up' : `Test ${as}`
-	});
+	const signedIn = signInGoogleUser(
+		db,
+		{
+			sub: `test-${as}`,
+			email: `${as}@example.test`,
+			name: as === 'grown-up' ? 'Test grown-up' : `Test ${as}`
+		},
+		url.searchParams.has('invited') ? 'never' : 'always'
+	);
+	if (!signedIn) redirect(303, '/login?error=not_allowed');
+	const { id } = signedIn;
 
 	if (url.searchParams.get('setup') !== 'new') {
 		const [user] = db.select().from(schema.user).where(eq(schema.user.id, id)).all();

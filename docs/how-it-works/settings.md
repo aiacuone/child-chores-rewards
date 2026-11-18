@@ -16,7 +16,7 @@ The Settings tab holds the family's choices (docs/SPEC.md, "Settings"; Settings,
 | `/grown-up/settings/notifications/ntfy` | Ntfy | The topic and a test alert. |
 | `/grown-up/settings/daily-reset` | Daily-Reset | Reset time in half-hour steps, and the bonus from 5 to 100 in fives. |
 
-The Children row opens [children.md](children.md). Temporary fix: the Grown-ups row says "Coming soon" until #33.
+The Children row is explained in [children.md](children.md), and the Grown-ups row in [grown-ups.md](grown-ups.md).
 
 ## What each setting changes
 

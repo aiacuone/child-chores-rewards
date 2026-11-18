@@ -4,6 +4,7 @@ import { error, json } from '@sveltejs/kit';
 import { maskEmail } from '#lib/mask.ts';
 import { ensureTopic } from '#lib/server/alerts.ts';
 import { getDb } from '#lib/server/db/app.ts';
+import { familyGrownUps } from '#lib/server/invites.ts';
 import { forFamily } from '#lib/server/family.ts';
 import { parseSettings } from '#lib/server/forms/settings.ts';
 import { requireGrownUp } from '#lib/server/grownup.ts';
@@ -21,7 +22,8 @@ export const GET: RequestHandler = (event) => {
 		signedInAs: maskEmail(event.locals.user!.email),
 		recovery: recovery ? maskEmail(recovery) : null,
 		topic: ensureTopic(scope),
-		children: scope.children().map((c) => c.name)
+		children: scope.children().map((c) => c.name),
+		grownUps: familyGrownUps(scope).length
 	});
 };
 

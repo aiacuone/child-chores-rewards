@@ -114,6 +114,33 @@ export const user = sqliteTable(
 	(t) => [index('user_family_idx').on(t.familyId)]
 );
 
+/**
+ * An invited grown-up (ADR 0017). Signing in with this verified Google email
+ * joins the family. Rows are kept after use so sends can be counted.
+ */
+export const invite = sqliteTable(
+	'invite',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		/** Always lower case. */
+		email: text('email').notNull(),
+		expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+		acceptedAt: integer('accepted_at', { mode: 'timestamp_ms' }),
+		/** When a grown-up cancelled it, or a newer invite replaced it. */
+		cancelledAt: integer('cancelled_at', { mode: 'timestamp_ms' }),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date())
+	},
+	(t) => [
+		index('invite_family_idx').on(t.familyId, t.createdAt),
+		index('invite_email_idx').on(t.email)
+	]
+);
+
 /** One signed-in device. The id is a hash of the cookie token, never the token itself. */
 export const session = sqliteTable(
 	'session',

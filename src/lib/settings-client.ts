@@ -8,6 +8,7 @@ export type SettingsView = {
 	recovery: string | null;
 	topic: string;
 	children: string[];
+	grownUps: number;
 };
 
 export async function fetchSettings() {

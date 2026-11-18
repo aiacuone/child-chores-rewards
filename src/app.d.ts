@@ -10,6 +10,8 @@ declare global {
 		interface PageState {
 			/** The child just removed, for "Leo was removed" on Children. */
 			removed?: string;
+			/** The address just invited, for "Invite sent to ..." on Grown-ups. */
+			invited?: string;
 		}
 	}
 }

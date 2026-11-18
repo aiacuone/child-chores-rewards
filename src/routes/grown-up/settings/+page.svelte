@@ -1,6 +1,5 @@
 <script lang="ts">
-	// Settings (Settings.dc.html). Temporary fix: Grown-ups says "Coming soon"
-	// until #33 builds it.
+	// Settings (Settings.dc.html).
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import DoneNotice from '#lib/components/DoneNotice.svelte';
@@ -24,6 +23,8 @@
 	const GOLD = 'var(--color-amber)';
 	const ORANGE = 'var(--color-hi)';
 
+	const grownUpsHint = (n: number) => (n === 1 ? 'Just you' : `${n} grown-ups`);
+
 	const rows = $derived.by(() => {
 		if (!view) return [];
 		const s = view.settings;
@@ -35,7 +36,13 @@
 				colour: TEAL,
 				href: 'children'
 			},
-			{ label: 'Grown-ups', hint: 'Coming soon', icon: ICONS.person, colour: GOLD },
+			{
+				label: 'Grown-ups',
+				hint: grownUpsHint(view.grownUps),
+				icon: ICONS.person,
+				colour: GOLD,
+				href: 'grown-ups'
+			},
 			{
 				label: 'Grown-up PIN',
 				hint: 'Change your PIN',
@@ -85,7 +92,7 @@
 				colour: TEAL,
 				href: 'daily-reset'
 			}
-		] as { label: string; hint: string; icon: string; colour: string; href?: string }[];
+		];
 	});
 	const ROW = 'flex min-h-[60px] items-center gap-3 rounded-[18px] bg-card py-1.5 pr-3.5 pl-2.5';
 </script>
@@ -122,24 +129,20 @@
 
 <div class="flex flex-col gap-2">
 	{#each rows as row (row.label)}
-		{#if row.href}
-			<a href="/grown-up/settings/{row.href}" class={ROW}>
-				{@render body(row)}
-				<svg
-					aria-hidden="true"
-					width="18"
-					height="18"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="var(--color-muted)"
-					stroke-width="2.4"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="flex-none -scale-x-100"><path d="M15 5l-7 7 7 7" /></svg
-				>
-			</a>
-		{:else}
-			<div class={ROW}>{@render body(row)}</div>
-		{/if}
+		<a href="/grown-up/settings/{row.href}" class={ROW}>
+			{@render body(row)}
+			<svg
+				aria-hidden="true"
+				width="18"
+				height="18"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="var(--color-muted)"
+				stroke-width="2.4"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="flex-none -scale-x-100"><path d="M15 5l-7 7 7 7" /></svg
+			>
+		</a>
 	{/each}
 </div>

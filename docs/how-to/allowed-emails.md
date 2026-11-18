@@ -1,6 +1,6 @@
-# Add or remove an allowed grown-up
+# Change who can start the first family
 
-Only Google emails in the `ALLOWED_EMAILS` setting can sign in. The list lives in two places, and both must match:
+`ALLOWED_EMAILS` only decides who may create the first family. To add a grown-up to a family, use Settings, Grown-ups, Invite a grown-up instead; nothing on the VM changes. The list lives in two places, and both must match:
 
 - `~/.config/rocket-rewards/allowed.env` on your machine. `scripts/vm-setup.sh` rebuilds the VM's file from it.
 - `/etc/rocket-rewards/app.env` on the VM, which is what the running app reads.
@@ -32,15 +32,8 @@ ALLOWED_EMAILS=mum@example.com,dad@example.com
    sudo systemctl restart rocket-rewards
    ```
 
-5. Check by signing in at https://rocket-rewards.duckdns.org with the new account.
-
 ## Things to know
 
-- **Each new email starts its own family.** Invites are not built yet, so a second grown-up who signs in does not join your family. Add only the accounts that should have a family of their own, until invites exist.
-- **Removing an email blocks new sign-ins only.** Devices already signed in stay signed in until their session ends (up to 60 days). To cut someone off now, delete their sessions on the VM, if `sqlite3` is installed there:
-
-  ```
-  sudo sqlite3 /var/lib/rocket-rewards/rocket-rewards.db "delete from session where user_id = (select id from user where email = 'their@email.com')"
-  ```
-
+- **Once a family exists, the list lets nobody new in.** Everyone else joins by invite.
+- **Removing an email does not sign anyone out.** To remove a grown-up, the owner uses Settings, Grown-ups.
 - An empty or missing list lets nobody in.

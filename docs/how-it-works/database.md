@@ -8,6 +8,7 @@ The app keeps everything in one SQLite file ([ADR 0002](../adr/0002-database.md)
 | --- | --- |
 | `family` | One family. Everything else belongs to one. |
 | `user` | A grown-up who signs in with Google. |
+| `invite` | A Google email invited to join a family ([grown-ups.md](grown-ups.md)). |
 | `session` | One signed-in device (the id is a hash of the cookie token). |
 | `child` | A child in a family. |
 | `child_passcode` | A child's optional picture passcode, as a hash ([children.md](children.md)). |
@@ -136,6 +137,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0017` adds the `pin_reset` table ([recovery-email.md](recovery-email.md)).
 - `0018` adds the family's settings ([settings.md](settings.md)).
 - `0019` adds `child_passcode` and `child_unlock`, with triggers so turning a passcode on or off bumps the family's version ([children.md](children.md)).
+- `0020` adds the `invite` table ([grown-ups.md](grown-ups.md)).
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

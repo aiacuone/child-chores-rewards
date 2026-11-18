@@ -1,5 +1,5 @@
 // The Google step, copied from shtrong: state and PKCE, and a verified email.
-// Only emails in ALLOWED_EMAILS may sign in. Invites come later.
+// ALLOWED_EMAILS says who may start the first family; invites add everyone else.
 import { createHash, randomBytes } from 'node:crypto';
 import { ALLOWED_EMAILS, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$app/env/private';
 import { isAllowedEmail as inList } from './allowlist';

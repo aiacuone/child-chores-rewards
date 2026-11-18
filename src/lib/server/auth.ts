@@ -3,8 +3,9 @@
 // renewed while in use.
 import { createHash, randomBytes } from 'node:crypto';
 import type { Cookies } from '@sveltejs/kit';
-import { count, eq, and, inArray, ne } from 'drizzle-orm';
+import { count, eq, and, inArray, ne, sql } from 'drizzle-orm';
 import { schema, type Db } from './db';
+import { acceptInvite } from './invites';
 
 const DAY = 24 * 60 * 60 * 1000;
 export const SESSION_TTL = 60 * DAY;
@@ -28,11 +29,22 @@ export function isFirstRun(db: Db) {
 }
 
 /**
- * Find the grown-up for a verified Google account, or create one.
- * An account the app has not seen starts its own family and owns it.
- * Invites (joining an existing family) come later.
+ * Who may start a family when an account is neither known nor invited (ADR 0017):
+ * `first-only` while no family exists yet, `never`, or `always` for test runs.
  */
-export function signInGoogleUser(db: Db, profile: GoogleProfile) {
+export type StartFamily = 'first-only' | 'never' | 'always';
+
+/**
+ * Sign in with a verified Google profile. A known account signs in, an invited
+ * email joins the family that invited it, and the first listed account starts
+ * the first family. Anyone else gets null and is refused.
+ */
+export function signInGoogleUser(
+	db: Db,
+	profile: GoogleProfile,
+	start: StartFamily,
+	now = Date.now()
+) {
 	return db.transaction((tx) => {
 		const [found] = tx
 			.select()
@@ -54,6 +66,20 @@ export function signInGoogleUser(db: Db, profile: GoogleProfile) {
 			}
 			return { id: found.id, created: false };
 		}
+
+		// One Google email is one account, even if it arrives with a new Google id.
+		const [sameEmail] = tx
+			.select({ id: schema.user.id })
+			.from(schema.user)
+			.where(sql`lower(${schema.user.email}) = ${profile.email.toLowerCase()}`)
+			.all();
+		if (sameEmail) return null;
+
+		const joined = acceptInvite(tx, profile, now);
+		if (joined) return { id: joined, created: true };
+
+		const [families] = tx.select({ n: count() }).from(schema.family).all();
+		if (start === 'never' || (start === 'first-only' && families.n > 0)) return null;
 
 		const [fam] = tx.insert(schema.family).values({ name: 'Our family' }).returning().all();
 		const [created] = tx

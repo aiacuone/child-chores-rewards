@@ -19,7 +19,8 @@ export const MESSAGES = {
 	tooManyEmails: 'Too many emails. Try again in an hour.',
 	alertNotSent: "The test alert didn't send. Try again.",
 	tooManyChildren: `You can add up to ${MAX_CHILDREN} children.`,
-	lastChild: 'Keep at least one child.'
+	lastChild: 'Keep at least one child.',
+	alreadyJoined: 'That Google account already uses Rocket Rewards.'
 } as const;
 
 // Letters in any language, with spaces, hyphens, apostrophes and full stops

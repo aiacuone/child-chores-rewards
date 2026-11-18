@@ -17,7 +17,8 @@ export const GET: RequestHandler = async ({ cookies, getClientAddress, url }) =>
 
 	const code = url.searchParams.get('code');
 	const state = url.searchParams.get('state');
-	if (!code || !state || !saved.verifier || state !== saved.state) redirect(303, '/login?error=failed');
+	if (!code || !state || !saved.verifier || state !== saved.state)
+		redirect(303, '/login?error=failed');
 
 	const ip = getClientAddress();
 	if (isRateLimited(ip)) redirect(303, '/login?error=rate');
@@ -27,14 +28,21 @@ export const GET: RequestHandler = async ({ cookies, getClientAddress, url }) =>
 		recordFailure(ip);
 		redirect(303, '/login?error=failed');
 	}
-	if (!isAllowedEmail(profile.email)) {
+
+	// A known or invited account gets in. ALLOWED_EMAILS only says who may start
+	// the first family (ADR 0017).
+	const db = getDb();
+	const user = signInGoogleUser(
+		db,
+		profile,
+		isAllowedEmail(profile.email) ? 'first-only' : 'never'
+	);
+	if (!user) {
 		recordFailure(ip);
 		redirect(303, '/login?error=not_allowed');
 	}
 	clearFailures(ip);
 
-	const db = getDb();
-	const user = signInGoogleUser(db, profile);
 	const { token, expiresAt } = createSession(db, user.id);
 	setSessionCookie(cookies, token, expiresAt, url.protocol === 'https:');
 	redirect(303, '/');
