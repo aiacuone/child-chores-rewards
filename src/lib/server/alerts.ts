@@ -10,7 +10,8 @@ import { outbox } from './outbox';
 
 const NTFY = 'https://ntfy.sh';
 const TOPIC_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789';
-const TOPIC_LENGTH = 32;
+const TOPIC_PREFIX = 'rocket-';
+const TOPIC_RANDOM = 12;
 
 export const ALERTS = {
 	test: { title: 'Test alert', body: 'Rocket Rewards alerts are working.' },
@@ -41,15 +42,21 @@ export type Alert = { title: string; body: string; click?: string };
 
 export class AlertNotSent extends Error {}
 
-/** A new random topic: 32 letters and digits, about 165 bits. */
+/**
+ * A new topic: "rocket-" and 12 random letters and digits, about 62 bits. Short
+ * enough to read, and the random part is what keeps it secret, so it must stay.
+ */
 export function newTopic() {
-	let t = '';
-	for (let i = 0; i < TOPIC_LENGTH; i++) t += TOPIC_CHARS[randomInt(TOPIC_CHARS.length)];
+	let t = TOPIC_PREFIX;
+	for (let i = 0; i < TOPIC_RANDOM; i++) t += TOPIC_CHARS[randomInt(TOPIC_CHARS.length)];
 	return t;
 }
 
+// The current shape, and the 32 characters that families made earlier still have.
+const TOPIC_SHAPES = [new RegExp(`^${TOPIC_PREFIX}[a-z0-9]{${TOPIC_RANDOM}}$`), /^[a-z0-9]{32}$/];
+
 export const isTopic = (t: unknown): t is string =>
-	typeof t === 'string' && new RegExp(`^[a-z0-9]{${TOPIC_LENGTH}}$`).test(t);
+	typeof t === 'string' && TOPIC_SHAPES.some((shape) => shape.test(t));
 
 /** The family's topic, or null before setup step 4. */
 export function familyTopic(scope: FamilyScope) {

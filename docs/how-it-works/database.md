@@ -99,7 +99,7 @@ The family's shared PIN is in `family.pin_hash`, never as the PIN itself ([ADR 0
 
 - **`family.recovery_email`** is set only when someone opens the confirm link and presses Confirm (`src/lib/server/recovery-email.ts`). Until then the address waits in `email_verification`.
 - **`email_verification`** has one row per confirm link sent. It keeps a hash of the link's token, never the token. A link works once, for 24 hours, and a newer link cancels older ones. Rows are kept after use so a family can be limited to 5 links an hour.
-- **`family.ntfy_topic`** is the family's secret alert topic, 32 random letters and digits (`src/lib/server/alerts.ts`).
+- **`family.ntfy_topic`** is the family's secret alert topic: `rocket-` and 12 random letters and digits. Families made earlier may have 32 random characters, which still work (`src/lib/server/alerts.ts`).
 - **`family.setup_done_at`** is set by Finish on setup step 4. While it is empty, `/` sends the family to their setup step.
 
 ## Live updates: `family.version`

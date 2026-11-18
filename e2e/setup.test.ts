@@ -84,7 +84,7 @@ test('a new family goes through all four setup steps', async ({ page }) => {
 	await expect(page).toHaveURL('/setup/alerts');
 	await expect(page.getByRole('heading', { name: 'Get alerts on this phone' })).toBeVisible();
 	const topic = await page.getByLabel('Your topic').inputValue();
-	expect(topic).toMatch(/^[a-z0-9]{32}$/);
+	expect(topic).toMatch(/^rocket-[a-z0-9]{12}$/);
 	await expectAccessible(page);
 	await page.getByRole('button', { name: 'Send a test alert' }).click();
 	await expect

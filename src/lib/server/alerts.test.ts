@@ -4,11 +4,20 @@ import { ALERTS, AlertNotSent, isTopic, newTopic, sendAlert } from './alerts';
 afterEach(() => vi.unstubAllGlobals());
 
 describe('ntfy alerts', () => {
-	it('makes long random topics', () => {
+	it('makes short random topics', () => {
 		const a = newTopic();
+		expect(a).toMatch(/^rocket-[a-z0-9]{12}$/);
 		expect(isTopic(a)).toBe(true);
-		expect(a).toHaveLength(32);
 		expect(newTopic()).not.toBe(a);
+	});
+
+	it('still accepts the longer topics of existing families', () => {
+		expect(isTopic('a1'.repeat(16))).toBe(true);
+	});
+
+	it('refuses a simple name, which anyone could guess', () => {
+		for (const t of ['rocket-rewards', 'rocket-', 'rocket-ABCDEFGHIJKL', 'rocket-abc/defghijk'])
+			expect(isTopic(t)).toBe(false);
 	});
 
 	it('posts the alert to the topic with caching off', async () => {
