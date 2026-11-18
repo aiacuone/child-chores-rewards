@@ -14,6 +14,10 @@ const TOPIC_LENGTH = 32;
 
 export const ALERTS = {
 	test: { title: 'Test alert', body: 'Rocket Rewards alerts are working.' },
+	rewardClaimed: {
+		title: 'A reward was claimed',
+		body: 'A child wants a reward. Open Rocket Rewards to hand it out.'
+	},
 	choreWaiting: {
 		title: 'A chore is ready to check',
 		body: 'A chore is waiting. Open Rocket Rewards to take a look.'

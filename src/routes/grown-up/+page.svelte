@@ -1,7 +1,6 @@
 <script lang="ts">
 	// Mission control (Parent-Home.dc.html): today's progress, the chores to
-	// check, and each child's trip. Temporary fix: "1 reward to hand out" waits
-	// for #27.
+	// check, the rewards to hand out, and each child's trip.
 	import { onMount } from 'svelte';
 	import LiveUpdates from '#lib/components/LiveUpdates.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
@@ -9,12 +8,14 @@
 	import type { ChildCard } from '#lib/server/flying.ts';
 	import type { StopState } from '#lib/server/trip.ts';
 	import type { toCheck } from '#lib/server/check.ts';
+	import type { waitingClaims } from '#lib/server/claims.ts';
 
 	type Home = {
 		version: number;
 		day: string;
 		children: (ChildCard & { states: StopState[]; next: string | null; reached: string | null })[];
 		checks: ReturnType<typeof toCheck>;
+		claims: ReturnType<typeof waitingClaims>;
 	};
 	let home = $state<Home | null>(null);
 
@@ -70,6 +71,42 @@
 			<span
 				class="inline-flex h-[26px] flex-none items-center rounded-full bg-amber/20 px-2.5 text-[13px] font-black text-amber"
 				>Check</span
+			>
+		</a>
+	{/if}
+
+	{#if home.claims.length}
+		{@const first = home.claims[0]}
+		<a
+			href={home.claims.length === 1 ? `/grown-up/claim/${first.claimId}` : '/grown-up/rewards'}
+			class="flex min-h-16 items-center gap-3 rounded-[20px] border-2 border-ok bg-ok/14 px-4 py-2"
+		>
+			<svg
+				aria-hidden="true"
+				width="26"
+				height="26"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="var(--color-ok)"
+				stroke-width="2.2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="flex-none"
+				><rect x="3" y="9" width="18" height="12" rx="2" /><path d="M3 13h18M12 9v12" /><path
+					d="M12 9c-2-4-6-4-6-1.5S10 9 12 9zM12 9c2-4 6-4 6-1.5S14 9 12 9z"
+				/></svg
+			>
+			<span class="min-w-0 flex-1">
+				<span class="block text-[16px] font-black"
+					>{plural(home.claims.length, 'reward')} to hand out</span
+				>
+				<span class="block text-[13px] font-bold text-muted"
+					>{home.claims.map((c) => `${c.childName}: ${c.rewardName}`).join(', ')}</span
+				>
+			</span>
+			<span
+				class="inline-flex h-[26px] flex-none items-center rounded-full bg-ok/20 px-2.5 text-[13px] font-black text-ok"
+				>Hand out</span
 			>
 		</a>
 	{/if}

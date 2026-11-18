@@ -6,7 +6,7 @@ The signal is one number per family, `family.version`.
 
 | Part | File | Job |
 | --- | --- | --- |
-| The counter | `drizzle/0010_live_version.sql`, `drizzle/0013_reward_version.sql` | Database triggers add 1 to `family.version` on every change. |
+| The counter | `drizzle/0010_live_version.sql`, `drizzle/0013_reward_version.sql`, `drizzle/0015_claim_version.sql` | Database triggers add 1 to `family.version` on every change. |
 | Reading it | `src/lib/server/live.ts` | `familyVersion(scope)`: the signed-in family's current number. |
 | Asking for it | `src/routes/api/changes/+server.ts` | `GET /api/changes` returns `{ "version": 58 }`. |
 | Watching it | `src/lib/components/LiveUpdates.svelte` | Asks every few seconds and reloads the page's data when the number has moved. |
@@ -20,6 +20,7 @@ The signal is one number per family, `family.version`.
 - `chore_copy` (statuses: "I did it!", Undo, the daily reset, and accepting from #24)
 - `star_event`
 - `reward` and `reward_child` ([rewards.md](rewards.md))
+- `reward_claim` ([claims.md](claims.md))
 
 Because the database does it, no code has to remember to. A new feature that writes to these tables gets live updates for free. A new table that screens show needs its own three triggers, in a new hand-written migration.
 

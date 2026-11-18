@@ -2,13 +2,13 @@
 
 Rewards are what children spend stars on. A grown-up adds them, and each child they are for sees a meter of their stars against the cost (docs/SPEC.md, "Rewards"; Rewards.dc.html, Add-Reward.dc.html, Child-Rewards.dc.html). The rules are in `src/lib/server/rewards.ts`. The cost and meter rules shared with the pages are in `src/lib/rewards.ts`, and the planet colours in `src/lib/reward-planets.ts`.
 
-Claiming, handing out and declining a reward come in #27. Until then a reward only shows how close a child is.
+Claiming, handing out and declining a reward are in [claims.md](claims.md).
 
 ## The pages
 
 | Page | Screen | Shows |
 | --- | --- | --- |
-| `/grown-up/rewards` | Rewards, Rewards-Added | Every reward with a meter for each child it is for. A tap opens its edit form. |
+| `/grown-up/rewards` | Rewards, Rewards-Added | Every reward with a meter for each child it is for. A tap opens its edit form, or its hand-out when a claim is waiting ([claims.md](claims.md)). |
 | `/grown-up/rewards/new` | Add-Reward | The reward form. |
 | `/grown-up/rewards/<id>/edit` | (not designed: the same form, decided in #26) | The form with the reward's values, and Remove reward below it. |
 | `/trip/<child>/rewards` | Child-Rewards | My rewards: the rewards for this child. Opened from the star count on the trip, and "See my rewards" on Trip complete and Nothing to do today. |
@@ -34,18 +34,18 @@ Two tables ([database.md](database.md)):
 - `reward`: the family's reward, with its `name`, `cost` (stars needed) and `colour` (the planet).
 - `reward_child`: one row for each child a reward is for ("Who does it?"). A reward can be for nobody yet, as a chore can.
 
-A child's stars are the sum of their `star_event` rows (`balance`, [database.md](database.md)). Rewards never change them: only claims will (#27).
+A child's stars are the sum of their `star_event` rows (`balance`, [database.md](database.md)). Rewards never change them: only a hand-out does ([claims.md](claims.md)).
 
 ## The functions
 
 | Function | Used by | What it does |
 | --- | --- | --- |
-| `listRewards(scope)` | the Rewards tab API | Every reward, oldest first, with a meter row for each child it is for (their name, colour and stars). |
+| `listRewards(scope)` | the Rewards tab API | Every reward, oldest first, with a meter row for each child it is for (their name, colour and stars), and its first waiting claim. |
 | `getReward(scope, id)` | the edit page API | One reward with `childIds`, or `null` if it is not this family's. |
 | `addReward(scope, input)` | `POST` | Adds the reward and its children in one transaction. |
 | `updateReward(scope, id, input)` | `PUT` | Changes it and makes it for exactly the children picked. False when it is not this family's. |
 | `removeReward(scope, id)` | `DELETE` | Removes it, and its children rows with it. Stars stay. |
-| `childRewards(scope, child)` | My rewards | The rewards for one child, in My rewards order. |
+| `childRewards(scope, child)` | My rewards | The rewards for one child, in My rewards order, each marked `asked` when a claim is waiting. |
 | `reachedReward(scope, child)` | Mission control | The dearest reward the child can afford now, or `null`. |
 | `meter(stars, cost)` in `src/lib/rewards.ts` | both screens | `{ ready, percent, toGo }`. |
 
@@ -87,7 +87,7 @@ Every bar is a `role="progressbar"` with a label ("Mia's stars" on the Rewards t
 | A child is taken off a reward | That meter goes, and the reward leaves their My rewards. |
 | A reward is for nobody | The Rewards tab shows "Nobody yet", and no child sees it. |
 | No rewards yet | The Rewards tab says "No rewards yet." and My rewards says "No rewards yet. A grown-up can add some." |
-| A claimable reward is tapped on the Rewards tab | It opens the edit form (a temporary fix until #27 adds Hand out). |
+| A reward with a claim waiting is tapped on the Rewards tab | It opens that claim's hand-out. To edit it, answer the claim first. Any other reward opens Edit. |
 
 ## Live updates
 
@@ -101,9 +101,7 @@ Triggers bump `family.version` on every change to `reward` and `reward_child` (m
 
 ## Temporary fixes
 
-- **No Claim button** on My rewards until #27. "Ready to claim!" still shows.
 - **No "Use my own photo"** on the reward form, and no photo on the planet, until #36.
-- **"1 reward to hand out"** on Mission control until #27.
 - **Who's flying** tiles have no reward line ("3 stops to Movie night", "Reached Park trip today!") yet. The spec does not say how it is worked out.
 
 ## Tests

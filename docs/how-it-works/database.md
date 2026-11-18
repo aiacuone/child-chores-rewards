@@ -16,6 +16,7 @@ The app keeps everything in one SQLite file ([ADR 0002](../adr/0002-database.md)
 | `chore_reset` | One daily reset that ran for a family ([reset.md](reset.md)). |
 | `reward` | A reward in the family's library ([rewards.md](rewards.md)). |
 | `reward_child` | One child a reward is for. |
+| `reward_claim` | A child asking for a reward, and the grown-up's answer ([claims.md](claims.md)). |
 | `checked_notice` | A "checked!" message waiting to show on a child's trip ([checking.md](checking.md)). |
 
 ## How tables link: `family_id`
@@ -76,7 +77,7 @@ A child's stars are never stored as a number ([ADR 0003](../adr/0003-data-model-
 | --- | --- | --- |
 | `chore` | positive | a grown-up accepts a chore |
 | `bonus` | positive | every stop for the day is done |
-| `reward` | negative | a grown-up hands out a reward |
+| `reward` | negative | a grown-up hands out a reward (`source_id` is the claim, [claims.md](claims.md)) |
 
 - `source_id` says which chore copy or reward claim a row came from. For a `bonus` row it is the chore day as a number (`20261117`), so a day can only have one ([daily-bonus.md](daily-bonus.md)).
 - **Undoing an accepted chore** deletes the one row the accept added, by its id (`chore_copy.star_event_id`), because a daily chore's copy collects a row every day. **"That wasn't Mia"** writes the row for the right child instead ([checking.md](checking.md)). The log shows only what stands.
@@ -104,7 +105,7 @@ The family's shared PIN is in `family.pin_hash`, never as the PIN itself ([ADR 0
 
 Screens on other devices refresh when the family's data changes (ADR 0006). The signal is one number, `family.version`:
 
-- **Triggers bump it.** Every insert, update or delete on `child`, `chore`, `chore_copy`, `star_event`, `reward` or `reward_child` adds 1 to that row's family's `version` (migrations `0010` and `0013`). No code has to remember to do it, so new features get live updates for free.
+- **Triggers bump it.** Every insert, update or delete on `child`, `chore`, `chore_copy`, `star_event`, `reward`, `reward_child` or `reward_claim` adds 1 to that row's family's `version` (migrations `0010`, `0013` and `0015`). No code has to remember to do it, so new features get live updates for free.
 - **Screens poll it.** `GET /api/changes` returns the signed-in family's version (`src/lib/server/live.ts`). Details are in [live-updates.md](live-updates.md).
 - Only the changed family's number moves, so one family's activity never makes another family's screens reload.
 
@@ -126,6 +127,8 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0011` adds `checked_at`, `star_event_id` and `message` to `chore_copy`, and the `checked_notice` table.
 - `0012` adds the `reward` and `reward_child` tables.
 - `0013` adds the triggers that bump `family.version` for them. Written by hand, like `0010`.
+- `0014` adds the `reward_claim` table, with a partial unique index so a child has one waiting claim per reward.
+- `0015` adds the version triggers for it. Written by hand, like `0010`.
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

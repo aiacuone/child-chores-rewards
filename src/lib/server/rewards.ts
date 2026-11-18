@@ -6,11 +6,17 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { schema } from './db';
 import { NotInFamily, type FamilyScope } from './family';
 import type { RewardInput } from './forms/rewards';
+import { waitingClaims } from './claims';
 import { balance } from './stars';
 import { colourValue } from '../colours';
 import { meter, type ChildReward, type RewardSummary } from '../rewards';
 
 type Tx = Parameters<Parameters<FamilyScope['db']['transaction']>[0]>[0];
+
+const firstWaiting = (waiting: ReturnType<typeof waitingClaims>, rewardId: number) => {
+	const claim = waiting.find((w) => w.rewardId === rewardId);
+	return claim ? { claimId: claim.claimId } : null;
+};
 
 /** Every reward in the family, oldest first (new ones go at the end), with a meter per child. */
 export function listRewards(scope: FamilyScope): RewardSummary[] {
@@ -27,6 +33,7 @@ export function listRewards(scope: FamilyScope): RewardSummary[] {
 		.all();
 	const kids = scope.children();
 	const stars = new Map(kids.map((c) => [c.id, balance(scope, c.id)]));
+	const waiting = waitingClaims(scope);
 	return rewards.map((r) => ({
 		id: r.id,
 		name: r.name,
@@ -39,7 +46,8 @@ export function listRewards(scope: FamilyScope): RewardSummary[] {
 				name: c.name,
 				colour: colourValue(c.colour),
 				stars: stars.get(c.id) ?? 0
-			}))
+			})),
+		waiting: firstWaiting(waiting, r.id)
 	}));
 }
 
@@ -138,6 +146,11 @@ export function removeReward(scope: FamilyScope, rewardId: number) {
  */
 export function childRewards(scope: FamilyScope, childId: number): ChildReward[] {
 	const stars = balance(scope, childId);
+	const asked = new Set(
+		waitingClaims(scope)
+			.filter((w) => w.childId === childId)
+			.map((w) => w.rewardId)
+	);
 	return scope.db
 		.select({
 			id: schema.reward.id,
@@ -154,7 +167,7 @@ export function childRewards(scope: FamilyScope, childId: number): ChildReward[]
 			)
 		)
 		.all()
-		.map((r) => ({ ...r, stars }))
+		.map((r) => ({ ...r, stars, asked: asked.has(r.id) }))
 		.sort((a, b) => {
 			const ma = meter(stars, a.cost);
 			const mb = meter(stars, b.cost);

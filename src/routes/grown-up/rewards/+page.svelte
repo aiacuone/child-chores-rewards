@@ -1,12 +1,13 @@
 <script lang="ts">
-	// The Rewards tab (Rewards.dc.html, Rewards-Added.dc.html): every reward with
-	// a labelled meter for each child it is for. Temporary fix: a claimable
-	// reward opens its edit form, not the hand-out screen, until #27.
+	// The Rewards tab (Rewards.dc.html, Rewards-Added.dc.html, Rewards-Claimed,
+	// Rewards-Declined): every reward with a labelled meter for each child it is
+	// for. A reward with a claim waiting opens its hand-out; any other opens Edit.
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import DoneNotice from '#lib/components/DoneNotice.svelte';
 	import LiveUpdates from '#lib/components/LiveUpdates.svelte';
 	import RewardPlanet from '#lib/components/RewardPlanet.svelte';
+	import { fetchClaim, type ClaimView } from '#lib/claim-client.ts';
 	import { meter, type RewardSummary } from '#lib/rewards.ts';
 	import { grownupFetch } from '#lib/grownup.svelte.ts';
 
@@ -17,6 +18,22 @@
 	const savedId = $derived(Number(page.url.searchParams.get('saved')) || null);
 	const added = $derived(rewards?.find((r) => r.id === addedId) ?? null);
 	const saved = $derived(rewards?.find((r) => r.id === savedId) ?? null);
+
+	// The notice after answering a claim: ?handed=<claim> or ?declined=<claim>.
+	let answered = $state<ClaimView | null>(null);
+	const answeredKind = $derived(
+		page.url.searchParams.has('handed')
+			? 'handed'
+			: page.url.searchParams.has('declined')
+				? 'declined'
+				: null
+	);
+	$effect(() => {
+		const id = answeredKind ? page.url.searchParams.get(answeredKind) : null;
+		answered = null;
+		if (!id || !/^\d{1,9}$/.test(id)) return;
+		fetchClaim(id).then((found) => (answered = found));
+	});
 
 	async function load() {
 		const res = await grownupFetch('/api/grown-up/rewards');
@@ -61,6 +78,10 @@
 	<DoneNotice text="{added.name} added" />
 {:else if saved}
 	<DoneNotice text="{saved.name} saved" />
+{:else if answeredKind === 'handed' && answered}
+	<DoneNotice text="Handed out. {answered.child.name} has {answered.stars} stars left" />
+{:else if answeredKind === 'declined' && answered?.message}
+	<DoneNotice text="Told {answered.child.name}: “{answered.message}”" />
 {/if}
 
 <p class="m-0 text-[16px] leading-[1.45] font-bold text-muted">
@@ -77,7 +98,9 @@
 			{@const claimable = meters.some((m) => m.ready)}
 			<li>
 				<a
-					href="/grown-up/rewards/{reward.id}/edit"
+					href={reward.waiting
+						? `/grown-up/claim/${reward.waiting.claimId}`
+						: `/grown-up/rewards/${reward.id}/edit`}
 					class={[
 						'flex items-center gap-3 rounded-[18px] border-2 py-3 pr-3.5 pl-2.5',
 						claimable

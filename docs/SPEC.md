@@ -139,11 +139,15 @@ Settings is a grown-up-only tab. Rows:
 - **Declining:** a grown-up can decline a claim with a message (for example "Maybe on the weekend!"). The child sees the message and keeps their stars.
 - Sample data: Extra screen time costs 100 stars, Movie night 150, Pizza night 200 and Park trip 90.
 - **Adding a reward** (decided in #26): a name of up to 40 characters, stars needed (a whole number from 1 to 1,000), who it is for ("Who does it?", which may be left empty), and one of five planet colours.
-- **Editing and removing** (decided in #26; no screen is designed): tapping a reward on the Rewards tab opens the New reward form as "Edit reward", with "Save changes" and a "Remove reward" that asks first. Stars stay with the children. Until #27, a claimable reward opens the same form.
+- **Editing and removing** (decided in #26; no screen is designed): tapping a reward on the Rewards tab opens the New reward form as "Edit reward", with "Save changes" and a "Remove reward" that asks first. Stars stay with the children.
 - **Meters** (decided in #26): the Rewards tab shows a meter for each child the reward is for, with "22 to go" or a tick and "Ready", and a "Claimable" pill on a reward any child can claim. My rewards shows "22 stars to go" or "Ready to claim!". Every meter is a labelled progress bar.
 - **Order** (decided in #26): the Rewards tab lists oldest first, so a new reward goes at the end. My rewards lists ready rewards first, then the closest to ready, then the cheapest.
 - **Mission control** (decided in #26): "All done today · reached Park trip" names the dearest reward the child can afford, and reads "· 128 stars saved" when there is none.
 - **Empty lists** (decided in #26): "No rewards yet." on the Rewards tab, and "No rewards yet. A grown-up can add some." on My rewards.
+- **Claims** (decided in #27): a child can claim a reward that is for them when their stars reach its cost, and has one waiting claim per reward. While it waits, the card says "Asked a grown-up!" in place of the Claim button. No stars move until a grown-up confirms.
+- **Hand-out** (decided in #27): the hand-out screen shows "Mia's stars 128 → 28". It opens from the alert (after the PIN), from "N rewards to hand out" on Mission control, and by tapping a reward that has a claim waiting. A reward without a waiting claim opens Edit, and to edit one with a waiting claim the claim is answered first. If the child's stars have dropped below the cost by then, the hand-out is refused ("Mia doesn't have enough stars for this now.") so stars never go below 0.
+- **Declining** (decided in #27): three kind messages ("Maybe on the weekend!", "Finish your chores first", "Ask me again tomorrow") or the grown-up's own (up to 100 characters). The stars stay, and the child can ask again straight away.
+- **The child sees the answer once**, the next time My rewards shows (straight away if it is open): "Extra screen time handed out! −100 stars", or "Grown-up says: “Maybe on the weekend!” Your stars are safe."
 - **My rewards** is opened from the star count on the trip, and from "See my rewards" on Trip complete and Nothing to do today.
 
 ## Checking, undo and send back

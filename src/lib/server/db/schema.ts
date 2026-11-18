@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 const createdAt = () =>
@@ -164,7 +165,7 @@ export const chore = sqliteTable(
 
 /**
  * A reward in the family's library (the Rewards tab, My rewards). It may have
- * no children assigned. Claims come with #27.
+ * no children assigned. Claims are in reward_claim.
  */
 export const reward = sqliteTable(
 	'reward',
@@ -206,6 +207,45 @@ export const rewardChild = sqliteTable(
 	(t) => [
 		index('reward_child_family_idx').on(t.familyId),
 		uniqueIndex('reward_child_reward_child_idx').on(t.rewardId, t.childId)
+	]
+);
+
+/**
+ * A child asking for a reward (docs/SPEC.md, "Rewards"). It waits for a grown-up,
+ * who hands the reward out (the stars are taken then, as one star_event row of
+ * kind 'reward') or declines it with a message. A child has at most one waiting
+ * claim for each reward; the partial unique index makes a double tap harmless.
+ */
+export const rewardClaim = sqliteTable(
+	'reward_claim',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		rewardId: integer('reward_id')
+			.notNull()
+			.references(() => reward.id, { onDelete: 'cascade' }),
+		childId: integer('child_id')
+			.notNull()
+			.references(() => child.id, { onDelete: 'cascade' }),
+		status: text('status', { enum: ['waiting', 'handed_out', 'declined'] })
+			.notNull()
+			.default('waiting'),
+		/** Handed out: the stars taken, which is the reward's cost at that moment. */
+		stars: integer('stars'),
+		/** Declined: the grown-up's kind message. */
+		message: text('message'),
+		resolvedAt: integer('resolved_at', { mode: 'timestamp_ms' }),
+		/** When the child saw the answer on My rewards. Null until then. */
+		seenAt: integer('seen_at', { mode: 'timestamp_ms' }),
+		createdAt: createdAt()
+	},
+	(t) => [
+		index('reward_claim_family_idx').on(t.familyId, t.childId),
+		uniqueIndex('reward_claim_waiting_idx')
+			.on(t.rewardId, t.childId)
+			.where(sql`${t.status} = 'waiting'`)
 	]
 );
 

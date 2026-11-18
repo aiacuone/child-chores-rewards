@@ -3,6 +3,7 @@
 // family's children and chores.
 import { json } from '@sveltejs/kit';
 import { toCheck } from '#lib/server/check.ts';
+import { waitingClaims } from '#lib/server/claims.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { forFamily } from '#lib/server/family.ts';
 import { childCards } from '#lib/server/flying.ts';
@@ -32,6 +33,7 @@ export const GET: RequestHandler = (event) => {
 		version,
 		day: WEEKDAYS[weekday(choreDay(now))].long,
 		children,
-		checks: toCheck(scope)
+		checks: toCheck(scope),
+		claims: waitingClaims(scope)
 	});
 };

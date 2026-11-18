@@ -65,6 +65,7 @@ export async function typePin(page: Page, pin = TEST_PIN) {
 /**
  * Mia sends a stop with "I did it!" and a grown-up accepts it through the API.
  * `as` is the test user, `token` a grown-up token from /api/grown-up/unlock.
+ * Returns the chore copy's id, for undoing the accept.
  */
 export async function acceptStop(
 	page: Page,
@@ -79,10 +80,11 @@ export async function acceptStop(
 	const { alerts } = (await (await page.request.get(`/test/outbox?as=${as}`)).json()) as {
 		alerts: { headers: Record<string, string> }[];
 	};
-	const copy = alerts.at(-1)!.headers.Click.split('/').pop();
+	const copy = alerts.at(-1)!.headers.Click.split('/').pop()!;
 	const res = await page.request.post(`/api/grown-up/checks/${copy}`, {
 		headers: { origin: BASE, 'content-type': 'application/json', 'x-grown-up': token },
 		data: { action: 'accept' }
 	});
 	expect(res.status()).toBe(204);
+	return copy;
 }

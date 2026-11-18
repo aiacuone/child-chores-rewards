@@ -6,21 +6,18 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import BackHeader from '#lib/components/BackHeader.svelte';
+	import MessageChoice from '#lib/components/MessageChoice.svelte';
 	import { SAVE_FAILED } from '#lib/chores.ts';
-	import { MAX_MESSAGE, SEND_BACK_MESSAGES } from '#lib/check.ts';
+	import { SEND_BACK_MESSAGES } from '#lib/check.ts';
 	import { answer, fetchCheck, type CheckView } from '#lib/check-client.ts';
 
 	const copyId = $derived(page.params.copyId!);
 	const back = $derived(`/grown-up/check/${copyId}`);
-	const OWN = 'own';
 	let check = $state<CheckView | null>(null);
 	let missing = $state(false);
-	let picked = $state<string>(SEND_BACK_MESSAGES[0]);
-	let own = $state('');
+	let message = $state('');
 	let busy = $state(false);
 	let failed = $state(false);
-
-	const message = $derived(picked === OWN ? own.trim() : picked);
 
 	onMount(async () => {
 		const found = await fetchCheck(copyId);
@@ -58,43 +55,7 @@
 	</p>
 
 	<form onsubmit={send} class="flex flex-col gap-3.5">
-		<fieldset class="m-0 flex flex-col gap-2 border-0 p-0">
-			<legend class="sr-only">Message</legend>
-			{#each [...SEND_BACK_MESSAGES, OWN] as choice (choice)}
-				{@const on = picked === choice}
-				<label
-					class={[
-						'flex min-h-[58px] cursor-pointer items-center gap-3 rounded-[18px] border-2 bg-card px-4 text-[16px] font-black',
-						on ? 'border-hi' : 'border-card'
-					]}
-				>
-					<input type="radio" name="message" value={choice} bind:group={picked} class="sr-only" />
-					<span
-						aria-hidden="true"
-						class={[
-							'flex size-6 flex-none items-center justify-center rounded-full border-[3px]',
-							on ? 'border-hi' : 'border-line'
-						]}
-					>
-						{#if on}<span class="size-2.5 rounded-full bg-hi"></span>{/if}
-					</span>
-					{choice === OWN ? 'Write my own message…' : choice}
-				</label>
-			{/each}
-		</fieldset>
-
-		{#if picked === OWN}
-			<label class="flex flex-col gap-1.5">
-				<span class="text-[15px] font-black text-muted">Your message</span>
-				<input
-					type="text"
-					bind:value={own}
-					maxlength={MAX_MESSAGE}
-					required
-					class="min-h-14 rounded-[18px] border-2 border-line bg-card px-4 text-[16px] font-bold text-ink"
-				/>
-			</label>
-		{/if}
+		<MessageChoice choices={SEND_BACK_MESSAGES} bind:message />
 
 		{#if failed}
 			<p role="alert" class="m-0 text-[16px] font-black text-amber">{SAVE_FAILED}</p>
