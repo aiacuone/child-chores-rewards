@@ -38,7 +38,7 @@
 			href="/grown-up/settings/children/{child.id}"
 			class="flex min-h-[76px] items-center gap-3.5 rounded-[18px] bg-card px-3.5"
 		>
-			<Rocket colour={child.colour} rank={child.rank} height={50} />
+			<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={50} />
 			<span class="min-w-0 flex-1">
 				<span class="block font-heading text-[22px]">{child.name}</span>
 				<span class="block text-[13px] font-bold text-muted"

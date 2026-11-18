@@ -15,7 +15,7 @@
 
 <div class="relative z-[2] mx-auto flex max-w-[420px] flex-col gap-[18px] px-6 pt-[110px] pb-10">
 	<div class="flex justify-center">
-		<Rocket colour={child.colour} rank={child.rank} height={170} />
+		<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={170} />
 	</div>
 	<h1 class="m-0 text-center font-heading text-[44px] leading-[1.05] font-normal">
 		Are you {child.name}?

@@ -11,6 +11,7 @@
 		start,
 		taken,
 		rank,
+		photo = null,
 		onsave,
 		rows
 	}: {
@@ -19,6 +20,7 @@
 		/** Colours other children have. Each child keeps their own. */
 		taken: ColourId[];
 		rank?: RankName;
+		photo?: string | null;
 		/** Returns the message to show, or null when saved. */
 		onsave: (child: { name: string; colour: ColourId }) => Promise<string | null>;
 		/** Rows between the colours and Save. */
@@ -41,7 +43,7 @@
 </script>
 
 <h1 class="m-0 font-heading text-[30px] leading-[1.05] font-normal">{title}</h1>
-<div class="flex justify-center"><Rocket colour={colourValue(colour)} {rank} height={130} /></div>
+<div class="flex justify-center"><Rocket colour={colourValue(colour)} {rank} {photo} height={130} /></div>
 
 <form onsubmit={submit} class="flex flex-col gap-3.5">
 	<div class="flex flex-col gap-1.5">

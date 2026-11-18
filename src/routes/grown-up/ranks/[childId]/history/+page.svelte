@@ -37,7 +37,7 @@
 	<BackHeader href="/grown-up/ranks?who={child.id}" label="Ranks" />
 
 	<div class="flex items-center gap-3">
-		<Rocket colour={child.colour} rank={child.rank} height={56} />
+		<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={56} />
 		<span class="min-w-0 flex-1">
 			<h1 class="m-0 font-heading text-[32px] leading-[1.05] font-normal">Star history</h1>
 			<span class="mt-0.5 block font-heading text-[22px]" style:color={child.colour}

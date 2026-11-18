@@ -56,7 +56,7 @@
 		{@const marked = child.id === marker.id}
 		{@const tint = marked ? 'var(--color-muted)' : child.colour}
 		{#snippet row()}
-			<Rocket colour={child.colour} rank={child.rank} height={56} />
+			<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={56} />
 			<span class="flex-1 font-heading text-[22px]">{child.name}</span>
 			<span
 				class="inline-flex h-[26px] flex-none items-center rounded-full px-2.5 text-[13px] font-black"

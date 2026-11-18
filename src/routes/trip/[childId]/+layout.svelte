@@ -25,5 +25,6 @@
 	name={child.name}
 	colour={child.colour}
 	rank={child.rank}
+	photo={child.photo}
 	after={data.autoReturnSeconds * 1000}
 />

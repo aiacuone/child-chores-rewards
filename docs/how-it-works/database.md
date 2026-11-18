@@ -11,6 +11,7 @@ The app keeps everything in one SQLite file ([ADR 0002](../adr/0002-database.md)
 | `invite` | A Google email invited to join a family ([grown-ups.md](grown-ups.md)). |
 | `session` | One signed-in device (the id is a hash of the cookie token). |
 | `child` | A child in a family. |
+| `child_photo` | The photo in a child's rocket window ([photos.md](photos.md)). |
 | `child_passcode` | A child's optional picture passcode, as a hash ([children.md](children.md)). |
 | `child_unlock` | A passcode trip open on one device. |
 | `star_event` | One change to a child's stars. |
@@ -22,6 +23,162 @@ The app keeps everything in one SQLite file ([ADR 0002](../adr/0002-database.md)
 | `reward_claim` | A child asking for a reward, and the grown-up's answer ([claims.md](claims.md)). |
 | `pin_reset` | An emailed code for setting a new PIN ([recovery-email.md](recovery-email.md)). |
 | `checked_notice` | A "checked!" message waiting to show on a child's trip ([checking.md](checking.md)). |
+
+## Diagram
+
+Each box is a table, showing only its main columns. A line means the table on the "many" side holds the id of the other, and deleting the parent row deletes the rows that depend on it.
+
+To keep this readable, a table with another parent does not also get a line to `family`. It still has its own `family_id`, as the next section explains.
+
+```mermaid
+erDiagram
+    family ||--o{ user : "has"
+    family ||--o{ child : "has"
+    family ||--o{ chore : "has"
+    family ||--o{ reward : "has"
+    family ||--o{ invite : "sends"
+    family ||--o{ pin_reset : "requests"
+    family ||--o{ email_verification : "requests"
+    family ||--o{ chore_reset : "records"
+
+    user ||--o{ session : "signs in on"
+    session ||--o{ grownup_token : "unlocks with"
+    session ||--o{ child_unlock : "has open"
+
+    child ||--o{ star_event : "earns and spends"
+    child ||--o{ chore_copy : "gets"
+    child ||--o{ reward_child : "is listed in"
+    child ||--o{ reward_claim : "makes"
+    child ||--o{ checked_notice : "is shown"
+    child ||--o{ child_unlock : "is opened by"
+    child ||--o| child_passcode : "may have"
+    child ||--o| child_photo : "may have"
+
+    chore ||--o{ chore_copy : "is copied to"
+    chore_copy ||--o{ checked_notice : "leads to"
+    reward ||--o{ reward_child : "is for"
+    reward ||--o{ reward_claim : "is asked for in"
+
+    family {
+        int id PK
+        text name
+        text pin_hash
+        int version
+    }
+    user {
+        int id PK
+        int family_id FK
+        text role
+        text email
+    }
+    session {
+        text id PK
+        int user_id FK
+        int expires_at
+    }
+    grownup_token {
+        text id PK
+        int family_id FK
+        text session_id FK
+        int expires_at
+    }
+    invite {
+        int id PK
+        int family_id FK
+        text email
+        int expires_at
+    }
+    pin_reset {
+        int id PK
+        int family_id FK
+        text code_hash
+        int expires_at
+    }
+    email_verification {
+        int id PK
+        int family_id FK
+        text email
+        text token_hash
+    }
+    child {
+        int id PK
+        int family_id FK
+        text name
+        text colour
+    }
+    child_passcode {
+        int child_id PK, FK
+        int family_id FK
+        text hash
+        int fails
+    }
+    child_photo {
+        int child_id PK, FK
+        int family_id FK
+        blob data
+        int version
+    }
+    child_unlock {
+        text session_id PK, FK
+        int child_id PK, FK
+        int family_id FK
+        int expires_at
+    }
+    star_event {
+        int id PK
+        int family_id FK
+        int child_id FK
+        text kind
+        int amount
+    }
+    chore {
+        int id PK
+        int family_id FK
+        text name
+        int stars
+    }
+    chore_copy {
+        int id PK
+        int family_id FK
+        int chore_id FK
+        int child_id FK
+        text status
+    }
+    chore_reset {
+        int id PK
+        int family_id FK
+        text chore_day
+        int copies_reset
+    }
+    checked_notice {
+        int id PK
+        int family_id FK
+        int child_id FK
+        int copy_id FK
+        int stars
+    }
+    reward {
+        int id PK
+        int family_id FK
+        text name
+        int cost
+    }
+    reward_child {
+        int id PK
+        int family_id FK
+        int reward_id FK
+        int child_id FK
+    }
+    reward_claim {
+        int id PK
+        int family_id FK
+        int reward_id FK
+        int child_id FK
+        text status
+    }
+```
+
+When a change adds a table or a link, update this diagram in the same commit.
 
 ## How tables link: `family_id`
 
@@ -109,7 +266,7 @@ The family's shared PIN is in `family.pin_hash`, never as the PIN itself ([ADR 0
 
 Screens on other devices refresh when the family's data changes (ADR 0006). The signal is one number, `family.version`:
 
-- **Triggers bump it.** Every insert, update or delete on `child`, `chore`, `chore_copy`, `star_event`, `reward`, `reward_child` or `reward_claim` adds 1 to that row's family's `version` (migrations `0010`, `0013` and `0015`). Adding or removing a `child_passcode` does too (`0019`). No code has to remember to do it, so new features get live updates for free.
+- **Triggers bump it.** Every insert, update or delete on `child`, `chore`, `chore_copy`, `star_event`, `reward`, `reward_child` or `reward_claim` adds 1 to that row's family's `version` (migrations `0010`, `0013` and `0015`). Adding or removing a `child_passcode` does too (`0019`), and so does any change to a `child_photo` (`0021`). No code has to remember to do it, so new features get live updates for free.
 - **Screens poll it.** `GET /api/changes` returns the signed-in family's version (`src/lib/server/live.ts`). Details are in [live-updates.md](live-updates.md).
 - Only the changed family's number moves, so one family's activity never makes another family's screens reload.
 
@@ -138,6 +295,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0018` adds the family's settings ([settings.md](settings.md)).
 - `0019` adds `child_passcode` and `child_unlock`, with triggers so turning a passcode on or off bumps the family's version ([children.md](children.md)).
 - `0020` adds the `invite` table ([grown-ups.md](grown-ups.md)).
+- `0021` adds `child_photo`, with triggers that bump the family's version ([photos.md](photos.md)).
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

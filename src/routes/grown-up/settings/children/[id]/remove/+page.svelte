@@ -37,12 +37,12 @@
 	<h1 class="m-0 font-heading text-[30px] leading-[1.05] font-normal">Child not found</h1>
 {:else if child}
 	{@const c = child}
-	<div class="flex justify-center"><Rocket colour={c.colour} rank={c.rank} height={110} /></div>
+	<div class="flex justify-center"><Rocket colour={c.colour} rank={c.rank} photo={c.photo} height={110} /></div>
 	<h1 class="m-0 text-center font-heading text-[34px] leading-[1.05] font-normal">
 		Remove {c.name}?
 	</h1>
 	<p class="m-0 text-[16px] leading-[1.45] font-bold text-muted">
-		{c.name}’s trip, {c.stars}
+		{c.name}’s trip, {c.photo ? 'photo, ' : ''}{c.stars}
 		{c.stars === 1 ? 'star' : 'stars'} and rank will be deleted. The chores stay in the list. This can’t
 		be undone.
 	</p>

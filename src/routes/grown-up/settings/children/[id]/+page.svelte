@@ -1,12 +1,17 @@
 <script lang="ts">
-	// Edit a child (Child-Edit.dc.html). Temporary fix: the Rocket photo row is left
-	// out until #34 builds photos.
+	// Edit a child (Child-Edit.dc.html). Temporary fix: Remove photo is a plain
+	// button until #35 designs it.
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChildForm from '#lib/components/ChildForm.svelte';
-	import { fetchChild, saveChild, type ChildDetail } from '#lib/children-client.ts';
+	import {
+		fetchChild,
+		removeChildPhoto,
+		saveChild,
+		type ChildDetail
+	} from '#lib/children-client.ts';
 	import type { ColourId } from '#lib/colours.ts';
 
 	let child = $state<ChildDetail | null>(null);
@@ -16,6 +21,12 @@
 		child = await fetchChild(page.params.id);
 		missing = !child;
 	});
+
+	let photoProblem = $state('');
+	async function removePhoto(id: number) {
+		photoProblem = (await removeChildPhoto(id)) ?? '';
+		if (!photoProblem) child = await fetchChild(page.params.id);
+	}
 
 	async function save(id: number, fields: { name: string; colour: ColourId }) {
 		const message = await saveChild(id, fields);
@@ -39,9 +50,43 @@
 		start={{ name: c.name, colour: c.colourId }}
 		taken={c.takenColours}
 		rank={c.rank}
+		photo={c.photo}
 		onsave={(fields) => save(c.id, fields)}
 	>
 		{#snippet rows()}
+			<div class="flex min-h-[60px] items-center gap-3 rounded-[18px] bg-card py-1.5 pr-3.5 pl-2.5">
+				<span class="flex size-10 flex-none items-center justify-center rounded-xl bg-label">
+					<svg
+						aria-hidden="true"
+						width="26"
+						height="26"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="var(--color-ok)"
+						stroke-width="2.2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						><path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></svg
+					>
+				</span>
+				<span class="min-w-0 flex-1">
+					<span class="block text-[16px] font-black">Rocket photo</span>
+					<span class="mt-0.5 block text-[13px] font-bold text-muted"
+						>{c.name} adds it · shared on all your devices</span
+					>
+				</span>
+				{#if c.photo}
+					<button
+						type="button"
+						onclick={() => removePhoto(c.id)}
+						class="min-h-11 flex-none rounded-full border-2 border-[#7A3A4A] px-3 text-[13px] font-black text-danger"
+						>Remove photo</button
+					>
+				{/if}
+			</div>
+			{#if photoProblem}
+				<p role="alert" class="m-0 text-[16px] font-black text-amber">{photoProblem}</p>
+			{/if}
 			<a
 				href="/grown-up/settings/children/{c.id}/passcode"
 				class="flex min-h-[60px] items-center gap-3 rounded-[18px] bg-card py-1.5 pr-3.5 pl-2.5"

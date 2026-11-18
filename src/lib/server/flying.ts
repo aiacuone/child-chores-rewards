@@ -1,6 +1,7 @@
 // What Who's flying and a child's trip show about each child: name, colour,
 // rank and stars. Only the signed-in family's children are reachable.
 import { colourValue } from '../colours';
+import { childPhotoUrl } from './child-photo';
 import type { FamilyScope } from './family';
 import { standing } from './stars';
 
@@ -10,6 +11,8 @@ export type ChildCard = {
 	colour: string;
 	rank: ReturnType<typeof standing>['rank'];
 	stars: number;
+	/** The address of their rocket photo, or null. */
+	photo: string | null;
 };
 
 function card(
@@ -17,7 +20,14 @@ function card(
 	c: { id: number; name: string; colour: Parameters<typeof colourValue>[0] }
 ): ChildCard {
 	const { stars, rank } = standing(scope, c.id);
-	return { id: c.id, name: c.name, colour: colourValue(c.colour), rank, stars };
+	return {
+		id: c.id,
+		name: c.name,
+		colour: colourValue(c.colour),
+		rank,
+		stars,
+		photo: childPhotoUrl(scope, c.id)
+	};
 }
 
 export function childCards(scope: FamilyScope) {

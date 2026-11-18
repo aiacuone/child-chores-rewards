@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Who's flying? (design/screens/Main.dc.html, R-Main-Tablet.dc.html)
-	// Left out until later items: the camera badge on each rocket (#34), and the
-	// progress bar and reward line on each tile (the spec has no rule for them yet).
+	// Left out until the spec has a rule for them: the progress bar and reward line
+	// on each tile.
 	import { onMount } from 'svelte';
 	import Planet from '#lib/components/Planet.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
@@ -58,21 +58,43 @@
 		<h1 class="m-0 font-heading text-[44px] leading-[1.05] font-normal">Who’s flying<br />today?</h1>
 
 		{#each data.children as child (child.id)}
-			<a
-				href={child.passcode ? `/passcode/${child.id}` : `/trip/${child.id}`}
+			<div
 				class="flex items-center gap-1.5 rounded-[26px] border-[3px] bg-card py-4 pr-4 pl-3"
 				style="border-color:{child.colour}"
 			>
-				<span class="block min-w-14 flex-none px-2">
-					<Rocket colour={child.colour} rank={child.rank} height={84} />
-				</span>
-				<span class="block flex-1">
+				<a
+					href={child.passcode ? `/passcode/${child.id}?to=rocket` : `/rocket/${child.id}`}
+					aria-label="Change {child.name}’s rocket photo"
+					class="relative block min-w-14 flex-none px-2"
+				>
+					<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={84} />
+					<span
+						class="absolute -right-1.5 -bottom-0.5 flex size-[34px] items-center justify-center rounded-full bg-hi text-ink-on-orange shadow-[0_0_0_3px_var(--color-card)]"
+					>
+						<svg
+							aria-hidden="true"
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							><path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></svg
+						>
+					</span>
+				</a>
+				<a
+					href={child.passcode ? `/passcode/${child.id}` : `/trip/${child.id}`}
+					class="flex min-h-[84px] flex-1 flex-col justify-center"
+				>
 					<span class="block font-heading text-[30px] leading-none">{child.name}</span>
 					<span class="mt-1 block text-[13px] font-extrabold text-muted"
 						>{child.rank} · <StarCount stars={child.stars} /></span
 					>
-				</span>
-			</a>
+				</a>
+			</div>
 		{/each}
 
 		<a

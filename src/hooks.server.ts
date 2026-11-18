@@ -17,6 +17,13 @@ import { testRoutesAllowed } from '#lib/server/test-routes.ts';
 // /verify-email is opened from an email, often on a device that is not signed in.
 const PUBLIC_PATHS = ['/login', '/login/google', '/login/google/callback', '/verify-email'];
 
+function guardedArea(routeId: string | null) {
+	if (routeId === '/trip/[childId]' || routeId?.startsWith('/trip/[childId]/')) return 'trip';
+	if (routeId === '/rocket/[childId]') return 'rocket';
+	if (routeId === '/api/rocket/[childId]/photo') return 'api';
+	return null;
+}
+
 // The daily reset runs inside the app (ADR 0010). Starting it here also
 // catches up a reset missed while the app was stopped.
 export const init: ServerInit = () => {
@@ -66,18 +73,17 @@ const guard: Handle = async ({ event, resolve }) => {
 		redirect(303, '/login');
 	}
 
-	// A passcode guards every page and form action of a child's trip. This uses
-	// the matched route, not the address text, so /trip/%31 cannot slip past it.
-	const routeId = event.route.id;
-	if (
-		event.locals.user &&
-		event.locals.sessionId &&
-		(routeId === '/trip/[childId]' || routeId?.startsWith('/trip/[childId]/'))
-	) {
+	// A passcode guards a child's trip and rocket photo, on every page, form action
+	// and upload. This uses the matched route, not the address text, so /trip/%31
+	// cannot slip past it.
+	const guarded = guardedArea(event.route.id);
+	if (guarded && event.locals.user && event.locals.sessionId) {
 		const childId = childIdFrom(event.params.childId);
 		const scope = forFamily(getDb(), event.locals.user.familyId);
-		if (childId && !tripOpen(scope, event.locals.sessionId, childId))
-			redirect(303, `/passcode/${childId}`);
+		if (childId && !tripOpen(scope, event.locals.sessionId, childId)) {
+			if (guarded === 'api') return new Response('Passcode needed', { status: 403 });
+			redirect(303, `/passcode/${childId}${guarded === 'rocket' ? '?to=rocket' : ''}`);
+		}
 	}
 
 	return resolve(event);

@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import {
+	blob,
 	index,
 	integer,
 	primaryKey,
@@ -173,7 +174,7 @@ export const grownupToken = sqliteTable(
 	(t) => [index('grownup_token_session_idx').on(t.sessionId)]
 );
 
-/** A child in the family. Their photo comes with #34; a passcode is in child_passcode. */
+/** A child in the family. A photo is in child_photo and a passcode in child_passcode. */
 export const child = sqliteTable(
 	'child',
 	{
@@ -189,6 +190,27 @@ export const child = sqliteTable(
 		createdAt: createdAt()
 	},
 	(t) => [index('child_family_idx').on(t.familyId)]
+);
+
+/**
+ * The photo in a child's rocket window (ADR 0011), re-encoded by image.ts. It has
+ * its own table so that lists of children never load the image.
+ */
+export const childPhoto = sqliteTable(
+	'child_photo',
+	{
+		childId: integer('child_id')
+			.primaryKey()
+			.references(() => child.id, { onDelete: 'cascade' }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		/** A WebP image. */
+		data: blob('data', { mode: 'buffer' }).notNull(),
+		/** Changes with each new photo, so browsers can keep each one for good. */
+		version: integer('version').notNull()
+	},
+	(t) => [index('child_photo_family_idx').on(t.familyId)]
 );
 
 /**

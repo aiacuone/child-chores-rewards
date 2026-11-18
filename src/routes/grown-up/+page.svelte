@@ -117,7 +117,7 @@
 			href="/grown-up/chores?who={child.id}"
 			class="flex items-center gap-3 rounded-[22px] bg-card p-3.5"
 		>
-			<Rocket colour={child.colour} rank={child.rank} height={56} />
+			<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={56} />
 			<span class="min-w-0 flex-1">
 				<span class="flex justify-between font-heading text-[22px]"
 					>{child.name}{#if child.states.length}<span class="text-[18px] text-hi"

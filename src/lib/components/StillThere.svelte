@@ -11,11 +11,13 @@
 		name,
 		colour,
 		rank,
+		photo = null,
 		after = 60_000
 	}: {
 		name: string;
 		colour: string;
 		rank: RankName;
+		photo?: string | null;
 		/** No-touch time before going back, warning included. Set in Settings. */
 		after?: number;
 	} = $props();
@@ -76,7 +78,7 @@
 			class="flex w-full max-w-[380px] flex-col items-center gap-3.5 rounded-[26px] border-[3px] bg-card p-6 text-center"
 			style="border-color:{colour}"
 		>
-			<Rocket {colour} {rank} height={80} />
+			<Rocket {colour} {rank} {photo} height={80} />
 			<h2 id="still-there" class="m-0 font-heading text-[30px] leading-[1.05] font-normal">
 				Still there, {name}?
 			</h2>

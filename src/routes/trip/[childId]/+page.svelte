@@ -119,7 +119,7 @@
 		<div class="relative mt-6 h-[260px] w-[200px]">
 			<div class="absolute top-[100px] left-0"><Planet size={200} body="#5BB58A" spots="#4a9471" /></div>
 			<div class="absolute top-0 left-[64px]">
-				<Rocket colour={child.colour} rank={child.rank} height={130} rotate={10} />
+				<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={130} rotate={10} />
 			</div>
 		</div>
 		<h2 class="m-0 text-center font-heading text-[36px] leading-[1.05] font-normal">
@@ -212,7 +212,7 @@
 			class="absolute z-[3] -translate-x-1/2 -translate-y-1/2"
 			style="left:{pct(board.rocket.x)};top:{board.rocket.y}px"
 		>
-			<Rocket colour={child.colour} rank={child.rank} height={70} rotate={board.rocket.rotate} />
+			<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={70} rotate={board.rocket.rotate} />
 		</div>
 
 		<ol aria-label="Today’s stops" class="m-0 list-none p-0">

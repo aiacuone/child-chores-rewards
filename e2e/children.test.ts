@@ -19,7 +19,7 @@ const tapAll = async (page: Page, pictures: string[]) => {
 
 async function childId(page: Page, name: string) {
 	await page.goto('/');
-	const href = await row(page, new RegExp(name)).getAttribute('href');
+	const href = await row(page, new RegExp(`^${name}`)).getAttribute('href');
 	return Number(href!.split('/').pop());
 }
 
@@ -90,7 +90,7 @@ test('add, edit and remove children', async ({ page }) => {
 	});
 	expect(last.status()).toBe(409);
 
-	await expect(row(page, /Leo/)).toHaveCount(0);
+	await expect(row(page, /^Leo/)).toHaveCount(0);
 	expect((await page.goto(`/trip/${leo}`))!.status()).toBe(404);
 });
 
@@ -115,7 +115,7 @@ test('a passcode guards the trip until the right pictures are tapped', async ({ 
 
 	// Who's flying now asks for the pictures.
 	await backToWhosFlying(page);
-	await row(page, /Mia/).click();
+	await row(page, /^Mia/).click();
 	await expect(page).toHaveURL(`/passcode/${mia}`);
 	await expect(page.getByRole('heading', { name: 'Hi Mia!' })).toBeVisible();
 	await expectAccessible(page);
@@ -152,7 +152,7 @@ test('a passcode guards the trip until the right pictures are tapped', async ({ 
 
 	// Leo has no passcode, and going back to Who's flying closes Mia's trip.
 	await backToWhosFlying(page);
-	await row(page, /Leo/).click();
+	await row(page, /^Leo/).click();
 	await expect(page).toHaveURL(/\/trip\/\d+$/);
 	await backToWhosFlying(page);
 	await page.goto(`/trip/${mia}`);
@@ -176,7 +176,7 @@ test('a passcode guards the trip until the right pictures are tapped', async ({ 
 	await button(page, 'Turn off passcode').click();
 	await expect(row(page, /Picture passcode\s*Off/)).toBeVisible();
 	await page.goto('/');
-	await row(page, /Mia/).click();
+	await row(page, /^Mia/).click();
 	await expect(page).toHaveURL(`/trip/${mia}`);
 });
 

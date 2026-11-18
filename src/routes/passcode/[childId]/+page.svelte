@@ -53,7 +53,7 @@
 			if (!res.ok) throw new Error('refused');
 			const answer = (await res.json()) as { result: string; seconds?: number };
 			if (answer.result === 'ok') {
-				await goto(`/trip/${child.id}`);
+				await goto(data.next);
 				return;
 			}
 			if (answer.result === 'wait') startWaiting(answer.seconds ?? 30);
@@ -88,7 +88,7 @@
 	<div class="relative z-[2] mx-auto flex max-w-[420px] flex-col gap-[18px] px-[22px] pt-[26px] pb-10">
 		<BackArrow href="/" />
 		<div class="flex items-center gap-3.5">
-			<Rocket colour={child.colour} rank={child.rank} height={70} />
+			<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={70} />
 			<h1 class="m-0 font-heading text-[38px] leading-[1.05] font-normal">Hi {child.name}!</h1>
 		</div>
 		<p class="m-0 text-[16px] leading-[1.45] font-bold text-muted">Tap your 3 secret pictures.</p>

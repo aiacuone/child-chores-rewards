@@ -51,7 +51,7 @@
 				<Planet size={170} body="var(--color-bonus-planet)" spots="#c69437" ring="#ffd951" />
 			</div>
 			<div class="absolute top-[62px] left-[66px]">
-				<Rocket colour={child.colour} rank={child.rank} height={110} rotate={10} />
+				<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={110} rotate={10} />
 			</div>
 		</div>
 		<h1 class="m-0 text-center font-heading text-[40px] leading-[1.05] font-normal">

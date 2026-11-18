@@ -11,9 +11,9 @@ Grown-ups add, edit and remove children in Settings, and can give a child an opt
 | `/grown-up/settings/children/<id>` | Child-Edit | Name, colour, Picture passcode, Save, Remove. |
 | `/grown-up/settings/children/<id>/remove` | Child-Remove | What will be deleted, then "Yes, remove Leo" or Cancel. |
 | `/grown-up/settings/children/<id>/passcode` | Passcode-Setup | Pick 3 pictures, and Turn off passcode when one is set. |
-| `/passcode/<child>` | Passcode-Enter | "Tap your 3 secret pictures." For children, not grown-ups. |
+| `/passcode/<child>` | Passcode-Enter | "Tap your 3 secret pictures." For children, not grown-ups. It leads to the trip, or with `?to=rocket` to the rocket photo. |
 
-Temporary fix: the Rocket photo row on Child-Edit is left out until #34.
+The Rocket photo row is explained in [photos.md](photos.md).
 
 ## The API
 
@@ -29,13 +29,12 @@ Temporary fix: the Rocket photo row on Child-Edit is left out until #34.
 
 - Names and colours use the same checks as setup (`parseChild` in `forms/setup.ts`). Each child has their own name, ignoring capitals, and their own colour.
 - A family has at most 4 children and at least 1. The last child has no Remove button and the server answers 409.
-- `removeChild` deletes the child row. Database cascades remove their chore copies, stars, reward links, claims, notices, passcode and open trips. The chores themselves stay in the library. It then calls `settleFamilyBonuses`.
-- Photos do not exist yet. #34 must delete a child's photo when the child is removed.
+- `removeChild` deletes the child row. Database cascades remove their chore copies, stars, reward links, claims, notices, photo, passcode and open trips. The chores themselves stay in the library. It then calls `settleFamilyBonuses`.
 
 ## How the passcode is enforced
 
 1. `child_passcode` holds the scrypt hash of the three pictures in order, never the pictures, plus the wrong-try count.
-2. `src/hooks.server.ts` runs `tripOpen` for every request matched to `/trip/[childId]` or a route below it. If the trip is not open, it redirects to `/passcode/<child>`. This covers pages, their data requests and form actions. It reads the matched route and its params, so an address like `/trip/%31` cannot get past it.
+2. `src/hooks.server.ts` runs `tripOpen` for every request matched to `/trip/[childId]`, a route below it, or the rocket photo page and upload. If the trip is not open, it redirects to `/passcode/<child>`. This covers pages, their data requests and form actions. It reads the matched route and its params, so an address like `/trip/%31` cannot get past it.
 3. The right pictures add a `child_unlock` row for this child and this device's session.
 4. Who's flying calls `/api/passcode/close` when it opens, which removes this device's rows. It is not done in the page's `load`, because `load` also runs when a link is only hovered.
 5. An open trip that is not used for an hour closes by itself (`OPEN_MS`). This covers a tablet left on a trip with the app closed.

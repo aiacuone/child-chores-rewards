@@ -12,6 +12,7 @@ export type ChildRow = {
 	rank: RankName;
 	stars: number;
 	passcode: boolean;
+	photo: string | null;
 };
 export type ChildDetail = ChildRow & {
 	colourId: ColourId;
@@ -58,4 +59,8 @@ export async function savePasscode(id: number, pictures: PictureId[]) {
 
 export async function turnOffPasscode(id: number) {
 	return problem(await grownupFetch(`/api/grown-up/children/${id}/passcode`, { method: 'DELETE' }));
+}
+
+export async function removeChildPhoto(id: number) {
+	return problem(await grownupFetch(`/api/grown-up/children/${id}/photo`, { method: 'DELETE' }));
 }

@@ -79,7 +79,7 @@ test('invite, refuse, join and remove', async ({ page, browser }) => {
 	await invite(page, 'gu-sam@example.test');
 	await expect(button(page, /gu-sam.*Waiting/)).toBeVisible();
 	const sam = await device(browser, 'gu-sam');
-	await expect(sam.getByRole('link', { name: /Mia/ })).toBeVisible();
+	await expect(sam.getByRole('link', { name: /^Mia/ })).toBeVisible();
 	await expect(button(page, /Test gu-sam.*Remove/)).toBeVisible({ timeout: 15_000 });
 
 	// Sam is not the owner: nothing to remove here, and the server refuses too.

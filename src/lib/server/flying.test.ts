@@ -26,7 +26,7 @@ describe("Who's flying cards", () => {
 		ours.addChild('Leo', 'blue');
 		addStars(ours, { childId: mia.id, kind: 'chore', amount: 120 });
 		expect(childCards(ours)).toEqual([
-			{ id: mia.id, name: 'Mia', colour: '#F28AA0', rank: 'Explorer', stars: 120 },
+			{ id: mia.id, name: 'Mia', colour: '#F28AA0', rank: 'Explorer', stars: 120, photo: null },
 			expect.objectContaining({ name: 'Leo', colour: '#6EC6F0', rank: 'Cadet', stars: 0 })
 		]);
 	});

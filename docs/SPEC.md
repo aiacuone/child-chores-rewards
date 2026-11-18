@@ -189,6 +189,7 @@ Settings is a grown-up-only tab. Rows:
 - A reward always keeps its planet: the photo shows as a small round badge on the planet's corner in lists, and large on the claim screens.
 - Photos are resized on upload and deleted with the chore, reward or child. If a photo is missing or fails to load, the built-in icon or planet shows instead.
 - "Take a photo" should use the device camera (file picker with the camera hint). Camera permission needs https.
+- **Rocket photos** (decided in #34): My-Rocket says "Take a photo of yourself. Only your family can see it.", because photos show on every signed-in device. A child with a picture passcode taps it before changing their photo. Until #35, a grown-up can use Remove photo on Edit child.
 
 ## Accessibility
 

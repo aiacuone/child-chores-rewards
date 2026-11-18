@@ -48,7 +48,7 @@
 						child.id === chosen.id && children.length > 1 && 'outline-2 outline-offset-0 outline-ok'
 					]}
 				>
-					<Rocket colour={child.colour} rank={child.rank} height={70} />
+					<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={70} />
 					<span class="font-heading text-[22px]">{child.name}</span>
 					<span class="text-[13px] font-black text-ok">{child.rank}</span>
 					<span class="text-[13px] font-extrabold text-amber">{child.stars} stars</span>
