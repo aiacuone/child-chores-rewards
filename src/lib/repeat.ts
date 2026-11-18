@@ -6,7 +6,7 @@
 // on these strings is done on UTC midnights, where every day is 24 hours.
 
 export const TIME_ZONE = 'Australia/Melbourne';
-/** The daily reset, in minutes after midnight. Settings makes it adjustable in #31. */
+/** The default daily reset, in minutes after midnight. Each family can change it in Settings. */
 export const RESET_MINUTES = 6 * 60;
 
 /** Days of the week, Monday first: 0 is Monday, 6 is Sunday. */

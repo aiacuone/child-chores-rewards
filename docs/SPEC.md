@@ -104,6 +104,7 @@ Settings is a grown-up-only tab. Rows:
 | Notifications | ntfy topic, test message, which alerts are on |
 | Daily reset and bonus | Time chores reset (default 6:00 am) and the daily bonus amount (default +20 stars) |
 
+- **Details** (decided in #31): the reset time is chosen in half-hour steps and the daily bonus from 5 to 100 stars in fives. A new bonus amount applies to bonuses earned from then on. Auto-lock and return choices save when tapped. **Change PIN** is one form (current PIN, new PIN, type it again); wrong current PINs count towards the pad's lock, and other devices in grown-up mode must then enter the new PIN.
 - **Removing a child:** needs a confirmation step. The screen says what will be removed before the grown-up confirms.
 - **Changing a picture:** children can change their own rocket picture from Who's flying.
 

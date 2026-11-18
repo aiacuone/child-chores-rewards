@@ -5,8 +5,9 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { schema } from './db';
 import { NotInFamily, type FamilyScope } from './family';
 import type { ChoreInput } from './forms/chores';
-import { choreDay, daysBetween, REPEAT_LIMITS, type Repeat } from '../repeat';
+import { daysBetween, REPEAT_LIMITS, type Repeat } from '../repeat';
 import { activeSkip, type Skip } from '../skip';
+import { familyDay } from './settings';
 
 /** A Once date outside the coming week (and not the chore's saved date). */
 export class BadRepeat extends Error {}
@@ -77,7 +78,7 @@ function savedRepeat(input: ChoreInput['repeat'], today: string, old: Repeat | n
 
 /** Every chore in the family, newest first, with who it is assigned to. */
 export function listChores(scope: FamilyScope, now = new Date()): ChoreSummary[] {
-	const day = choreDay(now);
+	const day = familyDay(scope, now);
 	const chores = scope.db
 		.select()
 		.from(schema.chore)
@@ -127,7 +128,7 @@ export function getChore(scope: FamilyScope, choreId: number, now = new Date()) 
 		repeat: toRepeat(c),
 		childIds: copies.map((k) => k.childId),
 		hidden: c.hidden,
-		skip: activeSkip(c, choreDay(now)),
+		skip: activeSkip(c, familyDay(scope, now)),
 		copies
 	};
 }
@@ -160,7 +161,7 @@ function assign(scope: FamilyScope, db: Tx, choreId: number, childIds: number[])
 
 export function addChore(scope: FamilyScope, input: ChoreInput, now = new Date()) {
 	checkChildren(scope, input.childIds);
-	const repeat = savedRepeat(input.repeat, choreDay(now), null);
+	const repeat = savedRepeat(input.repeat, familyDay(scope, now), null);
 	return scope.db.transaction((tx) => {
 		const [c] = tx
 			.insert(schema.chore)
@@ -191,7 +192,7 @@ export function updateChore(
 		const mine = scope.where(schema.chore, eq(schema.chore.id, choreId));
 		const [old] = tx.select().from(schema.chore).where(mine).all();
 		if (!old) return false;
-		const repeat = savedRepeat(input.repeat, choreDay(now), toRepeat(old));
+		const repeat = savedRepeat(input.repeat, familyDay(scope, now), toRepeat(old));
 		tx.update(schema.chore)
 			.set({
 				name: input.name,

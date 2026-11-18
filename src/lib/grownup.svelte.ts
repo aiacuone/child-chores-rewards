@@ -4,12 +4,20 @@
 // Only the browser changes this state; grown-up pages are not rendered on the
 // server (src/routes/grown-up/+layout.ts).
 import { goto } from '$app/navigation';
+import { choreDay } from './repeat';
+import { DEFAULT_SETTINGS } from './settings';
 
 const GROWNUP_HEADER = 'x-grown-up';
 /** Touches are reported to the server at most this often. */
 const REPORT_EVERY = 30 * 1000;
 
-const state = $state({ token: null as string | null, lastTouch: 0, justLocked: false });
+const state = $state({
+	token: null as string | null,
+	lastTouch: 0,
+	justLocked: false,
+	autoLockMinutes: DEFAULT_SETTINGS.autoLockMinutes as number,
+	resetMinutes: DEFAULT_SETTINGS.resetMinutes
+});
 let lastReport = 0;
 
 export const grownup = {
@@ -20,6 +28,13 @@ export const grownup = {
 	get lastTouch() {
 		return state.lastTouch;
 	},
+	/** Grown-up mode locks after this long without a touch, in ms. */
+	get autoLock() {
+		return state.autoLockMinutes * 60_000;
+	},
+	get resetMinutes() {
+		return state.resetMinutes;
+	},
 	/** True right after grown-up mode locked, for "Grown-up mode is locked" on Who's flying. */
 	get justLocked() {
 		return state.justLocked;
@@ -28,6 +43,15 @@ export const grownup = {
 		state.justLocked = false;
 	}
 };
+
+/** The family's chore day on this device. */
+export const grownupToday = () => choreDay(new Date(), state.resetMinutes);
+
+/** Settings just saved, or sent with a new grown-up token. */
+export function useSettings(s: { autoLockMinutes?: number; resetMinutes?: number }) {
+	state.autoLockMinutes = s.autoLockMinutes ?? state.autoLockMinutes;
+	state.resetMinutes = s.resetMinutes ?? state.resetMinutes;
+}
 
 export type UnlockAnswer =
 	{ result: 'ok' } | { result: 'wrong' } | { result: 'locked'; until: number };
@@ -40,8 +64,13 @@ export async function unlockWithPin(pin: string): Promise<UnlockAnswer> {
 		body: JSON.stringify({ pin })
 	});
 	if (!res.ok) throw new Error(`unlock failed: ${res.status}`);
-	const answer = (await res.json()) as UnlockAnswer & { token?: string };
+	const answer = (await res.json()) as UnlockAnswer & {
+		token?: string;
+		autoLockMinutes?: number;
+		resetMinutes?: number;
+	};
 	if (answer.result === 'ok' && answer.token) {
+		useSettings(answer);
 		state.token = answer.token;
 		state.lastTouch = lastReport = Date.now();
 		state.justLocked = false;

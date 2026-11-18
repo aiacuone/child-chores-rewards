@@ -12,12 +12,12 @@
 	import { whoDoesIt, type ChoreRow, type Kid } from '#lib/chores.ts';
 	import { clock } from '#lib/check.ts';
 	import { answer, fetchCheck, type CheckView } from '#lib/check-client.ts';
-	import { choreDay, repeatLabel } from '#lib/repeat.ts';
-	import { grownupFetch } from '#lib/grownup.svelte.ts';
+	import { repeatLabel } from '#lib/repeat.ts';
+	import { grownupFetch, grownupToday } from '#lib/grownup.svelte.ts';
 	import { skipNotice, skipPill } from '#lib/skip.ts';
 	import type { toCheck } from '#lib/server/check.ts';
 
-	const today = choreDay(new Date());
+	const today = grownupToday();
 	let kids = $state<Kid[]>([]);
 	let chores = $state<ChoreRow[] | null>(null);
 	let checks = $state<ReturnType<typeof toCheck>>([]);

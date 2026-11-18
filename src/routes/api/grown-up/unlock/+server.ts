@@ -7,6 +7,7 @@ import { getDb } from '#lib/server/db/app.ts';
 import { forFamily } from '#lib/server/family.ts';
 import { unlock } from '#lib/server/grownup.ts';
 import { isPin } from '#lib/server/pin.ts';
+import { getSettings } from '#lib/server/settings.ts';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ locals, request, url }) => {
@@ -23,7 +24,10 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 
 	const scope = forFamily(getDb(), locals.user.familyId);
 	const result = unlock(scope, locals.sessionId, pin);
-	if (result.ok) return json({ result: 'ok', token: result.token });
+	if (result.ok) {
+		const { autoLockMinutes, resetMinutes } = getSettings(scope);
+		return json({ result: 'ok', token: result.token, autoLockMinutes, resetMinutes });
+	}
 	if (result.reason === 'wrong') return json({ result: 'wrong' });
 
 	// The first lock in a run of wrong tries tells every grown-up (no names or details).

@@ -14,7 +14,6 @@
 	import Rocket from '#lib/components/Rocket.svelte';
 	import SeeRewards from '#lib/components/SeeRewards.svelte';
 	import StarCount from '#lib/components/StarCount.svelte';
-	import { DAILY_BONUS } from '#lib/bonus.ts';
 	import { asSaid } from '#lib/check.ts';
 	import { pct, tripPath } from '#lib/trip-path.ts';
 	import type { TripStop } from '#lib/server/trip.ts';
@@ -145,7 +144,7 @@
 				{plural(stops.length, 'stop')} today · do them in any order!
 			{:else if finished < stops.length}
 				{finished} of {plural(stops.length, 'stop')} · {stops.length - finished} more for
-				<span class="text-hi">+{DAILY_BONUS} bonus stars</span>
+				<span class="text-hi">+{data.dailyBonus} bonus stars</span>
 			{:else}
 				{finished} of {plural(stops.length, 'stop')}
 			{/if}
@@ -205,7 +204,7 @@
 					stroke-linejoin="round"
 					class="flex-none"
 					><path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.2 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z" /></svg
-				>+{DAILY_BONUS} bonus
+				>+{data.dailyBonus} bonus
 			</span>
 		</a>
 

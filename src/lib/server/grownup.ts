@@ -3,7 +3,7 @@
 // - The right PIN gives a grown-up token. The page keeps it only in memory and
 //   sends it with every grown-up request; the server keeps its hash, tied to
 //   the family and to this device's session.
-// - A token lasts AUTO_LOCK after its last use. The page locks itself at that
+// - A token lasts the family's auto-lock time after its last use. The page locks itself at that
 //   time; the server allows a little longer (GRACE) because the page reports
 //   touches at most every 30 seconds.
 // - Wrong PINs are counted per family. 5 in a row lock the pad for 30 s; each
@@ -11,12 +11,11 @@
 //   resets the count. While locked, the PIN is not even checked.
 import { createHash, randomBytes } from 'node:crypto';
 import { error, type RequestEvent } from '@sveltejs/kit';
-import { and, eq, gt } from 'drizzle-orm';
+import { and, eq, gt, ne } from 'drizzle-orm';
 import { schema, type Db } from './db';
 import type { FamilyScope } from './family';
-import { verifyPin } from './pin';
-
-import { AUTO_LOCK } from '../grownup-times';
+import { hashPin, verifyPin } from './pin';
+import { getSettings } from './settings';
 
 const GRACE = 45 * 1000;
 export const FAILS_BEFORE_LOCK = 5;
@@ -24,6 +23,9 @@ export const LOCK_STEPS = [30_000, 60_000, 5 * 60_000, 15 * 60_000];
 
 /** The header a grown-up request carries its token in. */
 export const GROWNUP_HEADER = 'x-grown-up';
+
+/** How long a token lasts after its last use, for this family's auto-lock. */
+const tokenLife = (scope: FamilyScope) => getSettings(scope).autoLockMinutes * 60_000 + GRACE;
 
 const hashToken = (token: string) => createHash('sha256').update(token).digest('hex');
 const isToken = (t: unknown): t is string => typeof t === 'string' && /^[A-Za-z0-9_-]{43}$/.test(t);
@@ -114,7 +116,7 @@ export function unlock(
 				id: hashToken(token),
 				familyId: scope.familyId,
 				sessionId,
-				expiresAt: new Date(now + AUTO_LOCK + GRACE)
+				expiresAt: new Date(now + tokenLife(scope))
 			})
 			.run();
 		return { ok: true, token };
@@ -129,7 +131,7 @@ export function useToken(scope: FamilyScope, sessionId: string, token: unknown, 
 	if (!isToken(token)) return false;
 	const changed = scope.db
 		.update(schema.grownupToken)
-		.set({ expiresAt: new Date(now + AUTO_LOCK + GRACE) })
+		.set({ expiresAt: new Date(now + tokenLife(scope)) })
 		.where(
 			and(
 				eq(schema.grownupToken.id, hashToken(token)),
@@ -140,6 +142,20 @@ export function useToken(scope: FamilyScope, sessionId: string, token: unknown, 
 		)
 		.run().changes;
 	return changed === 1;
+}
+
+/** Set a new PIN. Other devices in grown-up mode have to enter it; this one stays open. */
+export function changePin(scope: FamilyScope, keepToken: unknown, pin: string) {
+	if (!isToken(keepToken)) throw new Error('a grown-up token is needed');
+	scope.db.transaction((tx) => {
+		tx.update(schema.family)
+			.set({ pinHash: hashPin(pin) })
+			.where(eq(schema.family.id, scope.familyId))
+			.run();
+		tx.delete(schema.grownupToken)
+			.where(scope.where(schema.grownupToken, ne(schema.grownupToken.id, hashToken(keepToken))))
+			.run();
+	});
 }
 
 /** End grown-up mode for this token. */

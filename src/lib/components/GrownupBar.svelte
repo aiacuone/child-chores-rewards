@@ -4,13 +4,13 @@
 	// scroll restarts the time, except while the warning shows: then only "Keep
 	// going" does.
 	import { onMount } from 'svelte';
-	import { AUTO_LOCK, LOCK_WARNING } from '#lib/grownup-times.ts';
+	import { LOCK_WARNING } from '#lib/grownup-times.ts';
 	import { grownup, lock, touch } from '#lib/grownup.svelte.ts';
 
 	let now = $state(Date.now());
 	let keepGoing = $state<HTMLButtonElement>();
 
-	const left = $derived(Math.min(AUTO_LOCK, Math.max(0, grownup.lastTouch + AUTO_LOCK - now)));
+	const left = $derived(Math.min(grownup.autoLock, Math.max(0, grownup.lastTouch + grownup.autoLock - now)));
 	const warning = $derived(left <= LOCK_WARNING);
 	const seconds = $derived(Math.ceil(left / 1000));
 	const clock = $derived(`${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`);
@@ -22,10 +22,10 @@
 	onMount(() => {
 		const tick = setInterval(() => {
 			now = Date.now();
-			if (grownup.token && grownup.lastTouch + AUTO_LOCK <= now) lock();
+			if (grownup.token && grownup.lastTouch + grownup.autoLock <= now) lock();
 		}, 250);
 		const activity = () => {
-			if (grownup.lastTouch + AUTO_LOCK - Date.now() > LOCK_WARNING) touch();
+			if (grownup.lastTouch + grownup.autoLock - Date.now() > LOCK_WARNING) touch();
 		};
 		const events = ['pointerdown', 'keydown', 'wheel', 'scroll', 'touchstart'] as const;
 		for (const e of events) window.addEventListener(e, activity, { passive: true });

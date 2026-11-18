@@ -3,6 +3,7 @@ import { forFamily } from '#lib/server/family.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { childCard } from '#lib/server/flying.ts';
 import { familyVersion } from '#lib/server/live.ts';
+import { getSettings } from '#lib/server/settings.ts';
 import { setupStep } from '#lib/server/setup.ts';
 import type { LayoutServerLoad } from './$types';
 
@@ -16,5 +17,6 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 	const id = /^\d{1,9}$/.test(params.childId) ? Number(params.childId) : NaN;
 	const child = childCard(scope, id);
 	if (!child) error(404, 'Not found');
-	return { child, version };
+	const { dailyBonus, autoReturnSeconds } = getSettings(scope);
+	return { child, version, dailyBonus, autoReturnSeconds };
 };

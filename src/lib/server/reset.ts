@@ -10,7 +10,8 @@ import { eq, inArray } from 'drizzle-orm';
 import { schema, type Db } from './db';
 import { forFamily, type FamilyScope } from './family';
 import { toRepeat } from './chores';
-import { choreDay, isDue } from '../repeat';
+import { isDue } from '../repeat';
+import { familyDay } from './settings';
 
 const CHECK_EVERY = 60 * 1000;
 
@@ -19,7 +20,7 @@ const CHECK_EVERY = 60 * 1000;
  * Returns how many copies went back to pending, or null when it had already run.
  */
 export function resetFamily(scope: FamilyScope, now = new Date()) {
-	const day = choreDay(now);
+	const day = familyDay(scope, now);
 	return scope.db.transaction((tx) => {
 		// The unique index on family + day lets only one run claim the day.
 		const [claimed] = tx
@@ -69,9 +70,12 @@ export function resetFamily(scope: FamilyScope, now = new Date()) {
 /** Reset every family that has not reset for its current chore day. */
 export function resetAll(db: Db, now = new Date()) {
 	for (const { id } of db.select({ id: schema.family.id }).from(schema.family).all()) {
-		const reset = resetFamily(forFamily(db, id), now);
+		const scope = forFamily(db, id);
+		const reset = resetFamily(scope, now);
 		if (reset !== null)
-			console.info(`daily reset: family ${id}, chore day ${choreDay(now)}, ${reset} copies`);
+			console.info(
+				`daily reset: family ${id}, chore day ${familyDay(scope, now)}, ${reset} copies`
+			);
 	}
 }
 

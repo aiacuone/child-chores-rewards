@@ -12,8 +12,7 @@ import { schema } from './db';
 import type { FamilyScope } from './family';
 import { addStars } from './stars';
 import { tripStops } from './trip';
-import { DAILY_BONUS } from '../bonus';
-import { choreDay } from '../repeat';
+import { familyDay, getSettings } from './settings';
 
 /** The chore day as the bonus row's source: "2026-11-17" is 20261117. */
 export const bonusSource = (day: string) => Number(day.replaceAll('-', ''));
@@ -43,7 +42,7 @@ const tripDone = (scope: FamilyScope, childId: number, now: Date) => {
 
 /** The bonus the child earned today, or null. */
 export function bonusToday(scope: FamilyScope, childId: number, now = new Date()) {
-	const row = bonusRow(scope, childId, choreDay(now));
+	const row = bonusRow(scope, childId, familyDay(scope, now));
 	return row ? { stars: row.amount } : null;
 }
 
@@ -53,9 +52,14 @@ export function bonusToday(scope: FamilyScope, childId: number, now = new Date()
  * was added.
  */
 export function settleBonus(scope: FamilyScope, childId: number, now = new Date()) {
-	const day = choreDay(now);
+	const day = familyDay(scope, now);
 	if (bonusRow(scope, childId, day) || !tripDone(scope, childId, now)) return false;
-	addStars(scope, { childId, kind: 'bonus', amount: DAILY_BONUS, sourceId: bonusSource(day) });
+	addStars(scope, {
+		childId,
+		kind: 'bonus',
+		amount: getSettings(scope).dailyBonus,
+		sourceId: bonusSource(day)
+	});
 	return true;
 }
 
@@ -69,7 +73,7 @@ export function settleFamilyBonuses(scope: FamilyScope, now = new Date()) {
  * bonus goes too. Returns whether it was removed.
  */
 export function undoBonus(scope: FamilyScope, childId: number, now = new Date()) {
-	const row = bonusRow(scope, childId, choreDay(now));
+	const row = bonusRow(scope, childId, familyDay(scope, now));
 	if (!row || tripDone(scope, childId, now)) return false;
 	scope.db
 		.delete(schema.starEvent)

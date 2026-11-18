@@ -1,6 +1,6 @@
 # How the daily bonus works
 
-A child earns a bonus (+20 stars by default) once per chore day, when every stop on their trip is Done (docs/SPEC.md, "Trip, stars and bonus"; [ADR 0003](../adr/0003-data-model-for-stars.md); Child-Bonus.dc.html, Space-Child-AllDone.dc.html). All the rules are in `src/lib/server/bonus.ts`. The amount, `DAILY_BONUS`, is in `src/lib/bonus.ts` and stays fixed until Settings makes it adjustable (#31).
+A child earns a bonus (+20 stars by default) once per chore day, when every stop on their trip is Done (docs/SPEC.md, "Trip, stars and bonus"; [ADR 0003](../adr/0003-data-model-for-stars.md); Child-Bonus.dc.html, Space-Child-AllDone.dc.html). All the rules are in `src/lib/server/bonus.ts`. The default amount, `DAILY_BONUS`, is in `src/lib/bonus.ts`. Each family can change the amount in Settings ([settings.md](settings.md)).
 
 ## The idea
 

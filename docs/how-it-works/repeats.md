@@ -25,7 +25,7 @@ Every date is a string like `2026-11-17`, meaning that day in Melbourne. It is n
 | Tue 6:00 am | Tuesday |
 | Wed 1:00 am | Tuesday |
 
-The 6:00 am is `RESET_MINUTES`. Settings will make it adjustable (#31).
+The 6:00 am is the default, `RESET_MINUTES`. Each family can change it in Settings, and `familyDay` applies it ([settings.md](settings.md)).
 
 ## The five kinds
 

@@ -58,7 +58,7 @@ The claim comes first, so even two checks running at the same moment can never b
 | Several days were missed | It resets for today only. A chore that was due on a missed day but not today is not on today's trip, and resets on its next due day. |
 | Later checks the same day | They find today's row and change nothing, so a chore finished at 9:00 am is not undone. |
 | Daylight saving starts or ends | The chore day comes from the Melbourne clock, so 6:00 am is still 6:00 am. |
-| Settings changes the reset time (#31) | The next check uses the new time. Nothing needs rescheduling, because the job only asks "has this chore day been reset?" |
+| Settings changes the reset time | The next check uses the new time. Nothing needs rescheduling, because the job only asks "has this chore day been reset?" |
 | A family is created during the day | Its first check records today as reset, with nothing to reset. |
 | A grown-up accepted a chore just before 6:00 am | The reset puts it back to Pending, so the 1-minute undo no longer applies. The stars stay. |
 | A chore is Waiting at 6:00 am | Left alone, with its "I did it!" time, so a grown-up can still check it later ([checking.md](checking.md)). |

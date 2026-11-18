@@ -11,8 +11,9 @@ import { requireGrownUp } from '#lib/server/grownup.ts';
 import { familyVersion } from '#lib/server/live.ts';
 import { reachedReward } from '#lib/server/rewards.ts';
 import { tripStops } from '#lib/server/trip.ts';
-import { choreDay, weekday, WEEKDAYS } from '#lib/repeat.ts';
+import { weekday, WEEKDAYS } from '#lib/repeat.ts';
 import type { RequestHandler } from './$types';
+import { familyDay } from '#lib/server/settings.ts';
 
 export const GET: RequestHandler = (event) => {
 	const scope = forFamily(getDb(), event.locals.user!.familyId);
@@ -31,7 +32,7 @@ export const GET: RequestHandler = (event) => {
 	});
 	return json({
 		version,
-		day: WEEKDAYS[weekday(choreDay(now))].long,
+		day: WEEKDAYS[weekday(familyDay(scope, now))].long,
 		children,
 		checks: toCheck(scope),
 		claims: waitingClaims(scope)

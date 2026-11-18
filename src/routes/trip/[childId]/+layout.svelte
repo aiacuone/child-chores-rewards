@@ -21,4 +21,9 @@
 </main>
 
 <LiveUpdates version={data.version} />
-<StillThere name={child.name} colour={child.colour} rank={child.rank} />
+<StillThere
+	name={child.name}
+	colour={child.colour}
+	rank={child.rank}
+	after={data.autoReturnSeconds * 1000}
+/>

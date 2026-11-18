@@ -10,8 +10,8 @@
 	import DoneNotice from '#lib/components/DoneNotice.svelte';
 	import Planet from '#lib/components/Planet.svelte';
 	import { SAVE_FAILED, whoDoesIt, type ChoreRow, type Kid } from '#lib/chores.ts';
-	import { choreDay, repeatLabel } from '#lib/repeat.ts';
-	import { grownupFetch } from '#lib/grownup.svelte.ts';
+	import { repeatLabel } from '#lib/repeat.ts';
+	import { grownupFetch, grownupToday } from '#lib/grownup.svelte.ts';
 
 	const id = $derived(page.params.id);
 	let kids = $state<Kid[]>([]);
@@ -63,7 +63,7 @@
 {#if missing}
 	<p class="m-0 text-[18px] text-muted">Not found.</p>
 {:else if chore}
-	{@const repeats = repeatLabel(chore.repeat, choreDay(new Date()))}
+	{@const repeats = repeatLabel(chore.repeat, grownupToday())}
 	{#if page.url.searchParams.get('saved') === 'repeat'}
 		<DoneNotice
 			text="Saved · now repeats {repeats.replace(/^(Every|Monthly|Once)/, (w) => w.toLowerCase())}"

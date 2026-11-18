@@ -4,6 +4,7 @@ import { getDb } from '#lib/server/db/app.ts';
 import { ALERTS, familyTopic, sendAlert } from '#lib/server/alerts.ts';
 import { iDidIt, openStop } from '#lib/server/trip.ts';
 import type { Actions, PageServerLoad } from './$types';
+import { getSettings } from '#lib/server/settings.ts';
 
 // "Are you Mia?" (Confirm-Who.dc.html), after "I did it!". Like the stop page,
 // it only opens for the child's own unfinished stop today.
@@ -28,7 +29,7 @@ export const actions: Actions = {
 		if (!sent) redirect(303, `/trip/${child.id}`);
 		const topic = familyTopic(scope);
 		// A tap on the alert opens the PIN pad, then this chore's check screen.
-		if (topic) {
+		if (topic && getSettings(scope).alertChores) {
 			sendAlert(topic, {
 				...ALERTS.choreWaiting,
 				click: `${url.origin}/grown-up/check/${sent.copyId}`

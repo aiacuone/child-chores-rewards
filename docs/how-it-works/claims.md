@@ -94,7 +94,6 @@ Triggers bump `family.version` on every change to `reward_claim` (migration `001
 
 ## Temporary fixes
 
-- **The alert is always on** until Settings gives each alert a switch (#31).
 - A hand-out cannot be undone. Only chore accepts have an undo in the spec.
 
 ## Tests

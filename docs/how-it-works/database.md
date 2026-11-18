@@ -132,6 +132,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0015` adds the version triggers for it. Written by hand, like `0010`.
 - `0016` adds `hidden`, `skip_until` and `skip_open` to `chore` ([skip-hide.md](skip-hide.md)).
 - `0017` adds the `pin_reset` table ([recovery-email.md](recovery-email.md)).
+- `0018` adds the family's settings ([settings.md](settings.md)).
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

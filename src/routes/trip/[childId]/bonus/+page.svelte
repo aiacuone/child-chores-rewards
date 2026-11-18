@@ -6,7 +6,6 @@
 	import Rocket from '#lib/components/Rocket.svelte';
 	import SeeRewards from '#lib/components/SeeRewards.svelte';
 	import StarCount from '#lib/components/StarCount.svelte';
-	import { DAILY_BONUS } from '#lib/bonus.ts';
 
 	let { data } = $props();
 	const child = $derived(data.child);
@@ -90,7 +89,7 @@
 			Finish the whole trip
 		</h1>
 		<p class="m-0 text-center text-[18px] leading-[1.4] font-extrabold">
-			Do all {stops(total)} today and get <span class="text-amber">+{DAILY_BONUS} bonus stars</span>.
+			Do all {stops(total)} today and get <span class="text-amber">+{data.dailyBonus} bonus stars</span>.
 		</p>
 		<span
 			role="progressbar"

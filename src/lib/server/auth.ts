@@ -3,7 +3,7 @@
 // renewed while in use.
 import { createHash, randomBytes } from 'node:crypto';
 import type { Cookies } from '@sveltejs/kit';
-import { count, eq } from 'drizzle-orm';
+import { count, eq, and, inArray, ne } from 'drizzle-orm';
 import { schema, type Db } from './db';
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -34,7 +34,11 @@ export function isFirstRun(db: Db) {
  */
 export function signInGoogleUser(db: Db, profile: GoogleProfile) {
 	return db.transaction((tx) => {
-		const [found] = tx.select().from(schema.user).where(eq(schema.user.googleSub, profile.sub)).all();
+		const [found] = tx
+			.select()
+			.from(schema.user)
+			.where(eq(schema.user.googleSub, profile.sub))
+			.all();
 		if (found) {
 			if (found.email !== profile.email) {
 				const [clash] = tx
@@ -43,7 +47,10 @@ export function signInGoogleUser(db: Db, profile: GoogleProfile) {
 					.where(eq(schema.user.email, profile.email))
 					.all();
 				if (!clash)
-					tx.update(schema.user).set({ email: profile.email }).where(eq(schema.user.id, found.id)).run();
+					tx.update(schema.user)
+						.set({ email: profile.email })
+						.where(eq(schema.user.id, found.id))
+						.run();
 			}
 			return { id: found.id, created: false };
 		}
@@ -67,7 +74,9 @@ export function signInGoogleUser(db: Db, profile: GoogleProfile) {
 export function createSession(db: Db, userId: number, now = Date.now()) {
 	const token = randomBytes(32).toString('base64url');
 	const expiresAt = new Date(now + SESSION_TTL);
-	db.insert(schema.session).values({ id: hashToken(token), userId, expiresAt }).run();
+	db.insert(schema.session)
+		.values({ id: hashToken(token), userId, expiresAt })
+		.run();
 	return { token, expiresAt };
 }
 
@@ -99,10 +108,29 @@ export function validateSession(db: Db, token: string, now = Date.now()) {
 
 /** Sign out this device. */
 export function invalidateSession(db: Db, token: string) {
-	db.delete(schema.session).where(eq(schema.session.id, hashToken(token))).run();
+	db.delete(schema.session)
+		.where(eq(schema.session.id, hashToken(token)))
+		.run();
 }
 
-export function setSessionCookie(cookies: Cookies, token: string, expiresAt: Date, secure: boolean) {
+/** Sign out every other device in the family, whichever grown-up it belongs to. */
+export function signOutOtherDevices(db: Db, familyId: number, keepSessionId: string) {
+	const users = db
+		.select({ id: schema.user.id })
+		.from(schema.user)
+		.where(eq(schema.user.familyId, familyId));
+	return db
+		.delete(schema.session)
+		.where(and(inArray(schema.session.userId, users), ne(schema.session.id, keepSessionId)))
+		.run().changes;
+}
+
+export function setSessionCookie(
+	cookies: Cookies,
+	token: string,
+	expiresAt: Date,
+	secure: boolean
+) {
 	cookies.set(SESSION_COOKIE, token, {
 		path: '/',
 		httpOnly: true,

@@ -16,7 +16,7 @@
 		name: string;
 		colour: string;
 		rank: RankName;
-		/** No-touch time before going back, warning included. 1 minute by default; Settings comes with #31. */
+		/** No-touch time before going back, warning included. Set in Settings. */
 		after?: number;
 	} = $props();
 

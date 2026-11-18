@@ -32,6 +32,15 @@ export const family = sqliteTable('family', {
 	 * when to reload (ADR 0006, live.ts).
 	 */
 	version: integer('version').notNull().default(0),
+	/** Settings (src/lib/settings.ts has the allowed values). */
+	autoLockMinutes: integer('auto_lock_minutes').notNull().default(2),
+	autoReturnSeconds: integer('auto_return_seconds').notNull().default(60),
+	/** The daily reset, in minutes after midnight, Melbourne time. */
+	resetMinutes: integer('reset_minutes').notNull().default(360),
+	dailyBonus: integer('daily_bonus').notNull().default(20),
+	/** The two alerts a family can turn off. Safety alerts are always on. */
+	alertChores: integer('alert_chores', { mode: 'boolean' }).notNull().default(true),
+	alertRewards: integer('alert_rewards', { mode: 'boolean' }).notNull().default(true),
 	createdAt: createdAt()
 });
 

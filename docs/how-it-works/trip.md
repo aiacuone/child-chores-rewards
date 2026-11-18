@@ -57,7 +57,7 @@ Only `next` and `open` stops are links. Done and waiting stops cannot be opened,
 | Some | "2 of 5 stops · 3 more for +20 bonus stars" |
 | All | "5 of 5 stops", as on Trip complete |
 
-The +20 is `DAILY_BONUS` in `src/lib/bonus.ts`, until Settings makes it adjustable (#31).
+The +20 is the default bonus. Each family can change it in Settings ([settings.md](settings.md)).
 
 ### Step by step
 

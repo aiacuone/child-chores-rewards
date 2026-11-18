@@ -2,6 +2,7 @@
 	// A − value + row, as for Stars on New chore (Add-Stop.dc.html).
 	let {
 		label,
+		hint,
 		value = $bindable(),
 		min,
 		max,
@@ -11,6 +12,8 @@
 		show = (n: number) => String(n)
 	}: {
 		label: string;
+		/** A second line under the label. */
+		hint?: string;
 		value: number;
 		min: number;
 		max: number;
@@ -26,7 +29,10 @@
 </script>
 
 <div class="flex min-h-14 items-center gap-3 rounded-2xl bg-card px-3.5">
-	<span id="{id}-label" class="flex-1 font-black">{label}</span>
+	<span class="flex-1">
+		<span id="{id}-label" class="block font-black">{label}</span>
+		{#if hint}<span class="block text-[13px] font-bold text-muted">{hint}</span>{/if}
+	</span>
 	<button
 		type="button"
 		aria-label={less}

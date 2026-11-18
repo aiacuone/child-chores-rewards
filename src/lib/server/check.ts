@@ -12,7 +12,8 @@ import { addStars } from './stars';
 import { settleBonus, undoBonus } from './bonus';
 import { colourValue } from '../colours';
 import { UNDO_CHECK_SECONDS } from '../check';
-import { choreDay, repeatLabel } from '../repeat';
+import { repeatLabel } from '../repeat';
+import { familyDay } from './settings';
 
 /** The server allows undo a little longer, so a tap at 0:59 still counts. */
 const UNDO_GRACE_SECONDS = 10;
@@ -77,7 +78,7 @@ export function checkDetails(scope: FamilyScope, copyId: number, now = new Date(
 			name: chore.name,
 			icon: chore.icon,
 			stars: chore.stars,
-			repeats: repeatLabel(toRepeat(chore), choreDay(now))
+			repeats: repeatLabel(toRepeat(chore), familyDay(scope, now))
 		},
 		child: { id: child.id, name: child.name, colour: colourValue(child.colour) }
 	};

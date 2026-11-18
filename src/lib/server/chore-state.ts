@@ -9,8 +9,9 @@ import { settleFamilyBonuses } from './bonus';
 import { getChore } from './chores';
 import type { ChoreAction } from './forms/chores';
 import { tripStops, type StopState } from './trip';
-import { addDays, choreDay, daysBetween, isDue } from '../repeat';
+import { addDays, daysBetween, isDue } from '../repeat';
 import { SKIP_DATE, SKIP_DAYS, skipToday } from '../skip';
+import { familyDay } from './settings';
 
 /** A picked date outside the allowed range. */
 export class BadSkip extends Error {}
@@ -43,7 +44,7 @@ export function applyChoreAction(
 	now = new Date()
 ) {
 	if (!Number.isSafeInteger(choreId) || choreId <= 0) return false;
-	const set = changes(action, choreDay(now));
+	const set = changes(action, familyDay(scope, now));
 	return scope.db.transaction(() => {
 		const changed = scope.db
 			.update(schema.chore)
@@ -67,7 +68,7 @@ const STATE_WORDS: Record<StopState, string> = {
 export function choreToday(scope: FamilyScope, choreId: number, now = new Date()) {
 	const chore = getChore(scope, choreId, now);
 	if (!chore) return '';
-	const day = choreDay(now);
+	const day = familyDay(scope, now);
 	const away = [
 		...(chore.hidden ? ['Hidden from children'] : []),
 		...(chore.skip ? [skipToday(chore.skip, day)] : [])

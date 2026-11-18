@@ -8,9 +8,10 @@ import { and, eq, gte } from 'drizzle-orm';
 import { schema } from './db';
 import type { FamilyScope } from './family';
 import { toRepeat } from './chores';
-import { addDays, choreDay, isDue, repeatLabel, weekday, WEEKDAYS } from '../repeat';
+import { addDays, isDue, repeatLabel, weekday, WEEKDAYS } from '../repeat';
 import { activeSkip } from '../skip';
 import type { ChoreIconId } from '../chore-icons';
+import { familyDay } from './settings';
 
 /** Done and Grown-up checking count towards "2 of 5"; Up next is the first open stop. */
 export type StopState = 'done' | 'waiting' | 'next' | 'open';
@@ -77,7 +78,7 @@ const ORDER = { completed: 0, waiting: 1, pending: 2 } as const;
  * for a grown-up, then the rest. The first of the rest is Up next.
  */
 export function tripStops(scope: FamilyScope, childId: number, now = new Date()): TripStop[] {
-	const day = choreDay(now);
+	const day = familyDay(scope, now);
 	const today = copies(scope, childId).filter(
 		(c) => c.status !== 'skipped' && !away(c, day) && isDue(c.repeat, day)
 	);
@@ -114,7 +115,7 @@ function nextDue(c: Copy, today: string) {
 
 /** The child's chores that are not due today but are due in the next 6 days, soonest first. */
 export function comingUp(scope: FamilyScope, childId: number, now = new Date()): ComingUp[] {
-	const day = choreDay(now);
+	const day = familyDay(scope, now);
 	return copies(scope, childId)
 		.filter((c) => !isDue(c.repeat, day))
 		.map((c) => ({ c, next: nextDue(c, day) }))
@@ -135,7 +136,7 @@ export function comingUp(scope: FamilyScope, childId: number, now = new Date()):
  */
 export function openStop(scope: FamilyScope, childId: number, choreId: number, now = new Date()) {
 	if (!Number.isSafeInteger(choreId) || choreId <= 0) return null;
-	const day = choreDay(now);
+	const day = familyDay(scope, now);
 	const stop = copies(scope, childId).find((c) => c.chore.id === choreId);
 	if (!stop || stop.status !== 'pending' || away(stop, day) || !isDue(stop.repeat, day))
 		return null;
@@ -198,7 +199,8 @@ const undoable = (status: string, doneAt: Date | null, now: Date) =>
  */
 export function justSent(scope: FamilyScope, childId: number, choreId: number, now = new Date()) {
 	const copy = copies(scope, childId).find((c) => c.chore.id === choreId);
-	if (!copy || away(copy, choreDay(now)) || !undoable(copy.status, copy.doneAt, now)) return null;
+	if (!copy || away(copy, familyDay(scope, now)) || !undoable(copy.status, copy.doneAt, now))
+		return null;
 	const left = UNDO_SECONDS - Math.floor((now.getTime() - copy.doneAt!.getTime()) / 1000);
 	return { choreId, name: copy.chore.name, secondsLeft: Math.max(left, 0) };
 }

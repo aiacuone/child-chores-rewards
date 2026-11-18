@@ -89,7 +89,7 @@ Pages read it through `grownup` (read-only getters), and change it only through 
 - Any touch, key or scroll calls `touch()`, except in the last 10 seconds. Then "Locking soon" shows, and only "Keep going" counts.
 - At 0 the bar calls `lock()`.
 - **Leaving the grown-up pages** (for example Back to Who's flying) also calls `lock()`, from `src/routes/grown-up/+layout.svelte`. A child handed the device then cannot tap "I'm a grown-up" and walk straight back in.
-- The times are in `src/lib/grownup-times.ts`, shared by the page and the server. Settings will make the 2 minutes adjustable (#31).
+- The times are in `src/lib/grownup-times.ts`, shared by the page and the server. The 2 minutes is the default: each family can choose 1, 2 or 5 in Settings ([settings.md](settings.md)).
 
 ## What is in `src/lib/server/grownup.ts`
 

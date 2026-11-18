@@ -2,6 +2,7 @@
 	// The chore form: New chore (Add-Stop.dc.html) and Edit chore (Edit-Stop.dc.html).
 	// Temporary fix: no "Use my own photo" until #36.
 	import ChildPicker from '#lib/components/ChildPicker.svelte';
+	import { grownupToday } from '#lib/grownup.svelte.ts';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
 	import Stepper from '#lib/components/Stepper.svelte';
 	import {
@@ -46,7 +47,7 @@
 
 	// Every kind keeps its own setting, so switching Weekly to Monthly and back
 	// keeps the days ticked. Each starts from today.
-	const today = choreDay(new Date());
+	const today = grownupToday();
 	const days = onceChoices(today);
 	const startRepeat = () => ({
 		kind: initial.repeat.kind,

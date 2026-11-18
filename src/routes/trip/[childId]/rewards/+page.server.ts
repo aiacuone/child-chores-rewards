@@ -5,6 +5,7 @@ import { ALERTS, familyTopic, sendAlert } from '#lib/server/alerts.ts';
 import { claimNotice, claimReward, clearClaimNotices } from '#lib/server/claims.ts';
 import { childRewards } from '#lib/server/rewards.ts';
 import type { Actions, PageServerLoad } from './$types';
+import { getSettings } from '#lib/server/settings.ts';
 
 const wholeNumber = (raw: FormDataEntryValue | string | null) =>
 	typeof raw === 'string' && /^\d{1,9}$/.test(raw) ? Number(raw) : NaN;
@@ -30,7 +31,7 @@ export const actions: Actions = {
 		if (!claim) redirect(303, `/trip/${child.id}/rewards`);
 		const topic = familyTopic(scope);
 		// A tap on the alert opens the PIN pad, then this claim's hand-out screen.
-		if (claim.isNew && topic) {
+		if (claim.isNew && topic && getSettings(scope).alertRewards) {
 			sendAlert(topic, {
 				...ALERTS.rewardClaimed,
 				click: `${url.origin}/grown-up/claim/${claim.id}`

@@ -6,12 +6,13 @@
 	import { page } from '$app/state';
 	import BackHeader from '#lib/components/BackHeader.svelte';
 	import { SAVE_FAILED, type ChoreRow, type Kid } from '#lib/chores.ts';
-	import { grownupFetch } from '#lib/grownup.svelte.ts';
-	import { addDays, choreDay } from '#lib/repeat.ts';
+	import { grownup, grownupFetch, grownupToday } from '#lib/grownup.svelte.ts';
+	import { timeLabel } from '#lib/settings.ts';
+	import { addDays } from '#lib/repeat.ts';
 	import { backOn, SKIP_DATE, SKIP_DAYS } from '#lib/skip.ts';
 
 	const id = $derived(page.params.id);
-	const today = choreDay(new Date());
+	const today = grownupToday();
 	let chore = $state<ChoreRow | null>(null);
 	let kids = $state<Kid[]>([]);
 	let missing = $state(false);
@@ -81,7 +82,7 @@
 		onclick={() => skip({ action: 'skip', length: 'today' })}
 	>
 		<span class="text-[16px] font-black">Today only</span>
-		<span class="text-[13px] font-bold text-muted">Back tomorrow at 6:00 am</span>
+		<span class="text-[13px] font-bold text-muted">Back tomorrow at {timeLabel(grownup.resetMinutes)}</span>
 	</button>
 	{#each ['2', '3'] as const as length (length)}
 		<button
