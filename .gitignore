@@ -21,3 +21,6 @@ __pycache__/
 # Playwright
 /test-results
 /playwright-report
+
+# Talking points (personal notes)
+/talking-points
