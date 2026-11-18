@@ -72,7 +72,6 @@ Helpers inside the file:
 
 - **Skip and hide (#29)** change who is on the trip, so they must call `settleFamilyBonuses` too, as the chore edit does. So must removing a child (#32).
 - **Undo across 6:00 am:** `undoBonus` looks for the bonus of the chore day at the moment of the undo. An accept at 5:59 am undone at 6:00 am, for a chore not due that day, would remove the accept's stars but leave the earlier day's bonus. The reset would normally have put a due chore back to Pending first, which makes the undo refuse. It is a one-minute window and is left as it is.
-- "See my rewards" on Trip complete waits for the Rewards tab (#26).
 
 ## Tests
 

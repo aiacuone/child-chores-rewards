@@ -56,3 +56,33 @@ export async function addChores(
 	await page.request.post('/api/grown-up/lock', { headers });
 	return { mia, ids };
 }
+
+/** Type the grown-up PIN on the pad. */
+export async function typePin(page: Page, pin = TEST_PIN) {
+	for (const d of pin) await page.getByRole('button', { name: d, exact: true }).click();
+}
+
+/**
+ * Mia sends a stop with "I did it!" and a grown-up accepts it through the API.
+ * `as` is the test user, `token` a grown-up token from /api/grown-up/unlock.
+ */
+export async function acceptStop(
+	page: Page,
+	as: string,
+	childId: number,
+	choreId: number,
+	token: string
+) {
+	await page.goto(`/trip/${childId}/stop/${choreId}/confirm`);
+	await page.getByRole('button', { name: /^Yes, I’m / }).click();
+	await expect(page.getByRole('status')).toBeVisible();
+	const { alerts } = (await (await page.request.get(`/test/outbox?as=${as}`)).json()) as {
+		alerts: { headers: Record<string, string> }[];
+	};
+	const copy = alerts.at(-1)!.headers.Click.split('/').pop();
+	const res = await page.request.post(`/api/grown-up/checks/${copy}`, {
+		headers: { origin: BASE, 'content-type': 'application/json', 'x-grown-up': token },
+		data: { action: 'accept' }
+	});
+	expect(res.status()).toBe(204);
+}

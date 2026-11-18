@@ -1,25 +1,7 @@
-import { expect, test, type Page } from '@playwright/test';
-import { BASE, TEST_PIN, addChores, expectAccessible, signIn } from './helpers';
+import { expect, test } from '@playwright/test';
+import { BASE, TEST_PIN, acceptStop, addChores, expectAccessible, signIn } from './helpers';
 
 // The daily bonus and the end of the trip (#25).
-
-type SentAlert = { headers: Record<string, string> };
-
-/** Mia sends a stop, and a grown-up accepts it through the API. */
-async function finish(page: Page, mia: number, choreId: number, token: string) {
-	await page.goto(`/trip/${mia}/stop/${choreId}/confirm`);
-	await page.getByRole('button', { name: 'Yes, I’m Mia' }).click();
-	await expect(page.getByRole('status')).toBeVisible();
-	const { alerts } = (await (await page.request.get('/test/outbox?as=bonus-flow')).json()) as {
-		alerts: SentAlert[];
-	};
-	const copy = alerts.at(-1)!.headers.Click.split('/').pop();
-	const res = await page.request.post(`/api/grown-up/checks/${copy}`, {
-		headers: { origin: BASE, 'content-type': 'application/json', 'x-grown-up': token },
-		data: { action: 'accept' }
-	});
-	expect(res.status()).toBe(204);
-}
 
 test('finishing every stop earns the bonus and completes the trip', async ({ page }) => {
 	await signIn(page, { as: 'bonus-flow' });
@@ -44,8 +26,8 @@ test('finishing every stop earns the bonus and completes the trip', async ({ pag
 	const { token } = await (
 		await page.request.post('/api/grown-up/unlock', { data: { pin: TEST_PIN } })
 	).json();
-	await finish(page, mia, ids['Make your bed'], token);
-	await finish(page, mia, ids['Set the table'], token);
+	await acceptStop(page, 'bonus-flow', mia, ids['Make your bed'], token);
+	await acceptStop(page, 'bonus-flow', mia, ids['Set the table'], token);
 
 	// After: trip complete, with 10 + 10 + 20 stars.
 	await page.goto(`/trip/${mia}`);

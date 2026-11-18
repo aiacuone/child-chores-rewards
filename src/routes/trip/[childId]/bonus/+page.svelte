@@ -1,9 +1,10 @@
 <script lang="ts">
 	// The bonus planet (Child-Bonus.dc.html), and "Trip complete!" once the
-	// daily bonus is earned (Space-Child-AllDone.dc.html). Temporary fix: no
-	// "See my rewards" until #26.
+	// daily bonus is earned (Space-Child-AllDone.dc.html).
+	import BackArrow from '#lib/components/BackArrow.svelte';
 	import Planet from '#lib/components/Planet.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
+	import SeeRewards from '#lib/components/SeeRewards.svelte';
 	import StarCount from '#lib/components/StarCount.svelte';
 	import { DAILY_BONUS } from '#lib/bonus.ts';
 
@@ -30,25 +31,6 @@
 	<title>Rocket Rewards: {data.bonus ? 'Trip complete' : 'Bonus stars'}</title>
 </svelte:head>
 
-{#snippet back(href: string)}
-	<a
-		{href}
-		aria-label="Back"
-		class="relative z-[3] flex size-12 flex-none items-center justify-center rounded-full bg-card text-ink"
-	>
-		<svg
-			aria-hidden="true"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2.4"
-			stroke-linecap="round"
-			stroke-linejoin="round"><path d="M15 5l-7 7 7 7" /></svg
-		>
-	</a>
-{/snippet}
 
 {#if data.bonus}
 	<div class="relative z-[2] mx-auto flex max-w-[420px] flex-col gap-4 px-[22px] pt-[26px] pb-10">
@@ -64,7 +46,7 @@
 				><path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.2 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z" /></svg
 			>
 		{/each}
-		{@render back(trip)}
+		<BackArrow href={trip} />
 		<div class="relative mx-auto -mt-10 h-[280px] w-[200px]">
 			<div class="absolute top-[100px] left-1/2 -translate-x-1/2">
 				<Planet size={170} body="var(--color-bonus-planet)" spots="#c69437" ring="#ffd951" />
@@ -89,15 +71,18 @@
 		>
 			<StarCount stars={child.stars} size={20} />
 		</span>
-		<a
-			href="/"
-			class="mt-2 flex min-h-14 items-center justify-center rounded-[20px] border-2 border-line bg-card font-heading text-[19px]"
-			>Back to Who’s flying</a
-		>
+		<div class="mt-2 flex flex-col gap-2.5">
+			<SeeRewards href="/trip/{child.id}/rewards" />
+			<a
+				href="/"
+				class="flex min-h-14 items-center justify-center rounded-[20px] border-2 border-line bg-card font-heading text-[19px]"
+				>Back to Who’s flying</a
+			>
+		</div>
 	</div>
 {:else}
 	<div class="relative z-[2] mx-auto flex max-w-[420px] flex-col gap-4 px-[22px] pt-[26px] pb-10">
-		{@render back(trip)}
+		<BackArrow href={trip} />
 		<div class="mx-auto -mt-6">
 			<Planet size={170} body="var(--color-bonus-planet)" spots="#c69437" ring="#ffd951" />
 		</div>

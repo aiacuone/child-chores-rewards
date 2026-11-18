@@ -82,11 +82,11 @@ Mission control, the Chores tab and the check screen pass `onchange={load}` to `
 
 - "Wednesday · 2 of 3 stops done today": done and waiting stops count, for every child (`tripStops`).
 - "N stops to check" lists every one. With one, it opens that check. With more, it opens the Chores tab.
-- Each child's row: the count, a labelled progress bar (teal done, yellow waiting, the rest track blue), and "Next stop: … · 128 stars saved", "All done today · …" or "Nothing to do today · …".
+- Each child's row: the count, a labelled progress bar (teal done, yellow waiting, the rest track blue), and "Next stop: … · 128 stars saved", "All done today · reached Park trip" (the dearest reward the child can afford, or "· 128 stars saved" when none) or "Nothing to do today · …".
 
 ## Temporary fixes
 
-- "1 reward to hand out" and "Add reward" (#26, #27), and "· reached Park trip" (#26).
+- "1 reward to hand out" (#27).
 
 ## Tests
 

@@ -1,14 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
-import { BASE, TEST_PIN, addChores, expectAccessible, signIn } from './helpers';
+import { BASE, TEST_PIN, addChores, expectAccessible, signIn, typePin } from './helpers';
 
 // The grown-up check (#24): accept with undo, send back with a message, and
 // "That wasn't Mia". A tablet shows Mia's trip while a phone answers.
 
 type SentAlert = { topic: string; headers: Record<string, string>; body: string };
-
-async function typePin(page: Page) {
-	for (const d of TEST_PIN) await page.getByRole('button', { name: d, exact: true }).click();
-}
 
 /** Mia taps "I did it!" on a stop and confirms. */
 async function iDidIt(tablet: Page, name: string) {

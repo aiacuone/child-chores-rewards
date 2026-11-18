@@ -8,6 +8,7 @@ import { forFamily } from '#lib/server/family.ts';
 import { childCards } from '#lib/server/flying.ts';
 import { requireGrownUp } from '#lib/server/grownup.ts';
 import { familyVersion } from '#lib/server/live.ts';
+import { reachedReward } from '#lib/server/rewards.ts';
 import { tripStops } from '#lib/server/trip.ts';
 import { choreDay, weekday, WEEKDAYS } from '#lib/repeat.ts';
 import type { RequestHandler } from './$types';
@@ -22,7 +23,9 @@ export const GET: RequestHandler = (event) => {
 		return {
 			...child,
 			states: stops.map((s) => s.state),
-			next: stops.find((s) => s.state === 'next')?.name ?? null
+			next: stops.find((s) => s.state === 'next')?.name ?? null,
+			/** The dearest reward they can afford now, for "reached Park trip". */
+			reached: reachedReward(scope, child.id)?.name ?? null
 		};
 	});
 	return json({

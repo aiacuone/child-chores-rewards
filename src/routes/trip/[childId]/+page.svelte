@@ -6,12 +6,13 @@
 	// due (Space-Child-Empty.dc.html). The empty day keeps the name header, because
 	// the spec keeps each child's name and "Not Mia? Switch" on their trip screens.
 	// The bonus planet opens the bonus page. Once every stop is finished the
-	// count reads "5 of 5 stops", as on Trip complete. Temporary fix: the star
-	// count opens nothing and "See my rewards" is left out until #26.
+	// count reads "5 of 5 stops", as on Trip complete. The star count opens My
+	// rewards, as does "See my rewards" on the empty day.
 	import { enhance } from '$app/forms';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
 	import Planet from '#lib/components/Planet.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
+	import SeeRewards from '#lib/components/SeeRewards.svelte';
 	import StarCount from '#lib/components/StarCount.svelte';
 	import { DAILY_BONUS } from '#lib/bonus.ts';
 	import { asSaid } from '#lib/check.ts';
@@ -106,9 +107,12 @@
 				>Not {child.name}? Switch</a
 			>
 		</span>
-		<span class="inline-flex min-h-11 items-center rounded-full bg-card px-3.5 text-[16px]">
+		<a
+			href="/trip/{child.id}/rewards"
+			class="inline-flex min-h-11 items-center rounded-full bg-card px-3.5 text-[16px]"
+		>
 			<StarCount stars={child.stars} size={18} />
-		</span>
+		</a>
 	</div>
 
 {#if stops.length === 0}
@@ -125,6 +129,9 @@
 		<p class="m-0 text-center text-[18px] leading-[1.4] font-extrabold">
 			Enjoy your day. New stops arrive tomorrow morning.
 		</p>
+		<div class="mt-2 w-full">
+			<SeeRewards href="/trip/{child.id}/rewards" />
+		</div>
 	</div>
 {:else}
 	<div

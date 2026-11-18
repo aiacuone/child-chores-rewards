@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Who's flying? (design/screens/Main.dc.html, R-Main-Tablet.dc.html)
 	// Left out until later items: the camera badge on each rocket (#34), and the
-	// progress bar and reward line on each tile (#22, #26).
+	// progress bar and reward line on each tile (the spec has no rule for them yet).
 	import { onMount } from 'svelte';
 	import Planet from '#lib/components/Planet.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';

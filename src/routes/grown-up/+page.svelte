@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Mission control (Parent-Home.dc.html): today's progress, the chores to
-	// check, and each child's trip. Temporary fixes: "1 reward to hand out" and
-	// "Add reward" wait for #26 and #27, and "· reached Park trip" for #26.
+	// check, and each child's trip. Temporary fix: "1 reward to hand out" waits
+	// for #27.
 	import { onMount } from 'svelte';
 	import LiveUpdates from '#lib/components/LiveUpdates.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
@@ -13,7 +13,7 @@
 	type Home = {
 		version: number;
 		day: string;
-		children: (ChildCard & { states: StopState[]; next: string | null })[];
+		children: (ChildCard & { states: StopState[]; next: string | null; reached: string | null })[];
 		checks: ReturnType<typeof toCheck>;
 	};
 	let home = $state<Home | null>(null);
@@ -106,7 +106,7 @@
 					{#if child.next}
 						Next stop: {child.next} · {child.stars} stars saved
 					{:else if child.states.length}
-						All done today · {child.stars} stars saved
+						All done today · {child.reached ? `reached ${child.reached}` : `${child.stars} stars saved`}
 					{:else}
 						Nothing to do today · {child.stars} stars saved
 					{/if}
@@ -115,21 +115,40 @@
 		</a>
 	{/each}
 
-	<a
-		href="/grown-up/chores/new"
-		class="flex min-h-14 items-center justify-center gap-2 rounded-[20px] border-2 border-line bg-card font-heading text-[19px]"
-	>
-		<svg
-			aria-hidden="true"
-			width="22"
-			height="22"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2.4"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			class="flex-none"><path d="M12 5v14M5 12h14" /></svg
-		>Add chore
-	</a>
+	<div class="grid grid-cols-2 gap-2.5">
+		<a
+			href="/grown-up/chores/new"
+			class="flex min-h-14 items-center justify-center gap-2 rounded-[20px] border-2 border-line bg-card font-heading text-[19px]"
+		>
+			<svg
+				aria-hidden="true"
+				width="22"
+				height="22"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2.4"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="flex-none"><path d="M12 5v14M5 12h14" /></svg
+			>Add chore
+		</a>
+		<a
+			href="/grown-up/rewards/new"
+			class="flex min-h-14 items-center justify-center gap-2 rounded-[20px] border-2 border-line bg-card font-heading text-[19px]"
+		>
+			<svg
+				aria-hidden="true"
+				width="22"
+				height="22"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2.4"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="flex-none"><path d="M12 5v14M5 12h14" /></svg
+			>Add reward
+		</a>
+	</div>
 {/if}

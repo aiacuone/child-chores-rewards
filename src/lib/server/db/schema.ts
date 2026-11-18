@@ -163,6 +163,53 @@ export const chore = sqliteTable(
 );
 
 /**
+ * A reward in the family's library (the Rewards tab, My rewards). It may have
+ * no children assigned. Claims come with #27.
+ */
+export const reward = sqliteTable(
+	'reward',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		name: text('name').notNull(),
+		/** Stars needed. A child can claim it when their balance reaches this. */
+		cost: integer('cost').notNull(),
+		/** The planet's colour, one of PLANETS in src/lib/reward-planets.ts. */
+		colour: text('colour', { enum: ['pink', 'purple', 'green', 'tan', 'blue'] })
+			.notNull()
+			.default('pink'),
+		createdAt: createdAt()
+	},
+	(t) => [index('reward_family_idx').on(t.familyId)]
+);
+
+/**
+ * Which children a reward is for ("Who does it?"). Each child it is for gets
+ * a meter. Unassigning a child removes the row; stars are never touched.
+ */
+export const rewardChild = sqliteTable(
+	'reward_child',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		rewardId: integer('reward_id')
+			.notNull()
+			.references(() => reward.id, { onDelete: 'cascade' }),
+		childId: integer('child_id')
+			.notNull()
+			.references(() => child.id, { onDelete: 'cascade' })
+	},
+	(t) => [
+		index('reward_child_family_idx').on(t.familyId),
+		uniqueIndex('reward_child_reward_child_idx').on(t.rewardId, t.childId)
+	]
+);
+
+/**
  * One row per family per chore day the daily reset ran (ADR 0010). The unique
  * index makes each day's reset run once, and the rows show a missed or late one.
  */

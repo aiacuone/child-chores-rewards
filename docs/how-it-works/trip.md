@@ -16,6 +16,7 @@ A child's trip is the path of today's chores, from the home planet to the bonus 
 | `/trip/<child>/stop/<chore>/confirm` | Confirm-Who | "Are you Mia?" before the stop is sent. |
 | `/trip/<child>/coming-up` | Child-Coming | Chores due on the next 6 days instead of today. |
 | `/trip/<child>/bonus` | Child-Bonus, Space-Child-AllDone | "Finish the whole trip" with a progress bar, or "Trip complete!" once the bonus is earned. |
+| `/trip/<child>/rewards` | Child-Rewards | My rewards, with a meter for each reward ([rewards.md](rewards.md)). Opened from the star count and "See my rewards". |
 
 `src/routes/trip/[childId]/+layout.server.ts` finds the child for all of them. It refuses with 404 when the id is not a whole number or the child is not in the signed-in family, so a page below it never runs for another family's child. `+layout.svelte` adds the stars background, the child's colour along the top, the return to Who's flying when nobody touches the screen (`StillThere`), and live updates (`LiveUpdates`).
 

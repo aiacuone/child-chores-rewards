@@ -1,6 +1,7 @@
 <script lang="ts">
 	// The chore form: New chore (Add-Stop.dc.html) and Edit chore (Edit-Stop.dc.html).
 	// Temporary fix: no "Use my own photo" until #36.
+	import ChildPicker from '#lib/components/ChildPicker.svelte';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
 	import Stepper from '#lib/components/Stepper.svelte';
 	import {
@@ -80,12 +81,6 @@
 
 	function toggleDay(d: number) {
 		r.weekDays = r.weekDays.includes(d) ? r.weekDays.filter((x) => x !== d) : [...r.weekDays, d];
-	}
-
-	function toggle(id: number) {
-		chore.childIds = chore.childIds.includes(id)
-			? chore.childIds.filter((c) => c !== id)
-			: [...chore.childIds, id];
 	}
 
 	async function submit(e: SubmitEvent) {
@@ -169,42 +164,7 @@
 		more="More stars"
 	/>
 
-	<div class="flex flex-col gap-1.5">
-		<span id="who-label" class="text-[14px] font-black text-muted">Who does it?</span>
-		<div role="group" aria-labelledby="who-label" class="flex flex-wrap gap-2">
-			{#each kids as kid (kid.id)}
-				{@const on = chore.childIds.includes(kid.id)}
-				<button
-					type="button"
-					aria-pressed={on}
-					onclick={() => toggle(kid.id)}
-					class={[
-						'flex min-h-[50px] flex-1 items-center justify-center gap-2 rounded-2xl border-2 font-black',
-						on ? 'text-ink' : 'border-line bg-card text-muted'
-					]}
-					style={on
-						? `border-color:${kid.colour};background:color-mix(in srgb, ${kid.colour} 22%, transparent)`
-						: undefined}
-				>
-					{#if on}
-						<svg
-							aria-hidden="true"
-							width="18"
-							height="18"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke={kid.colour}
-							stroke-width="3"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="flex-none"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg
-						>
-					{/if}
-					{kid.name}
-				</button>
-			{/each}
-		</div>
-	</div>
+	<ChildPicker {kids} bind:selected={chore.childIds} />
 
 	<fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
 		<legend class="mb-1.5 p-0 text-[14px] font-black text-muted">Repeats</legend>
