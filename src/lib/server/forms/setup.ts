@@ -90,7 +90,10 @@ const email = z.email().max(254);
 
 /** Read the recovery email. It is refused, not cleaned, when it is not a plain address. */
 export function parseEmail(form: FormData): Result<string> {
-	const raw = form.get('email');
+	return parseEmailValue(form.get('email'));
+}
+
+export function parseEmailValue(raw: unknown): Result<string> {
 	if (typeof raw !== 'string') return { ok: false, message: MESSAGES.badEmail };
 	const parsed = email.safeParse(raw.trim());
 	if (!parsed.success) return { ok: false, message: MESSAGES.badEmail };

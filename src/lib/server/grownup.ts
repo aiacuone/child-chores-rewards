@@ -28,10 +28,12 @@ export const GROWNUP_HEADER = 'x-grown-up';
 const hashToken = (token: string) => createHash('sha256').update(token).digest('hex');
 const isToken = (t: unknown): t is string => typeof t === 'string' && /^[A-Za-z0-9_-]{43}$/.test(t);
 
-export type UnlockResult =
-	| { ok: true; token: string }
+type PinRefused =
 	| { ok: false; reason: 'wrong' }
 	| { ok: false; reason: 'locked'; until: number; firstLock: boolean };
+
+export type PinResult = { ok: true } | PinRefused;
+export type UnlockResult = { ok: true; token: string } | PinRefused;
 
 function pinState(db: Pick<Db, 'select'>, familyId: number) {
 	const [row] = db
@@ -53,6 +55,49 @@ export function padLockedUntil(scope: FamilyScope, now = Date.now()) {
 	return until > now ? until : null;
 }
 
+/** Check a PIN against the family's hash, counting a wrong one towards the lock. */
+function tryPin(
+	tx: Pick<Db, 'select' | 'update'>,
+	familyId: number,
+	pin: string,
+	now: number
+): PinResult {
+	const row = pinState(tx, familyId);
+	if (!row?.pinHash) return { ok: false, reason: 'wrong' };
+	const lockedUntil = row.lockedUntil?.getTime() ?? 0;
+	if (lockedUntil > now)
+		return { ok: false, reason: 'locked', until: lockedUntil, firstLock: false };
+
+	const family = eq(schema.family.id, familyId);
+	if (verifyPin(pin, row.pinHash)) {
+		tx.update(schema.family)
+			.set({ pinFails: 0, pinLockStage: 0, pinLockedUntil: null })
+			.where(family)
+			.run();
+		return { ok: true };
+	}
+
+	const fails = row.stage === 0 ? row.fails + 1 : row.fails;
+	const stage =
+		row.stage > 0 ? Math.min(row.stage + 1, LOCK_STEPS.length) : fails >= FAILS_BEFORE_LOCK ? 1 : 0;
+	const until = stage > 0 ? now + LOCK_STEPS[stage - 1] : null;
+	tx.update(schema.family)
+		.set({
+			pinFails: fails,
+			pinLockStage: stage,
+			pinLockedUntil: until === null ? null : new Date(until)
+		})
+		.where(family)
+		.run();
+	if (until === null) return { ok: false, reason: 'wrong' };
+	return { ok: false, reason: 'locked', until, firstLock: stage === 1 };
+}
+
+/** Check the PIN again inside grown-up mode. Wrong tries count towards the same lock. */
+export function checkPin(scope: FamilyScope, pin: string, now = Date.now()): PinResult {
+	return scope.db.transaction((tx) => tryPin(tx, scope.familyId, pin, now));
+}
+
 /** Check a PIN typed on this device's pad. */
 export function unlock(
 	scope: FamilyScope,
@@ -61,48 +106,18 @@ export function unlock(
 	now = Date.now()
 ): UnlockResult {
 	return scope.db.transaction((tx) => {
-		const row = pinState(tx, scope.familyId);
-		if (!row?.pinHash) return { ok: false, reason: 'wrong' } as const;
-		const lockedUntil = row.lockedUntil?.getTime() ?? 0;
-		if (lockedUntil > now)
-			return { ok: false, reason: 'locked', until: lockedUntil, firstLock: false };
-
-		const family = eq(schema.family.id, scope.familyId);
-		if (verifyPin(pin, row.pinHash)) {
-			tx.update(schema.family)
-				.set({ pinFails: 0, pinLockStage: 0, pinLockedUntil: null })
-				.where(family)
-				.run();
-			const token = randomBytes(32).toString('base64url');
-			tx.insert(schema.grownupToken)
-				.values({
-					id: hashToken(token),
-					familyId: scope.familyId,
-					sessionId,
-					expiresAt: new Date(now + AUTO_LOCK + GRACE)
-				})
-				.run();
-			return { ok: true, token };
-		}
-
-		const fails = row.stage === 0 ? row.fails + 1 : row.fails;
-		const stage =
-			row.stage > 0
-				? Math.min(row.stage + 1, LOCK_STEPS.length)
-				: fails >= FAILS_BEFORE_LOCK
-					? 1
-					: 0;
-		const until = stage > 0 ? now + LOCK_STEPS[stage - 1] : null;
-		tx.update(schema.family)
-			.set({
-				pinFails: fails,
-				pinLockStage: stage,
-				pinLockedUntil: until === null ? null : new Date(until)
+		const result = tryPin(tx, scope.familyId, pin, now);
+		if (!result.ok) return result;
+		const token = randomBytes(32).toString('base64url');
+		tx.insert(schema.grownupToken)
+			.values({
+				id: hashToken(token),
+				familyId: scope.familyId,
+				sessionId,
+				expiresAt: new Date(now + AUTO_LOCK + GRACE)
 			})
-			.where(family)
 			.run();
-		if (until === null) return { ok: false, reason: 'wrong' };
-		return { ok: false, reason: 'locked', until, firstLock: stage === 1 };
+		return { ok: true, token };
 	});
 }
 

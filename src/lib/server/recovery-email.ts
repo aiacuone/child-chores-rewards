@@ -81,17 +81,39 @@ export function linkEmail(db: Db, token: unknown, now = Date.now()) {
 	return openLink(db, token, now)?.email ?? null;
 }
 
-/** Confirm the link: its address becomes the family's recovery email. False if it no longer works. */
+/** The family's confirmed recovery email, or null. */
+export function recoveryEmail(scope: FamilyScope) {
+	const [row] = scope.db
+		.select({ email: schema.family.recoveryEmail })
+		.from(schema.family)
+		.where(eq(schema.family.id, scope.familyId))
+		.all();
+	return row?.email ?? null;
+}
+
+/**
+ * Confirm the link: its address becomes the family's recovery email, and the
+ * old one stops being used only now. Null if the link no longer works.
+ * `changed` is true when it replaced a different address, not on the first one.
+ */
 export function confirmLink(db: Db, token: unknown, now = Date.now()) {
 	return db.transaction((tx) => {
 		const row = openLink(tx, token, now);
-		if (!row) return false;
+		if (!row) return null;
+		const [family] = tx
+			.select({ email: schema.family.recoveryEmail })
+			.from(schema.family)
+			.where(eq(schema.family.id, row.familyId))
+			.all();
 		tx.update(schema.family)
 			.set({ recoveryEmail: row.email })
 			.where(eq(schema.family.id, row.familyId))
 			.run();
 		cancelOpenLinks(tx, row.familyId, now);
-		return true;
+		return {
+			familyId: row.familyId,
+			changed: family.email !== null && family.email !== row.email
+		};
 	});
 }
 

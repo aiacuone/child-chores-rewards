@@ -67,6 +67,8 @@ Grown-up mode is protected by a PIN and locks itself, so a child cannot be left 
 - **Forgot PIN:** the screen shows the recovery email partly hidden (for example j•••@example.com). It emails a one-time 6-digit code, never the PIN itself, and only to that address. The code leads to a "Set a new PIN" screen.
 - **Wrong PIN:** a wrong PIN shows "Wrong PIN, try again." After 5 wrong tries in a row the PIN pad locks with a countdown ("Try again in 0:30"): 30 seconds, then 1 minute, then 5 minutes, then 15 minutes for every further wrong try. The count is per family, not per device, and the right PIN resets it. "Forgot PIN?" still works while the pad is locked.
 - **Wrong reset code:** each emailed code allows 5 wrong tries. After that it is cancelled and a new code has to be sent.
+- **Reset code details** (decided in #30): a code lasts 15 minutes, a newer code replaces it, and a family can send 5 an hour. The right code clears the pad's lock and ends every grown-up session. With no confirmed recovery email, Forgot PIN says so and sends nothing.
+- **Recovery email changed alert** (decided in #30): sent when the new address is confirmed, because that is when it changes. Confirming the first address sends none. Body: "The recovery email was changed. If this wasn't you, open the app and check it."
 - **Safety alerts:** every grown-up gets an ntfy notification when a reset code is sent, when the recovery email is changed, and when the PIN pad first locks after wrong tries (once per run of wrong tries).
 
 ## Notifications with ntfy

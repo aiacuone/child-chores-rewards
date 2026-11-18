@@ -17,6 +17,7 @@ The app keeps everything in one SQLite file ([ADR 0002](../adr/0002-database.md)
 | `reward` | A reward in the family's library ([rewards.md](rewards.md)). |
 | `reward_child` | One child a reward is for. |
 | `reward_claim` | A child asking for a reward, and the grown-up's answer ([claims.md](claims.md)). |
+| `pin_reset` | An emailed code for setting a new PIN ([recovery-email.md](recovery-email.md)). |
 | `checked_notice` | A "checked!" message waiting to show on a child's trip ([checking.md](checking.md)). |
 
 ## How tables link: `family_id`
@@ -130,6 +131,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0014` adds the `reward_claim` table, with a partial unique index so a child has one waiting claim per reward.
 - `0015` adds the version triggers for it. Written by hand, like `0010`.
 - `0016` adds `hidden`, `skip_until` and `skip_open` to `chore` ([skip-hide.md](skip-hide.md)).
+- `0017` adds the `pin_reset` table ([recovery-email.md](recovery-email.md)).
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

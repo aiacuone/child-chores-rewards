@@ -35,6 +35,29 @@ export const family = sqliteTable('family', {
 	createdAt: createdAt()
 });
 
+/** An emailed code for setting a new PIN (pin-reset.ts). Rows are kept so sends can be counted. */
+export const pinReset = sqliteTable(
+	'pin_reset',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		/** The emailed 6-digit code as a salted scrypt hash (pin.ts). The code is never stored. */
+		codeHash: text('code_hash').notNull(),
+		wrongTries: integer('wrong_tries').notNull().default(0),
+		expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+		/** When it set a new PIN. */
+		usedAt: integer('used_at', { mode: 'timestamp_ms' }),
+		/** When too many wrong tries or a newer code ended it. */
+		cancelledAt: integer('cancelled_at', { mode: 'timestamp_ms' }),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date())
+	},
+	(t) => [index('pin_reset_family_idx').on(t.familyId, t.createdAt)]
+);
+
 /**
  * A confirm link sent to a new recovery email. The token is in the link only;
  * this keeps its hash. Rows are kept after use so sends can be counted.

@@ -40,7 +40,7 @@ describe('recovery email confirm links', () => {
 		expect(recoveryOf(ours)).toBeNull();
 		expect(linkEmail(opened.db, token)).toBe('jane@example.com');
 		expect(recoveryOf(ours)).toBeNull();
-		expect(confirmLink(opened.db, token)).toBe(true);
+		expect(confirmLink(opened.db, token)).not.toBeNull();
 		expect(recoveryOf(ours)).toBe('jane@example.com');
 	});
 
@@ -52,31 +52,31 @@ describe('recovery email confirm links', () => {
 
 	it('works once', () => {
 		const { token } = startVerification(ours, 'jane@example.com');
-		expect(confirmLink(opened.db, token)).toBe(true);
+		expect(confirmLink(opened.db, token)).not.toBeNull();
 		expect(linkEmail(opened.db, token)).toBeNull();
-		expect(confirmLink(opened.db, token)).toBe(false);
+		expect(confirmLink(opened.db, token)).toBeNull();
 	});
 
 	it('stops working after 24 hours', () => {
 		const now = Date.now();
 		const { token } = startVerification(ours, 'jane@example.com', now);
 		expect(linkEmail(opened.db, token, now + LINK_LIFETIME - 1)).toBe('jane@example.com');
-		expect(confirmLink(opened.db, token, now + LINK_LIFETIME)).toBe(false);
+		expect(confirmLink(opened.db, token, now + LINK_LIFETIME)).toBeNull();
 		expect(recoveryOf(ours)).toBeNull();
 	});
 
 	it('a newer link cancels the older one', () => {
 		const first = startVerification(ours, 'old@example.com');
 		const second = startVerification(ours, 'new@example.com');
-		expect(confirmLink(opened.db, first.token)).toBe(false);
-		expect(confirmLink(opened.db, second.token)).toBe(true);
+		expect(confirmLink(opened.db, first.token)).toBeNull();
+		expect(confirmLink(opened.db, second.token)).not.toBeNull();
 		expect(recoveryOf(ours)).toBe('new@example.com');
 	});
 
 	it('refuses unknown or badly shaped tokens', () => {
 		startVerification(ours, 'jane@example.com');
 		for (const t of [null, '', 'x', 'a'.repeat(43), '../../etc', 42])
-			expect(confirmLink(opened.db, t)).toBe(false);
+			expect(confirmLink(opened.db, t)).toBeNull();
 		expect(recoveryOf(ours)).toBeNull();
 	});
 
@@ -102,7 +102,7 @@ describe('recovery email confirm links', () => {
 		const { token, id } = startVerification(ours, 'jane@example.com');
 		dropLink(ours, id);
 		expect(linkSent(ours)).toBe(false);
-		expect(confirmLink(opened.db, token)).toBe(false);
+		expect(confirmLink(opened.db, token)).toBeNull();
 	});
 
 	it("cannot drop another family's link", () => {

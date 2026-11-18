@@ -2,7 +2,7 @@
 // or sent back. Answers { result: 'ok', token }, { result: 'wrong' } or
 // { result: 'locked', until }.
 import { error, json } from '@sveltejs/kit';
-import { ALERTS, AlertNotSent, familyTopic, sendAlert } from '#lib/server/alerts.ts';
+import { ALERTS, sendSafetyAlert } from '#lib/server/alerts.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { forFamily } from '#lib/server/family.ts';
 import { unlock } from '#lib/server/grownup.ts';
@@ -27,14 +27,6 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 	if (result.reason === 'wrong') return json({ result: 'wrong' });
 
 	// The first lock in a run of wrong tries tells every grown-up (no names or details).
-	if (result.firstLock) {
-		const topic = familyTopic(scope);
-		if (topic)
-			await sendAlert(topic, { ...ALERTS.pinLocked, click: `${url.origin}/grown-up` }).catch(
-				(e) => {
-					if (!(e instanceof AlertNotSent)) throw e;
-				}
-			);
-	}
+	if (result.firstLock) await sendSafetyAlert(scope, ALERTS.pinLocked, url.origin);
 	return json({ result: 'locked', until: result.until });
 };

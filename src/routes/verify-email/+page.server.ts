@@ -1,4 +1,6 @@
+import { ALERTS, sendSafetyAlert } from '#lib/server/alerts.ts';
 import { getDb } from '#lib/server/db/app.ts';
+import { forFamily } from '#lib/server/family.ts';
 import { confirmLink, linkEmail } from '#lib/server/recovery-email.ts';
 import { maskEmail } from '#lib/mask.ts';
 import type { Actions, PageServerLoad } from './$types';
@@ -14,5 +16,12 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ url }) => ({ confirmed: confirmLink(getDb(), url.searchParams.get('token')) })
+	default: async ({ url }) => {
+		const db = getDb();
+		const done = confirmLink(db, url.searchParams.get('token'));
+		// Replacing an address tells every grown-up (no address in the alert).
+		if (done?.changed)
+			await sendSafetyAlert(forFamily(db, done.familyId), ALERTS.recoveryChanged, url.origin);
+		return { confirmed: done !== null };
+	}
 };

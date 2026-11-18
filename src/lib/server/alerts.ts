@@ -25,6 +25,14 @@ export const ALERTS = {
 	pinLocked: {
 		title: 'PIN pad locked',
 		body: 'Too many wrong PIN tries. The PIN pad is locked for 30 seconds.'
+	},
+	pinResetSent: {
+		title: 'PIN reset code sent',
+		body: 'A PIN reset code was sent. If this wasn’t you, open the app and change the PIN.'
+	},
+	recoveryChanged: {
+		title: 'Recovery email changed',
+		body: 'The recovery email was changed. If this wasn’t you, open the app and check it.'
 	}
 } as const;
 
@@ -90,4 +98,16 @@ export async function sendAlert(topic: string, alert: Alert) {
 		console.error('alerts: send failed', (e as Error).message);
 		throw new AlertNotSent('send failed');
 	}
+}
+
+/**
+ * An always-on safety alert to every grown-up. A tap opens the PIN pad. The
+ * action it reports has already happened, so a failed send does not undo it.
+ */
+export async function sendSafetyAlert(scope: FamilyScope, alert: Alert, origin: string) {
+	const topic = familyTopic(scope);
+	if (!topic) return;
+	await sendAlert(topic, { ...alert, click: `${origin}/grown-up` }).catch((e) => {
+		if (!(e instanceof AlertNotSent)) throw e;
+	});
 }
