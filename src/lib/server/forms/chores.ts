@@ -5,7 +5,7 @@ import { isDate, REPEAT_LIMITS } from '../../repeat';
 
 // Any printable text: letters in any language, numbers, punctuation, emoji.
 // No control or invisible formatting characters, and no spaces at either end.
-const NAME = /^[^\p{C}\s](?:[^\p{C}]*[^\p{C}\s])?$/u;
+export const NAME = /^[^\p{C}\s](?:[^\p{C}]*[^\p{C}\s])?$/u;
 
 // When it repeats. Whether a Once date is in the coming week is checked in
 // chores.ts, which knows today's date and the chore's saved date.

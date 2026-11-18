@@ -120,7 +120,7 @@ describe('"I did it!" and Undo', () => {
 
 	it('sends the stop to Grown-up checking once, so a double tap changes nothing', () => {
 		const bed = chore('Make your bed', [mia]);
-		expect(iDidIt(ours, mia, bed, now)).toEqual({ name: 'Make your bed', moved: false });
+		expect(iDidIt(ours, mia, bed, now)).toMatchObject({ name: 'Make your bed', moved: false });
 		expect(path(mia)).toEqual([['Make your bed', 'waiting']]);
 		expect(iDidIt(ours, mia, bed, now)).toBeNull();
 	});

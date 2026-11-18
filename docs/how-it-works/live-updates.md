@@ -30,6 +30,7 @@ The number means nothing on its own. Only "has it moved since I loaded?" matters
 | --- | --- |
 | Who's flying (`/`) | `src/routes/+page.server.ts` |
 | Every trip page (`/trip/<child>/…`) | `src/routes/trip/[childId]/+layout.server.ts` |
+| Mission control, Chores, a check | their API's answer (`/api/grown-up/home`, `/checks`, `/checks/<copy>`) |
 
 Each returns `version` with the page's data, and its `.svelte` file renders `<LiveUpdates version={data.version} />`.
 
@@ -63,9 +64,9 @@ Moving to server-sent events later would only change step 2 ("tell" instead of "
 - `/api/changes` needs a signed-in device. The family comes from the session (`locals.user.familyId`), never from the request.
 - It returns only the number: no names, chores or stars. The page's own `load` functions still decide what to show, with all their family checks.
 
-## Known gaps
+## Grown-up screens
 
-- Grown-up screens load their data in the browser through `grownupFetch`, not through `load`, so `invalidateAll()` would not refresh them. They get live updates in #24, with "TO CHECK".
+Grown-up pages load their data in the browser through `grownupFetch`, not through `load`, so `invalidateAll()` would not refresh them. Mission control, the Chores tab and the check screen take `version` from their API's answer and pass `onchange={load}`, their own reload ([checking.md](checking.md)).
 
 ## Tests
 

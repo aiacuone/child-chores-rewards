@@ -114,6 +114,10 @@ The flow (design/FLOWS.md, "A child does a chore" and "A child does chores in an
 
 The daily reset clears `done_at` along with the status ([reset.md](reset.md)).
 
+## Messages from a grown-up
+
+The trip also shows "Feed Biscuit the dog checked! +15 stars" once after a grown-up accepts, and "Grown-up says: “…”" after "Not done yet", until the child taps "I did it!" again. How they work: [checking.md](checking.md).
+
 ## Live updates
 
 The trip pages and Who's flying refresh on their own when something changes on another device. The trip layout returns the family's `version` and renders `LiveUpdates`. How it works: [live-updates.md](live-updates.md).

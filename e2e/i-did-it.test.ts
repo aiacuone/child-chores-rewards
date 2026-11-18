@@ -13,7 +13,8 @@ test('a child taps I did it, confirms, undoes, and another device follows', asyn
 }) => {
 	await signIn(page, { as: 'did-it' });
 	await addChores(page, [{ name: 'Make your bed' }, { name: 'Set the table' }]);
-	const alertsBefore = (await (await page.request.get('/test/outbox')).json()).alerts.length;
+	const alertsBefore = (await (await page.request.get('/test/outbox?as=did-it')).json()).alerts
+		.length;
 
 	// A second device in the same family, watching Mia's trip.
 	const tablet = await (await browser.newContext({ baseURL: BASE })).newPage();
@@ -45,7 +46,7 @@ test('a child taps I did it, confirms, undoes, and another device follows', asyn
 	);
 
 	// Every grown-up got one alert, with no names or details.
-	const { alerts } = (await (await page.request.get('/test/outbox')).json()) as {
+	const { alerts } = (await (await page.request.get('/test/outbox?as=did-it')).json()) as {
 		alerts: SentAlert[];
 	};
 	const sent = alerts

@@ -20,6 +20,8 @@ export type TripStop = {
 	icon: ChoreIconId;
 	stars: number;
 	state: StopState;
+	/** A grown-up's kind message after "Not done yet", until the child taps "I did it!" again. */
+	message: string | null;
 };
 
 export type ComingUp = {
@@ -46,7 +48,8 @@ function copies(scope: FamilyScope, childId: number) {
 			chore: schema.chore,
 			copyId: schema.choreCopy.id,
 			status: schema.choreCopy.status,
-			doneAt: schema.choreCopy.doneAt
+			doneAt: schema.choreCopy.doneAt,
+			message: schema.choreCopy.message
 		})
 		.from(schema.choreCopy)
 		.innerJoin(schema.chore, eq(schema.chore.id, schema.choreCopy.choreId))
@@ -76,14 +79,21 @@ export function tripStops(scope: FamilyScope, childId: number, now = new Date())
 		(a, b) => ORDER[a.status as keyof typeof ORDER] - ORDER[b.status as keyof typeof ORDER]
 	);
 	let next = true;
-	return today.map(({ chore, status }) => {
+	return today.map(({ chore, status, message }) => {
 		let state: StopState =
 			status === 'completed' ? 'done' : status === 'waiting' ? 'waiting' : 'open';
 		if (state === 'open' && next) {
 			state = 'next';
 			next = false;
 		}
-		return { choreId: chore.id, name: chore.name, icon: chore.icon, stars: chore.stars, state };
+		return {
+			choreId: chore.id,
+			name: chore.name,
+			icon: chore.icon,
+			stars: chore.stars,
+			state,
+			message: status === 'pending' ? message : null
+		};
 	});
 }
 
@@ -144,7 +154,7 @@ export function iDidIt(scope: FamilyScope, childId: number, choreId: number, now
 	const before = tripStops(scope, childId, now).find((s) => s.choreId === choreId);
 	const changed = scope.db
 		.update(schema.choreCopy)
-		.set({ status: 'waiting', doneAt: now })
+		.set({ status: 'waiting', doneAt: now, message: null })
 		.where(
 			scope.where(
 				schema.choreCopy,
@@ -156,7 +166,18 @@ export function iDidIt(scope: FamilyScope, childId: number, choreId: number, now
 		.run().changes;
 	if (changed !== 1) return null;
 	// Up next stays where it is; any other stop jumps ahead of it.
-	return { name: stop.name, moved: before?.state === 'open' };
+	const [copy] = scope.db
+		.select({ id: schema.choreCopy.id })
+		.from(schema.choreCopy)
+		.where(
+			scope.where(
+				schema.choreCopy,
+				eq(schema.choreCopy.choreId, choreId),
+				eq(schema.choreCopy.childId, childId)
+			)
+		)
+		.all();
+	return { copyId: copy.id, name: stop.name, moved: before?.state === 'open' };
 }
 
 /** Whether the stop is still waiting and inside the Undo window. */

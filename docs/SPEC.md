@@ -146,6 +146,12 @@ Settings is a grown-up-only tab. Rows:
 - A grown-up can undo an accepted chore for 1 minute after accepting it.
 - A grown-up can send a chore back with a kind message ("Almost! Give it another go", and others). The child sees the message on the trip, and the stop opens again.
 - A grown-up can also choose "That wasn't Mia" to move a chore and its stars to the right child.
+- **"That wasn't Mia"** (decided in #24): the stars go to the child picked. If that child is assigned to the chore, their own stop shows Done. If not, they only get the stars: the chore is not added to their trip or assigned to them. Mia's stop opens again.
+- **"checked!" on the trip** (decided in #24): "Feed Biscuit the dog checked! +15 stars" shows once, the next time the child's trip shows (straight away if it is open).
+- **A sent-back message** shows on the trip until the child taps "I did it!" on that stop again, or the next daily reset. A grown-up can pick one of three messages or write their own (up to 100 characters).
+- **Tapping the chore alert** opens the PIN pad, then that chore's check screen.
+- **Mission control** (decided in #24): "N stops to check" lists every waiting chore; with one it opens that chore's check, with more the Chores tab. A child with nothing due reads "Nothing to do today · 128 stars saved".
+- **No pronouns** (decided in #24): children have no pronouns stored, so screens name the child or say "the trip": "Mia says it's done · 6:12 pm", "Mia sees your message on the trip", "Mia's stop opens again on the trip".
 
 ## Keeping children from mixing up trips
 

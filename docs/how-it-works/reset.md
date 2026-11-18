@@ -13,7 +13,14 @@ For one family, on one chore day:
 | Waiting (a grown-up has not checked it yet) | Left alone | Left alone |
 | Pending | Already pending | Left alone |
 
-Stars are never read or changed. They are rows in `star_event` ([database.md](database.md)), and the reset only edits `chore_copy.status`.
+A copy that goes back to Pending also loses what the last round left on it: `done_at` ("I did it!" time), `checked_at` and `star_event_id` (the grown-up's accept), and `message`.
+
+Two more things are cleared:
+
+- **"Not done yet" messages** on every copy of a due chore, including Pending ones, so yesterday's message does not show today.
+- **Unseen "checked!" notices** (`checked_notice`) for the whole family, even on a day with nothing due ([checking.md](checking.md)).
+
+Stars are never read or changed. They are rows in `star_event` ([database.md](database.md)). Clearing `star_event_id` only forgets which row the last accept added; the row stays.
 
 ## The functions
 
@@ -34,9 +41,11 @@ It runs in one transaction, so a reset is never half done.
 
 1. **Work out the chore day** with `choreDay(now)`: the Melbourne date, or the day before when it is earlier than 6:00 am.
 2. **Claim the day.** Insert a row into `chore_reset` with the family and the chore day. A unique index on the two means a second insert does nothing (`onConflictDoNothing`). No row came back means the day was already reset, so it stops and returns `null`.
-3. **Find the chores due today.** Read the family's chores and keep those where `isDue(toRepeat(chore), day)` is true.
-4. **Reset their copies.** One update sets `status` to Pending for the family's Completed and Skipped copies of those chores.
-5. **Write the count** to the claimed `chore_reset` row (`copies_reset`) and return it.
+3. **Clear unseen "checked!" notices** for the family.
+4. **Find the chores due today.** Read the family's chores and keep those where `isDue(toRepeat(chore), day)` is true. If none are due, stop and return 0.
+5. **Reset their copies.** One update sets the family's Completed and Skipped copies of those chores to Pending, and clears `done_at`, `checked_at`, `star_event_id` and `message`.
+6. **Clear messages** on every copy of those chores, so Pending copies that were sent back lose theirs too.
+7. **Write the count** to the claimed `chore_reset` row (`copies_reset`) and return it.
 
 The claim comes first, so even two checks running at the same moment can never both reset the same day. The second finds the row already there.
 
@@ -51,6 +60,8 @@ The claim comes first, so even two checks running at the same moment can never b
 | Daylight saving starts or ends | The chore day comes from the Melbourne clock, so 6:00 am is still 6:00 am. |
 | Settings changes the reset time (#31) | The next check uses the new time. Nothing needs rescheduling, because the job only asks "has this chore day been reset?" |
 | A family is created during the day | Its first check records today as reset, with nothing to reset. |
+| A grown-up accepted a chore just before 6:00 am | The reset puts it back to Pending, so the 1-minute undo no longer applies. The stars stay. |
+| A chore is Waiting at 6:00 am | Left alone, with its "I did it!" time, so a grown-up can still check it later ([checking.md](checking.md)). |
 
 ### The first run after #21 is deployed
 
@@ -76,3 +87,5 @@ No family has a `chore_reset` row yet, so the first check after the deploy reset
 - The catch-up after a missed reset, and the log rows.
 - Stars are untouched.
 - One family's reset never changes another family's chores.
+
+`src/lib/server/check.test.ts` also checks that the reset clears yesterday's "Not done yet" messages, and an unseen "checked!" even on a day with nothing due.

@@ -204,12 +204,42 @@ export const choreCopy = sqliteTable(
 			.default('pending'),
 		/** When the child tapped "I did it!". Undo is allowed for about a minute after it. */
 		doneAt: integer('done_at', { mode: 'timestamp_ms' }),
+		/** When a grown-up accepted it. The grown-up can undo for 1 minute after it. */
+		checkedAt: integer('checked_at', { mode: 'timestamp_ms' }),
+		/** The star row the accept added, so undo removes that row and no other. */
+		starEventId: integer('star_event_id'),
+		/** The grown-up's kind message when they sent it back. Shown on the trip until "I did it!". */
+		message: text('message'),
 		createdAt: createdAt()
 	},
 	(t) => [
 		index('chore_copy_family_idx').on(t.familyId),
 		uniqueIndex('chore_copy_chore_child_idx').on(t.choreId, t.childId)
 	]
+);
+
+/**
+ * "Feed Biscuit the dog checked! +15 stars" waiting to show on a child's trip.
+ * Shown once: the trip deletes the row as it shows it. Kept out of chore_copy,
+ * and given no version trigger, so showing it does not make every screen reload.
+ */
+export const checkedNotice = sqliteTable(
+	'checked_notice',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		childId: integer('child_id')
+			.notNull()
+			.references(() => child.id, { onDelete: 'cascade' }),
+		copyId: integer('copy_id')
+			.notNull()
+			.references(() => choreCopy.id, { onDelete: 'cascade' }),
+		stars: integer('stars').notNull(),
+		createdAt: createdAt()
+	},
+	(t) => [index('checked_notice_child_idx').on(t.familyId, t.childId)]
 );
 
 /**

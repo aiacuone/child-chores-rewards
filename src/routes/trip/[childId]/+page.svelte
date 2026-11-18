@@ -1,6 +1,7 @@
 <script lang="ts">
 	// A child's trip (Space-Child.dc.html, Space-Child-Open.dc.html,
-	// Space-Child-Waiting.dc.html, Space-Child-Reordered.dc.html), or "Nothing
+	// Space-Child-Waiting.dc.html, Space-Child-Reordered.dc.html,
+	// Space-Child-Done.dc.html, Space-Child-Retry.dc.html), or "Nothing
 	// to do today!" when no stops are
 	// due (Space-Child-Empty.dc.html). The empty day keeps the name header, because
 	// the spec keeps each child's name and "Not Mia? Switch" on their trip screens.
@@ -13,6 +14,7 @@
 	import Rocket from '#lib/components/Rocket.svelte';
 	import StarCount from '#lib/components/StarCount.svelte';
 	import { DAILY_BONUS } from '#lib/bonus.ts';
+	import { asSaid } from '#lib/check.ts';
 	import { pct, tripPath } from '#lib/trip-path.ts';
 	import type { TripStop } from '#lib/server/trip.ts';
 
@@ -29,6 +31,17 @@
 		if (!sent) return;
 		const timer = setTimeout(() => (showSent = false), sent.secondsLeft * 1000);
 		return () => clearTimeout(timer);
+	});
+
+	// "checked!" shows once: tell the server it has been seen, without reloading.
+	$effect(() => {
+		const notice = data.checked;
+		if (!notice || (showSent && data.sent)) return;
+		const body = new FormData();
+		body.set('upTo', String(notice.id));
+		fetch('?/seen', { method: 'POST', body, headers: { 'x-sveltekit-action': 'true' } }).catch(
+			() => {}
+		);
 	});
 
 	const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
@@ -286,8 +299,39 @@
 	{/if}
 {/if}
 
-{#if showSent && data.sent}
+{#if (showSent && data.sent) || data.checked || data.said}
 	<div aria-hidden="true" class="h-24"></div>
+{/if}
+
+{#snippet toast(border: string)}
+	<div
+		role="status"
+		class="fixed inset-x-0 bottom-6 z-[6] mx-auto flex min-h-[60px] max-w-[350px] items-center gap-3 rounded-[20px] border-2 bg-card px-4 text-[16px] font-black {border}"
+		style="width:calc(100% - 40px)"
+	>
+		{#if data.checked}
+			<svg
+				aria-hidden="true"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="var(--color-amber)"
+				stroke="var(--color-amber)"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="flex-none"
+				><path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.2 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z" /></svg
+			>
+			<span class="flex-1">{data.checked.name} checked! +{data.checked.stars} stars</span>
+		{:else if data.said}
+			<span class="flex-none text-hi"><ChoreIcon icon={data.said.icon} size={24} /></span>
+			<span class="flex-1">Grown-up says: “{asSaid(data.said.message ?? '')}”</span>
+		{/if}
+	</div>
+{/snippet}
+
+{#if showSent && data.sent}
 	<div
 		role="status"
 		class="fixed inset-x-0 bottom-6 z-[6] mx-auto flex min-h-[60px] max-w-[350px] items-center gap-3 rounded-[20px] border-2 border-amber bg-card px-4 text-[16px] font-black"
@@ -313,4 +357,8 @@
 			<button class="inline-flex min-h-11 items-center rounded-full bg-label px-4 text-ink">Undo</button>
 		</form>
 	</div>
+{:else if data.checked}
+	{@render toast('border-ok')}
+{:else if data.said}
+	{@render toast('border-hi')}
 {/if}

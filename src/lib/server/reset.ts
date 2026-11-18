@@ -30,6 +30,9 @@ export function resetFamily(scope: FamilyScope, now = new Date()) {
 			.all();
 		if (!claimed) return null;
 
+		// Any "checked!" a child did not see belongs to an earlier day.
+		tx.delete(schema.checkedNotice).where(scope.where(schema.checkedNotice)).run();
+
 		const due = tx
 			.select()
 			.from(schema.chore)
@@ -41,7 +44,7 @@ export function resetFamily(scope: FamilyScope, now = new Date()) {
 
 		const reset = tx
 			.update(schema.choreCopy)
-			.set({ status: 'pending', doneAt: null })
+			.set({ status: 'pending', doneAt: null, checkedAt: null, starEventId: null, message: null })
 			.where(
 				scope.where(
 					schema.choreCopy,
@@ -50,6 +53,11 @@ export function resetFamily(scope: FamilyScope, now = new Date()) {
 				)
 			)
 			.run().changes;
+		// Yesterday's "Not done yet" messages go too, on every copy of a due chore.
+		tx.update(schema.choreCopy)
+			.set({ message: null })
+			.where(scope.where(schema.choreCopy, inArray(schema.choreCopy.choreId, due)))
+			.run();
 		tx.update(schema.choreReset)
 			.set({ copiesReset: reset })
 			.where(scope.where(schema.choreReset, eq(schema.choreReset.id, claimed.id)))

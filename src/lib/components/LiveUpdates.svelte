@@ -1,12 +1,21 @@
 <script lang="ts">
 	// Live updates between devices (ADR 0006). Every few seconds, and as soon as
 	// the app comes back into view, ask whether the family has changed. When it
-	// has, reload the page's data. Nothing is drawn.
+	// has, reload the page's data: with invalidateAll for pages that load on the
+	// server, or with `onchange` for grown-up pages, which fetch their own data.
+	// Nothing is drawn.
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
 
-	/** The family's version that the page's data was loaded at. */
-	let { version }: { version: number } = $props();
+	let {
+		version,
+		onchange
+	}: {
+		/** The family's version that the page's data was loaded at. */
+		version: number;
+		/** Reload the page's data. It must bring a new `version`. */
+		onchange?: () => unknown;
+	} = $props();
 
 	const EVERY = 4000;
 
@@ -19,7 +28,7 @@
 				const res = await fetch('/api/changes', { cache: 'no-store' });
 				if (res.ok) {
 					const now = ((await res.json()) as { version: number }).version;
-					if (now !== version) await invalidateAll();
+					if (now !== version) await (onchange ? onchange() : invalidateAll());
 				}
 			} catch {
 				// Offline for a moment: try again next time.

@@ -27,9 +27,12 @@ export const actions: Actions = {
 		const sent = iDidIt(scope, child.id, id);
 		if (!sent) redirect(303, `/trip/${child.id}`);
 		const topic = familyTopic(scope);
-		// Temporary fix: the alert opens grown-up mode, not the chore's check screen, until #24.
+		// A tap on the alert opens the PIN pad, then this chore's check screen.
 		if (topic) {
-			sendAlert(topic, { ...ALERTS.choreWaiting, click: `${url.origin}/grown-up` }).catch(() => {});
+			sendAlert(topic, {
+				...ALERTS.choreWaiting,
+				click: `${url.origin}/grown-up/check/${sent.copyId}`
+			}).catch(() => {});
 		}
 		redirect(303, `/trip/${child.id}?sent=${id}${sent.moved ? '&moved=1' : ''}`);
 	}
