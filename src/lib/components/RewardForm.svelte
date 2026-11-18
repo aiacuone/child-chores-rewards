@@ -1,8 +1,13 @@
 <script lang="ts">
 	// The reward form: New reward (Add-Reward.dc.html) and Edit reward (the same
-	// form, decided in #26). Temporary fix: no "Use my own photo" until #36.
+	// form, decided in #26).
+	import type { Snippet } from 'svelte';
+	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChildPicker from '#lib/components/ChildPicker.svelte';
+	import PhotoField from '#lib/components/PhotoField.svelte';
+	import PhotoFlow from '#lib/components/PhotoFlow.svelte';
 	import RewardPlanet from '#lib/components/RewardPlanet.svelte';
+	import { PhotoDraft } from '#lib/photo-draft.svelte.ts';
 	import { SAVE_FAILED, type Kid } from '#lib/chores.ts';
 	import { MAX_REWARD_NAME, REWARD_COST, type RewardFields } from '#lib/rewards.ts';
 	import { PLANET_IDS, PLANETS } from '#lib/reward-planets.ts';
@@ -12,15 +17,37 @@
 		submitLabel,
 		kids,
 		initial,
-		onsave
+		photo = null,
+		backHref = '/grown-up/rewards',
+		photoProblem = false,
+		onsave,
+		onsaved,
+		onphotofailed,
+		after
 	}: {
 		title: string;
 		submitLabel: string;
 		kids: Kid[];
 		initial: RewardFields;
-		/** Save the reward; resolves false when it did not save. */
-		onsave: (reward: RewardFields) => Promise<boolean>;
+		/** The address of the saved photo, if any. */
+		photo?: string | null;
+		backHref?: string;
+		/** A new reward saved earlier but its photo did not. */
+		photoProblem?: boolean;
+		/** Save the reward; resolves its id, or null when it did not save. */
+		onsave: (reward: RewardFields) => Promise<number | null>;
+		/** Everything saved, including any photo. */
+		onsaved: (id: number) => unknown;
+		/** The reward saved but its photo did not. A new reward moves to its edit page. */
+		onphotofailed?: (id: number) => unknown;
+		/** Shown below the form, hidden with it behind the photo screens. */
+		after?: Snippet;
 	} = $props();
+
+	const savedPhoto = () => photo;
+	const draft = new PhotoDraft(savedPhoto());
+	const startProblem = () => photoProblem;
+	let photoFailed = $state(startProblem());
 
 	// The form edits its own copy of the starting values. The stars box is a
 	// number input, so its value is null while it is empty.
@@ -40,18 +67,33 @@
 		if (!ready) return;
 		saving = true;
 		failed = false;
-		const ok = await onsave({ ...reward, name: reward.name.trim(), cost: cost! }).catch(
-			() => false
-		);
+		photoFailed = false;
+		const id = await onsave({ ...reward, name: reward.name.trim(), cost: cost! }).catch(() => null);
+		if (id === null) {
+			saving = false;
+			failed = true;
+			return;
+		}
+		const photoSaved = await draft.apply('reward', id).catch(() => false);
 		saving = false;
-		failed = !ok;
+		if (photoSaved) await onsaved(id);
+		else {
+			photoFailed = true;
+			await onphotofailed?.(id);
+		}
 	}
 </script>
 
+{#if draft.screen}
+	<PhotoFlow kind="reward" {draft} name={reward.name} planet={reward.colour} />
+{/if}
+
+<div class={draft.screen ? 'hidden' : 'flex flex-col gap-3.5'}>
+<BackHeader href={backHref} label="Rewards" />
 <h1 class="m-0 font-heading text-[30px] leading-[1.05] font-normal">{title}</h1>
 
 <div class="flex justify-center">
-	<RewardPlanet colour={reward.colour} size={130} />
+	<RewardPlanet colour={reward.colour} photo={draft.preview} size={130} />
 </div>
 
 <form onsubmit={submit} class="flex flex-col gap-3.5">
@@ -115,8 +157,18 @@
 		</div>
 	</fieldset>
 
+	<div class="flex flex-col gap-1.5">
+		<span class="text-[14px] font-black text-muted">Picture</span>
+		<PhotoField {draft} round />
+	</div>
+
 	{#if failed}
 		<p role="alert" class="m-0 text-[16px] font-black text-amber">{SAVE_FAILED}</p>
+	{/if}
+	{#if photoFailed}
+		<p role="alert" class="m-0 text-[16px] font-black text-amber">
+			The reward saved, but its photo didn’t. Try adding the photo again.
+		</p>
 	{/if}
 
 	<button
@@ -126,3 +178,5 @@
 		>{submitLabel}</button
 	>
 </form>
+{@render after?.()}
+</div>

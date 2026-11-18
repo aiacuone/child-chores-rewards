@@ -3,7 +3,6 @@
 	// is chosen to start with.
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChoreForm from '#lib/components/ChoreForm.svelte';
 	import { CHORE_STARS } from '#lib/chore-icons.ts';
 	import type { ChoreFields, Kid } from '#lib/chores.ts';
@@ -22,18 +21,14 @@
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify(chore)
 		});
-		if (!res.ok) return false;
-		const { id } = (await res.json()) as { id: number };
-		await goto(`/grown-up/chores?added=${id}`);
-		return true;
+		if (!res.ok) return null;
+		return ((await res.json()) as { id: number }).id;
 	}
 </script>
 
 <svelte:head>
 	<title>Rocket Rewards: New chore</title>
 </svelte:head>
-
-<BackHeader href="/grown-up/chores" label="Chores" />
 
 {#if kids}
 	<ChoreForm
@@ -48,6 +43,9 @@
 			childIds: kids.map((k) => k.id),
 			repeat: { kind: 'daily' }
 		}}
+		backHref="/grown-up/chores"
 		onsave={save}
+		onsaved={(id) => goto(`/grown-up/chores?added=${id}`)}
+		onphotofailed={(id) => goto(`/grown-up/chores/${id}/edit?photo=failed`)}
 	/>
 {/if}

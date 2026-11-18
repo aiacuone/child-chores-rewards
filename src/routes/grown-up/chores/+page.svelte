@@ -7,6 +7,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
+	import PhotoImage from '#lib/components/PhotoImage.svelte';
 	import DoneNotice from '#lib/components/DoneNotice.svelte';
 	import LiveUpdates from '#lib/components/LiveUpdates.svelte';
 	import { whoDoesIt, type ChoreRow, type Kid } from '#lib/chores.ts';
@@ -199,11 +200,15 @@
 					href="/grown-up/check/{c.copyId}"
 					class="flex min-h-[68px] items-center gap-3 rounded-[18px] border-2 border-amber bg-amber/14 pr-3.5 pl-2.5"
 				>
-					<span
-						class="flex size-[46px] flex-none items-center justify-center rounded-[14px] bg-amber/25 text-amber"
-					>
-						<ChoreIcon icon={c.icon} size={26} />
-					</span>
+					<PhotoImage src={c.photo} size={46} radius="14px">
+						{#snippet fallback()}
+							<span
+								class="flex size-[46px] flex-none items-center justify-center rounded-[14px] bg-amber/25 text-amber"
+							>
+								<ChoreIcon icon={c.icon} size={26} />
+							</span>
+						{/snippet}
+					</PhotoImage>
 					<span class="min-w-0 flex-1">
 						<span class="block text-[16px] font-black">{c.name}</span>
 						<span class="block text-[13px] font-bold text-amber"
@@ -230,11 +235,15 @@
 					href="/grown-up/chores/{chore.id}"
 					class="flex min-h-14 items-center gap-2.5 rounded-2xl bg-card py-2 pr-3 pl-2"
 				>
-					<span
-						class="flex size-[38px] flex-none items-center justify-center rounded-xl bg-label text-hi"
-					>
-						<ChoreIcon icon={chore.icon} />
-					</span>
+					<PhotoImage src={chore.photo} size={38} radius="12px">
+						{#snippet fallback()}
+							<span
+								class="flex size-[38px] flex-none items-center justify-center rounded-xl bg-label text-hi"
+							>
+								<ChoreIcon icon={chore.icon} />
+							</span>
+						{/snippet}
+					</PhotoImage>
 					<span class="min-w-0 flex-1">
 						<span class="block text-[15px] font-black">{chore.name}</span>
 						<span class="block text-[13px] font-bold text-muted"

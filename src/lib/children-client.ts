@@ -62,5 +62,5 @@ export async function turnOffPasscode(id: number) {
 }
 
 export async function removeChildPhoto(id: number) {
-	return problem(await grownupFetch(`/api/grown-up/children/${id}/photo`, { method: 'DELETE' }));
+	return problem(await grownupFetch(`/api/grown-up/photos/child/${id}`, { method: 'DELETE' }));
 }

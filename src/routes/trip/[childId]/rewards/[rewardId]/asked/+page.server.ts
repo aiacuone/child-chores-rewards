@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { forFamily } from '#lib/server/family.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { waitingClaim } from '#lib/server/claims.ts';
+import { getReward } from '#lib/server/rewards.ts';
 import type { PageServerLoad } from './$types';
 
 // "Asked a grown-up!" (Claim-Waiting.dc.html): only while this child's claim
@@ -13,5 +14,10 @@ export const load: PageServerLoad = async ({ locals, params, parent }) => {
 	const id = /^\d{1,9}$/.test(params.rewardId) ? Number(params.rewardId) : NaN;
 	const claim = waitingClaim(scope, child.id, id);
 	if (!claim) redirect(303, `/trip/${child.id}/rewards`);
-	return { rewardName: claim.rewardName };
+	const reward = getReward(scope, id);
+	return {
+		rewardName: claim.rewardName,
+		rewardColour: reward?.colour ?? 'pink',
+		rewardPhoto: reward?.photo ?? null
+	};
 };

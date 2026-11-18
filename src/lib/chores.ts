@@ -14,9 +14,10 @@ export type ChoreRow = {
 	childIds: number[];
 	hidden: boolean;
 	skip: Skip | null;
+	photo: string | null;
 };
 /** What the chore form sends: a custom repeat's start is added by the server. */
-export type ChoreFields = Omit<ChoreRow, 'id' | 'repeat' | 'hidden' | 'skip'> & {
+export type ChoreFields = Omit<ChoreRow, 'id' | 'repeat' | 'hidden' | 'skip' | 'photo'> & {
 	repeat: RepeatInput;
 };
 

@@ -4,7 +4,6 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChoreForm from '#lib/components/ChoreForm.svelte';
 	import { choreFields, type ChoreFields, type ChoreRow, type Kid } from '#lib/chores.ts';
 	import { grownupFetch } from '#lib/grownup.svelte.ts';
@@ -33,18 +32,18 @@
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify(fields)
 		});
-		if (!res.ok) return false;
+		return res.ok ? Number(id) : null;
+	}
+
+	function saved(_id: number, fields: ChoreFields) {
 		const repeatChanged = JSON.stringify(fields.repeat) !== JSON.stringify(choreFields(chore!).repeat);
-		await goto(`/grown-up/chores/${id}?saved${repeatChanged ? '=repeat' : ''}`);
-		return true;
+		return goto(`/grown-up/chores/${id}?saved${repeatChanged ? '=repeat' : ''}`);
 	}
 </script>
 
 <svelte:head>
 	<title>Rocket Rewards: Edit chore</title>
 </svelte:head>
-
-<BackHeader href="/grown-up/chores/{id}" label="Chores" />
 
 {#if missing}
 	<p class="m-0 text-[18px] text-muted">Not found.</p>
@@ -54,6 +53,10 @@
 		submitLabel="Save changes"
 		{kids}
 		initial={choreFields(chore)}
+		photo={chore.photo}
+		backHref="/grown-up/chores/{id}"
+		photoProblem={page.url.searchParams.get('photo') === 'failed'}
 		onsave={save}
+		onsaved={saved}
 	/>
 {/if}

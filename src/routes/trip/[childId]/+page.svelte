@@ -10,6 +10,7 @@
 	// rewards, as does "See my rewards" on the empty day.
 	import { enhance } from '$app/forms';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
+	import PhotoImage from '#lib/components/PhotoImage.svelte';
 	import Planet from '#lib/components/Planet.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
 	import SeeRewards from '#lib/components/SeeRewards.svelte';
@@ -239,7 +240,9 @@
 						<span
 							class="absolute inset-0 flex items-center justify-center rounded-full border-4 {look.ring}"
 						>
-							<ChoreIcon icon={stop.icon} size={30} />
+							<PhotoImage src={stop.photo} size={58} radius="50%">
+								{#snippet fallback()}<ChoreIcon icon={stop.icon} size={30} />{/snippet}
+							</PhotoImage>
 						</span>
 						{#if stop.state === 'done' || stop.state === 'waiting'}
 							<span

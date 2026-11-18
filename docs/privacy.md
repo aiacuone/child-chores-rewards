@@ -13,14 +13,14 @@ Everything is in one SQLite file on the app's server.
 | Invites | The invited email and when it was sent, used or cancelled. |
 | Children | Name, rocket colour, chores and their status, star history, rewards, reward requests and messages from grown-ups. |
 | Picture passcode | A hash of the three pictures, if one is set. |
-| Rocket photo | A rebuilt 400 px image, if one is added. Hidden data in the original, such as location, is not kept. |
+| Photos | Rebuilt 400 px images for rockets, chores and rewards, if added. Hidden data in the originals, such as location, is not kept. |
 
 ## Who can see it
 
 - Only devices signed in to the family can see its data, and every query is limited to that family.
 - Grown-up screens also need the shared PIN.
 - Children's trips are open to anyone using a signed-in family device, unless the child has a picture passcode.
-- Rocket photos are served only to signed-in devices in the family.
+- Photos are served only to signed-in devices in the family.
 - Another family's data answers "not found".
 
 ## What leaves the server
@@ -41,7 +41,8 @@ The app has no analytics or advertising, and its security policy lets it run onl
 | Action | What goes |
 | --- | --- |
 | Remove a child | Their trip, chore copies, stars, reward requests, passcode and photo. Shared chores and rewards stay. |
-| Remove photo | The child's rocket photo. |
+| Remove photo | That rocket, chore or reward photo. |
+| Remove a chore or reward | It and its photo. |
 | Remove a grown-up | Their account and every device they signed in on. |
 
 Deleted data stays in older backups until 14 newer copies replace it. That is about two weeks, or longer if the data rarely changes.

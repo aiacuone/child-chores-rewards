@@ -54,7 +54,7 @@
 	<LiveUpdates version={claim.version} onchange={load} />
 
 	<div class="flex justify-center">
-		<RewardPlanet colour={claim.reward.colour} size={110} />
+		<RewardPlanet colour={claim.reward.colour} photo={claim.reward.photo} size={110} />
 	</div>
 	<h1 class="m-0 text-center font-heading text-[30px] leading-[1.05] font-normal">
 		{claim.reward.name}

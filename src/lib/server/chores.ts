@@ -1,6 +1,7 @@
 // The chores library (docs/SPEC.md, "Chores"). A chore belongs to the family;
 // each child it is assigned to gets their own copy with its own status. Every
 // function takes the family scope, so one family never reaches another's chores.
+import { photoUrl, photoUrls } from './photos';
 import { and, eq, inArray } from 'drizzle-orm';
 import { schema } from './db';
 import { NotInFamily, type FamilyScope } from './family';
@@ -26,6 +27,8 @@ export type ChoreSummary = {
 	hidden: boolean;
 	/** The skip in force on today's chore day, or null. */
 	skip: Skip | null;
+	/** The address of the grown-up's own photo, or null. */
+	photo: string | null;
 };
 
 /** The repeat stored in a chore row's columns. */
@@ -91,6 +94,7 @@ export function listChores(scope: FamilyScope, now = new Date()): ChoreSummary[]
 		.where(scope.where(schema.choreCopy))
 		.orderBy(schema.choreCopy.childId)
 		.all();
+	const photos = photoUrls(scope, 'chore');
 	return chores.reverse().map((c) => ({
 		id: c.id,
 		name: c.name,
@@ -100,7 +104,8 @@ export function listChores(scope: FamilyScope, now = new Date()): ChoreSummary[]
 		repeat: toRepeat(c),
 		childIds: copies.filter((k) => k.choreId === c.id).map((k) => k.childId),
 		hidden: c.hidden,
-		skip: activeSkip(c, day)
+		skip: activeSkip(c, day),
+		photo: photos.get(c.id) ?? null
 	}));
 }
 
@@ -129,6 +134,7 @@ export function getChore(scope: FamilyScope, choreId: number, now = new Date()) 
 		childIds: copies.map((k) => k.childId),
 		hidden: c.hidden,
 		skip: activeSkip(c, familyDay(scope, now)),
+		photo: photoUrl(scope, 'chore', c.id),
 		copies
 	};
 }

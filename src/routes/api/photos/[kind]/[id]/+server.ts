@@ -1,15 +1,16 @@
-// A child's rocket photo, for signed-in devices of their family only. Each
-// version never changes, so the browser may keep it, privately.
+// A rocket, chore or reward photo, for signed-in devices of its family only.
+// Each version never changes, so the browser may keep it, privately.
 import { error } from '@sveltejs/kit';
-import { readChildPhoto } from '#lib/server/child-photo.ts';
 import { getDb } from '#lib/server/db/app.ts';
 import { forFamily } from '#lib/server/family.ts';
+import { isPhotoKind, readPhoto } from '#lib/server/photos.ts';
 import { rowId } from '#lib/server/row-id.ts';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = ({ locals, params, request, url }) => {
 	const id = rowId(params.id);
-	const photo = id ? readChildPhoto(forFamily(getDb(), locals.user!.familyId), id) : null;
+	if (!id || !isPhotoKind(params.kind)) error(404, 'Not found');
+	const photo = readPhoto(forFamily(getDb(), locals.user!.familyId), params.kind, id);
 	if (!photo) error(404, 'Not found');
 	const etag = `"${photo.version}"`;
 	const headers = {

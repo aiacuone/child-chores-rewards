@@ -2,6 +2,7 @@
 // family and is for the children picked on it; each of them gets a meter
 // showing their stars against its cost. Every function takes the family scope,
 // so one family never reaches another's rewards.
+import { photoUrl, photoUrls } from './photos';
 import { and, eq, inArray } from 'drizzle-orm';
 import { schema } from './db';
 import { NotInFamily, type FamilyScope } from './family';
@@ -34,11 +35,13 @@ export function listRewards(scope: FamilyScope): RewardSummary[] {
 	const kids = scope.children();
 	const stars = new Map(kids.map((c) => [c.id, balance(scope, c.id)]));
 	const waiting = waitingClaims(scope);
+	const photos = photoUrls(scope, 'reward');
 	return rewards.map((r) => ({
 		id: r.id,
 		name: r.name,
 		cost: r.cost,
 		colour: r.colour,
+		photo: photos.get(r.id) ?? null,
 		children: kids
 			.filter((c) => links.some((l) => l.rewardId === r.id && l.childId === c.id))
 			.map((c) => ({
@@ -67,7 +70,14 @@ export function getReward(scope: FamilyScope, rewardId: number) {
 		.orderBy(schema.rewardChild.childId)
 		.all()
 		.map((l) => l.childId);
-	return { id: r.id, name: r.name, cost: r.cost, colour: r.colour, childIds };
+	return {
+		id: r.id,
+		name: r.name,
+		cost: r.cost,
+		colour: r.colour,
+		photo: photoUrl(scope, 'reward', r.id),
+		childIds
+	};
 }
 
 function checkChildren(scope: FamilyScope, childIds: number[]) {
@@ -151,6 +161,7 @@ export function childRewards(scope: FamilyScope, childId: number): ChildReward[]
 			.filter((w) => w.childId === childId)
 			.map((w) => w.rewardId)
 	);
+	const photos = photoUrls(scope, 'reward');
 	return scope.db
 		.select({
 			id: schema.reward.id,
@@ -167,7 +178,7 @@ export function childRewards(scope: FamilyScope, childId: number): ChildReward[]
 			)
 		)
 		.all()
-		.map((r) => ({ ...r, stars, asked: asked.has(r.id) }))
+		.map((r) => ({ ...r, photo: photos.get(r.id) ?? null, stars, asked: asked.has(r.id) }))
 		.sort((a, b) => {
 			const ma = meter(stars, a.cost);
 			const mb = meter(stars, b.cost);

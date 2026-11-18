@@ -1,7 +1,7 @@
 // What Who's flying and a child's trip show about each child: name, colour,
 // rank and stars. Only the signed-in family's children are reachable.
 import { colourValue } from '../colours';
-import { childPhotoUrl } from './child-photo';
+import { photoUrl } from './photos';
 import type { FamilyScope } from './family';
 import { standing } from './stars';
 
@@ -26,7 +26,7 @@ function card(
 		colour: colourValue(c.colour),
 		rank,
 		stars,
-		photo: childPhotoUrl(scope, c.id)
+		photo: photoUrl(scope, 'child', c.id)
 	};
 }
 

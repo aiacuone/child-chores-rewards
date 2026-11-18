@@ -55,7 +55,7 @@
 						: 'border-line bg-card'
 				]}
 			>
-				<RewardPlanet colour={reward.colour} ready={m.ready} />
+				<RewardPlanet colour={reward.colour} ready={m.ready} photo={reward.photo} />
 				<span class="flex min-w-0 flex-1 flex-col gap-1.5">
 					<span class="flex items-center gap-1.5">
 						<span class="flex-1 font-heading text-[20px]">{reward.name}</span>

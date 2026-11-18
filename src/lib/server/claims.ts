@@ -3,6 +3,7 @@
 // out (the stars are taken then, as one star_event row of kind 'reward') or
 // declines it with a kind message. Stars are never taken at the claim, and never
 // go below 0. Only the signed-in family's rows are read or changed.
+import { photoUrl } from './photos';
 import { and, asc, desc, eq, isNotNull, isNull, lte } from 'drizzle-orm';
 import { schema } from './db';
 import type { FamilyScope } from './family';
@@ -113,7 +114,13 @@ export function claimDetails(scope: FamilyScope, claimId: number) {
 		claimId: claim.id,
 		status: claim.status,
 		message: claim.message,
-		reward: { id: reward.id, name: reward.name, cost: reward.cost, colour: reward.colour },
+		reward: {
+			id: reward.id,
+			name: reward.name,
+			cost: reward.cost,
+			colour: reward.colour,
+			photo: photoUrl(scope, 'reward', reward.id)
+		},
 		child: { id: child.id, name: child.name, colour: colourValue(child.colour) },
 		/** The child's stars now. After a hand-out, what they have left. */
 		stars: balance(scope, child.id)

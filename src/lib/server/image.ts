@@ -1,6 +1,7 @@
 // Uploaded images are never stored as sent. The first bytes must be a JPEG, PNG
 // or WebP, so nothing else reaches the decoder, and the picture is rebuilt as a
 // small WebP. Rebuilding drops anything hidden in the file, such as its location.
+import { error } from '@sveltejs/kit';
 import sharp from 'sharp';
 
 /** Below the server's 512 KB body limit. The page sends about 100 KB. */
@@ -46,4 +47,16 @@ export async function reencodePhoto(data: Buffer) {
 	} catch {
 		return null;
 	}
+}
+
+/** Check an upload request and return the rebuilt photo, or refuse it. */
+export async function readUploadedPhoto(request: Request) {
+	if (!UPLOAD_TYPES.includes(request.headers.get('content-type') ?? ''))
+		error(415, 'Use a JPEG, PNG or WebP photo');
+	if (Number(request.headers.get('content-length') ?? 0) > MAX_UPLOAD) error(413, 'Too large');
+	const body = Buffer.from(await request.arrayBuffer());
+	if (body.length > MAX_UPLOAD) error(413, 'Too large');
+	const photo = await reencodePhoto(body);
+	if (!photo) error(400, 'Not a usable photo');
+	return photo;
 }

@@ -199,7 +199,7 @@ export const child = sqliteTable(
 export const childPhoto = sqliteTable(
 	'child_photo',
 	{
-		childId: integer('child_id')
+		ownerId: integer('child_id')
 			.primaryKey()
 			.references(() => child.id, { onDelete: 'cascade' }),
 		familyId: integer('family_id')
@@ -305,6 +305,22 @@ export const chore = sqliteTable(
 	(t) => [index('chore_family_idx').on(t.familyId)]
 );
 
+/** A grown-up's own photo for a chore, shown instead of its built-in picture. */
+export const chorePhoto = sqliteTable(
+	'chore_photo',
+	{
+		ownerId: integer('chore_id')
+			.primaryKey()
+			.references(() => chore.id, { onDelete: 'cascade' }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		data: blob('data', { mode: 'buffer' }).notNull(),
+		version: integer('version').notNull()
+	},
+	(t) => [index('chore_photo_family_idx').on(t.familyId)]
+);
+
 /**
  * A reward in the family's library (the Rewards tab, My rewards). It may have
  * no children assigned. Claims are in reward_claim.
@@ -326,6 +342,22 @@ export const reward = sqliteTable(
 		createdAt: createdAt()
 	},
 	(t) => [index('reward_family_idx').on(t.familyId)]
+);
+
+/** A grown-up's own photo for a reward, shown as a badge on its planet. */
+export const rewardPhoto = sqliteTable(
+	'reward_photo',
+	{
+		ownerId: integer('reward_id')
+			.primaryKey()
+			.references(() => reward.id, { onDelete: 'cascade' }),
+		familyId: integer('family_id')
+			.notNull()
+			.references(() => family.id, { onDelete: 'cascade' }),
+		data: blob('data', { mode: 'buffer' }).notNull(),
+		version: integer('version').notNull()
+	},
+	(t) => [index('reward_photo_family_idx').on(t.familyId)]
 );
 
 /**

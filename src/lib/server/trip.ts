@@ -4,6 +4,7 @@
 // 6 days instead (Child-Coming.dc.html). "I did it!" sends a stop to a grown-up, and
 // Undo takes it back for about a minute. Only the signed-in family's rows are
 // read or changed.
+import { photoUrl, photoUrls } from './photos';
 import { and, eq, gte } from 'drizzle-orm';
 import { schema } from './db';
 import type { FamilyScope } from './family';
@@ -20,6 +21,7 @@ export type TripStop = {
 	choreId: number;
 	name: string;
 	icon: ChoreIconId;
+	photo: string | null;
 	stars: number;
 	state: StopState;
 	/** A grown-up's kind message after "Not done yet", until the child taps "I did it!" again. */
@@ -30,6 +32,7 @@ export type ComingUp = {
 	choreId: number;
 	name: string;
 	icon: ChoreIconId;
+	photo: string | null;
 	stars: number;
 	/** The day it is next due, for example "Thursday". */
 	day: string;
@@ -85,6 +88,7 @@ export function tripStops(scope: FamilyScope, childId: number, now = new Date())
 	today.sort(
 		(a, b) => ORDER[a.status as keyof typeof ORDER] - ORDER[b.status as keyof typeof ORDER]
 	);
+	const photos = photoUrls(scope, 'chore');
 	let next = true;
 	return today.map(({ chore, status, message }) => {
 		let state: StopState =
@@ -97,6 +101,7 @@ export function tripStops(scope: FamilyScope, childId: number, now = new Date())
 			choreId: chore.id,
 			name: chore.name,
 			icon: chore.icon,
+			photo: photos.get(chore.id) ?? null,
 			stars: chore.stars,
 			state,
 			message: status === 'pending' ? message : null
@@ -116,6 +121,7 @@ function nextDue(c: Copy, today: string) {
 /** The child's chores that are not due today but are due in the next 6 days, soonest first. */
 export function comingUp(scope: FamilyScope, childId: number, now = new Date()): ComingUp[] {
 	const day = familyDay(scope, now);
+	const photos = photoUrls(scope, 'chore');
 	return copies(scope, childId)
 		.filter((c) => !isDue(c.repeat, day))
 		.map((c) => ({ c, next: nextDue(c, day) }))
@@ -125,6 +131,7 @@ export function comingUp(scope: FamilyScope, childId: number, now = new Date()):
 			choreId: c.chore.id,
 			name: c.chore.name,
 			icon: c.chore.icon,
+			photo: photos.get(c.chore.id) ?? null,
 			stars: c.chore.stars,
 			day: WEEKDAYS[weekday(next)].long
 		}));
@@ -144,6 +151,7 @@ export function openStop(scope: FamilyScope, childId: number, choreId: number, n
 		choreId: stop.chore.id,
 		name: stop.chore.name,
 		icon: stop.chore.icon,
+		photo: photoUrl(scope, 'chore', stop.chore.id),
 		stars: stop.chore.stars,
 		expectations: stop.chore.expectations,
 		repeats: repeatLabel(stop.repeat, day)

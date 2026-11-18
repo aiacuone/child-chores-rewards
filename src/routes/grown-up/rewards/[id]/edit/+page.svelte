@@ -5,7 +5,6 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ConfirmCard from '#lib/components/ConfirmCard.svelte';
 	import RewardForm from '#lib/components/RewardForm.svelte';
 	import { SAVE_FAILED, type Kid } from '#lib/chores.ts';
@@ -14,7 +13,7 @@
 
 	const id = $derived(page.params.id);
 	let kids = $state<Kid[]>([]);
-	let reward = $state<(RewardFields & { id: number }) | null>(null);
+	let reward = $state<(RewardFields & { id: number; photo: string | null }) | null>(null);
 	let missing = $state(false);
 	let confirming = $state(false);
 	let failed = $state(false);
@@ -29,7 +28,7 @@
 			return;
 		}
 		kids = ((await all.json()) as { children: Kid[] }).children;
-		reward = (await one.json()) as RewardFields & { id: number };
+		reward = (await one.json()) as RewardFields & { id: number; photo: string | null };
 	});
 
 	async function save(fields: RewardFields) {
@@ -38,9 +37,7 @@
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify(fields)
 		});
-		if (!res.ok) return false;
-		await goto(`/grown-up/rewards?saved=${id}`);
-		return true;
+		return res.ok ? Number(id) : null;
 	}
 
 	async function remove() {
@@ -55,8 +52,6 @@
 	<title>Rocket Rewards: Edit reward</title>
 </svelte:head>
 
-<BackHeader href="/grown-up/rewards" label="Rewards" />
-
 {#if missing}
 	<p class="m-0 text-[18px] text-muted">Not found.</p>
 {:else if reward}
@@ -70,9 +65,12 @@
 			colour: reward.colour,
 			childIds: reward.childIds
 		}}
+		photo={reward.photo}
+		photoProblem={page.url.searchParams.get('photo') === 'failed'}
 		onsave={save}
-	/>
-
+		onsaved={() => goto(`/grown-up/rewards?saved=${id}`)}
+	>
+		{#snippet after()}
 	{#if failed}
 		<p role="alert" class="m-0 text-[16px] font-black text-amber">{SAVE_FAILED}</p>
 	{/if}
@@ -86,7 +84,7 @@
 
 	{#if confirming}
 		<ConfirmCard
-			title="Remove {reward.name}?"
+			title="Remove {reward!.name}?"
 			text="It goes from every child’s My rewards. Stars stay with the children."
 			confirmLabel="Remove reward"
 			cancelLabel="Keep it"
@@ -94,4 +92,6 @@
 			oncancel={() => (confirming = false)}
 		/>
 	{/if}
+		{/snippet}
+	</RewardForm>
 {/if}

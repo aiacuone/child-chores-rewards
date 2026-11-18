@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import sharp from 'sharp';
 import { removeChild } from './children';
-import { childPhotoUrl, readChildPhoto, removeChildPhoto, saveChildPhoto } from './child-photo';
+import { listChores, removeChore } from './chores';
+import { listRewards, removeReward } from './rewards';
+import { photoUrl, photoUrls, readPhoto, removePhoto, savePhoto } from './photos';
 import { openDatabase, schema } from './db';
 import { forFamily, type FamilyScope } from './family';
 import { childCard } from './flying';
@@ -57,7 +59,7 @@ describe('re-encoding a photo', () => {
 	});
 });
 
-describe('storing a child’s photo', () => {
+describe('storing photos', () => {
 	let opened: ReturnType<typeof openDatabase>;
 	let ours: FamilyScope;
 	let theirs: FamilyScope;
@@ -82,36 +84,62 @@ describe('storing a child’s photo', () => {
 	it('gives each new photo a new address and refreshes screens', () => {
 		const start = familyVersion(ours);
 		expect(childCard(ours, mia)?.photo).toBeNull();
-		saveChildPhoto(ours, mia, data, 1000);
-		const first = childPhotoUrl(ours, mia);
+		savePhoto(ours, 'child', mia, data, 1000);
+		const first = photoUrl(ours, 'child', mia);
 		expect(first).toBe(`/api/photos/child/${mia}?v=1000`);
 		expect(childCard(ours, mia)?.photo).toBe(first);
 		expect(familyVersion(ours)).toBeGreaterThan(start);
-		saveChildPhoto(ours, mia, Buffer.from('next'), 1000);
-		expect(childPhotoUrl(ours, mia)).not.toBe(first);
-		expect(readChildPhoto(ours, mia)?.data.toString()).toBe('next');
+		savePhoto(ours, 'child', mia, Buffer.from('next'), 1000);
+		expect(photoUrl(ours, 'child', mia)).not.toBe(first);
+		expect(readPhoto(ours, 'child', mia)?.data.toString()).toBe('next');
 	});
 
 	it('can be taken down', () => {
-		saveChildPhoto(ours, mia, data);
-		expect(removeChildPhoto(ours, mia)).toBe(true);
-		expect(readChildPhoto(ours, mia)).toBeNull();
+		savePhoto(ours, 'child', mia, data);
+		expect(removePhoto(ours, 'child', mia)).toBe(true);
+		expect(readPhoto(ours, 'child', mia)).toBeNull();
 	});
 
 	it('is deleted with the child', () => {
-		saveChildPhoto(ours, leo, data);
-		saveChildPhoto(ours, mia, data);
+		savePhoto(ours, 'child', leo, data);
+		savePhoto(ours, 'child', mia, data);
 		removeChild(ours, leo);
 		const rows = opened.db.select().from(schema.childPhoto).all();
-		expect(rows.map((r) => r.childId)).toEqual([mia]);
+		expect(rows.map((r) => r.ownerId)).toEqual([mia]);
+	});
+
+	it('stores chore and reward photos, deleted with their owner', () => {
+		const [chore] = opened.db
+			.insert(schema.chore)
+			.values({ familyId: ours.familyId, name: 'Water', icon: 'paw', stars: 10 })
+			.returning()
+			.all();
+		const [reward] = opened.db
+			.insert(schema.reward)
+			.values({ familyId: ours.familyId, name: 'Pool', cost: 50 })
+			.returning()
+			.all();
+		const start = familyVersion(ours);
+		expect(savePhoto(ours, 'chore', chore.id, data, 5)).toBe(true);
+		expect(savePhoto(ours, 'reward', reward.id, data, 6)).toBe(true);
+		expect(familyVersion(ours)).toBeGreaterThan(start);
+		expect(listChores(ours)[0].photo).toBe(`/api/photos/chore/${chore.id}?v=5`);
+		expect(listRewards(ours)[0].photo).toBe(`/api/photos/reward/${reward.id}?v=6`);
+		expect(savePhoto(theirs, 'chore', chore.id, data)).toBe(false);
+		expect(readPhoto(theirs, 'reward', reward.id)).toBeNull();
+		expect(photoUrls(theirs, 'chore').size).toBe(0);
+		removeChore(ours, chore.id);
+		removeReward(ours, reward.id);
+		expect(opened.db.select().from(schema.chorePhoto).all()).toEqual([]);
+		expect(opened.db.select().from(schema.rewardPhoto).all()).toEqual([]);
 	});
 
 	it('never reaches another family’s child', () => {
-		saveChildPhoto(ours, mia, data);
-		expect(readChildPhoto(theirs, mia)).toBeNull();
-		expect(childPhotoUrl(theirs, mia)).toBeNull();
-		expect(saveChildPhoto(theirs, mia, Buffer.from('x'))).toBe(false);
-		expect(removeChildPhoto(theirs, mia)).toBe(false);
-		expect(readChildPhoto(ours, mia)?.data.toString()).toBe('photo-bytes');
+		savePhoto(ours, 'child', mia, data);
+		expect(readPhoto(theirs, 'child', mia)).toBeNull();
+		expect(photoUrl(theirs, 'child', mia)).toBeNull();
+		expect(savePhoto(theirs, 'child', mia, Buffer.from('x'))).toBe(false);
+		expect(removePhoto(theirs, 'child', mia)).toBe(false);
+		expect(readPhoto(ours, 'child', mia)?.data.toString()).toBe('photo-bytes');
 	});
 });

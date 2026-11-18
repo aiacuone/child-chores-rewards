@@ -12,6 +12,8 @@ The app keeps everything in one SQLite file ([ADR 0002](../adr/0002-database.md)
 | `session` | One signed-in device (the id is a hash of the cookie token). |
 | `child` | A child in a family. |
 | `child_photo` | The photo in a child's rocket window ([photos.md](photos.md)). |
+| `chore_photo` | A grown-up's own photo for a chore. |
+| `reward_photo` | A grown-up's own photo for a reward. |
 | `child_passcode` | A child's optional picture passcode, as a hash ([children.md](children.md)). |
 | `child_unlock` | A passcode trip open on one device. |
 | `star_event` | One change to a child's stars. |
@@ -55,8 +57,10 @@ erDiagram
     child ||--o| child_photo : "may have"
 
     chore ||--o{ chore_copy : "is copied to"
+    chore ||--o| chore_photo : "may have"
     chore_copy ||--o{ checked_notice : "leads to"
     reward ||--o{ reward_child : "is for"
+    reward ||--o| reward_photo : "may have"
     reward ||--o{ reward_claim : "is asked for in"
 
     family {
@@ -136,6 +140,18 @@ erDiagram
         int family_id FK
         text name
         int stars
+    }
+    chore_photo {
+        int chore_id PK, FK
+        int family_id FK
+        blob data
+        int version
+    }
+    reward_photo {
+        int reward_id PK, FK
+        int family_id FK
+        blob data
+        int version
     }
     chore_copy {
         int id PK
@@ -266,7 +282,7 @@ The family's shared PIN is in `family.pin_hash`, never as the PIN itself ([ADR 0
 
 Screens on other devices refresh when the family's data changes (ADR 0006). The signal is one number, `family.version`:
 
-- **Triggers bump it.** Every insert, update or delete on `child`, `chore`, `chore_copy`, `star_event`, `reward`, `reward_child` or `reward_claim` adds 1 to that row's family's `version` (migrations `0010`, `0013` and `0015`). Adding or removing a `child_passcode` does too (`0019`), and so does any change to a `child_photo` (`0021`). No code has to remember to do it, so new features get live updates for free.
+- **Triggers bump it.** Every insert, update or delete on `child`, `chore`, `chore_copy`, `star_event`, `reward`, `reward_child` or `reward_claim` adds 1 to that row's family's `version` (migrations `0010`, `0013` and `0015`). Adding or removing a `child_passcode` does too (`0019`), and so does any change to a photo table (`0021`, `0022`). No code has to remember to do it, so new features get live updates for free.
 - **Screens poll it.** `GET /api/changes` returns the signed-in family's version (`src/lib/server/live.ts`). Details are in [live-updates.md](live-updates.md).
 - Only the changed family's number moves, so one family's activity never makes another family's screens reload.
 
@@ -296,6 +312,7 @@ The files in `drizzle/` (`0000_…sql`, `0001_…sql`, `0002_…sql`) are steps,
 - `0019` adds `child_passcode` and `child_unlock`, with triggers so turning a passcode on or off bumps the family's version ([children.md](children.md)).
 - `0020` adds the `invite` table ([grown-ups.md](grown-ups.md)).
 - `0021` adds `child_photo`, with triggers that bump the family's version ([photos.md](photos.md)).
+- `0022` adds `chore_photo` and `reward_photo`, with the same triggers.
 
 Nothing combines them into one file. Running them in order builds the whole database.
 

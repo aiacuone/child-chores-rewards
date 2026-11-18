@@ -6,6 +6,7 @@
 	import { page } from '$app/state';
 	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
+	import PhotoImage from '#lib/components/PhotoImage.svelte';
 	import ConfirmCard from '#lib/components/ConfirmCard.svelte';
 	import DoneNotice from '#lib/components/DoneNotice.svelte';
 	import Planet from '#lib/components/Planet.svelte';
@@ -73,12 +74,16 @@
 	{/if}
 
 	<div class="flex items-center gap-4">
-		<span class="relative size-24 flex-none">
-			<Planet size={96} body="#E0B67A" spots="#b79564" />
-			<span class="absolute inset-0 flex items-center justify-center text-ink-on-orange">
-				<ChoreIcon icon={chore.icon} size={40} />
-			</span>
-		</span>
+		<PhotoImage src={chore.photo} size={96} radius="24px">
+			{#snippet fallback()}
+				<span class="relative size-24 flex-none">
+					<Planet size={96} body="#E0B67A" spots="#b79564" />
+					<span class="absolute inset-0 flex items-center justify-center text-ink-on-orange">
+						<ChoreIcon icon={chore!.icon} size={40} />
+					</span>
+				</span>
+			{/snippet}
+		</PhotoImage>
 		<h1 class="m-0 font-heading text-[30px] leading-[1.05] font-normal">{chore.name}</h1>
 	</div>
 

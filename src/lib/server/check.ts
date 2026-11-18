@@ -4,6 +4,7 @@
 // message, or gives it to the child who really did it ("That wasn't Mia").
 // Every star change is one star_event row. Only the signed-in family's rows are
 // read or changed.
+import { photoUrl, photoUrls } from './photos';
 import { and, desc, eq, lte } from 'drizzle-orm';
 import { schema } from './db';
 import type { FamilyScope } from './family';
@@ -41,6 +42,7 @@ const findCopy = (scope: FamilyScope, copyId: number) => {
 
 /** Chores waiting for a grown-up, oldest "I did it!" first (TO CHECK, Mission control). */
 export function toCheck(scope: FamilyScope) {
+	const photos = photoUrls(scope, 'chore');
 	return copyRows(scope, eq(schema.choreCopy.status, 'waiting'))
 		.orderBy(schema.choreCopy.doneAt, schema.choreCopy.id)
 		.all()
@@ -48,6 +50,7 @@ export function toCheck(scope: FamilyScope) {
 			copyId: copy.id,
 			name: chore.name,
 			icon: chore.icon,
+			photo: photos.get(chore.id) ?? null,
 			stars: chore.stars,
 			childId: child.id,
 			childName: child.name
@@ -77,6 +80,7 @@ export function checkDetails(scope: FamilyScope, copyId: number, now = new Date(
 			id: chore.id,
 			name: chore.name,
 			icon: chore.icon,
+			photo: photoUrl(scope, 'chore', chore.id),
 			stars: chore.stars,
 			repeats: repeatLabel(toRepeat(chore), familyDay(scope, now))
 		},

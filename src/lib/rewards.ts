@@ -25,6 +25,7 @@ export type RewardSummary = {
 	name: string;
 	cost: number;
 	colour: PlanetId;
+	photo: string | null;
 	children: RewardChild[];
 	/** The first claim waiting for a grown-up, if any: tapping the reward opens its hand-out. */
 	waiting: { claimId: number } | null;
@@ -44,6 +45,7 @@ export type ChildReward = {
 	name: string;
 	cost: number;
 	colour: PlanetId;
+	photo: string | null;
 	stars: number;
 	/** The child has asked for it and a grown-up has not answered yet. */
 	asked: boolean;

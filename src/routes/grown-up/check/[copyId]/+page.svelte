@@ -9,6 +9,7 @@
 	import { page } from '$app/state';
 	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
+	import PhotoImage from '#lib/components/PhotoImage.svelte';
 	import LiveUpdates from '#lib/components/LiveUpdates.svelte';
 	import Planet from '#lib/components/Planet.svelte';
 	import { SAVE_FAILED } from '#lib/chores.ts';
@@ -55,12 +56,16 @@
 	<LiveUpdates version={check.version} onchange={load} />
 
 	<div class="flex items-center gap-4">
-		<span class="relative size-24 flex-none">
-			<Planet size={96} body="#E0B67A" spots="#b79564" />
-			<span class="absolute inset-0 flex items-center justify-center text-ink-on-orange">
-				<ChoreIcon icon={check.chore.icon} size={40} />
-			</span>
-		</span>
+		<PhotoImage src={check.chore.photo} size={96} radius="24px">
+			{#snippet fallback()}
+				<span class="relative size-24 flex-none">
+					<Planet size={96} body="#E0B67A" spots="#b79564" />
+					<span class="absolute inset-0 flex items-center justify-center text-ink-on-orange">
+						<ChoreIcon icon={check!.chore.icon} size={40} />
+					</span>
+				</span>
+			{/snippet}
+		</PhotoImage>
 		<h1 class="m-0 font-heading text-[30px] leading-[1.05] font-normal">{check.chore.name}</h1>
 	</div>
 

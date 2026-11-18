@@ -3,6 +3,7 @@
 	// grown-up hands the reward out.
 	import BackArrow from '#lib/components/BackArrow.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
+	import RewardPlanet from '#lib/components/RewardPlanet.svelte';
 
 	let { data } = $props();
 	const child = $derived(data.child);
@@ -15,7 +16,11 @@
 <div class="relative z-[2] mx-auto flex max-w-[420px] flex-col gap-4 px-[22px] pt-[26px] pb-10">
 	<BackArrow href="/trip/{child.id}/rewards" />
 	<div class="mt-6 flex justify-center">
-		<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={170} />
+		{#if data.rewardPhoto}
+			<RewardPlanet colour={data.rewardColour} photo={data.rewardPhoto} size={170} />
+		{:else}
+			<Rocket colour={child.colour} rank={child.rank} photo={child.photo} height={170} />
+		{/if}
 	</div>
 	<h1 class="m-0 mt-2 text-center font-heading text-[40px] leading-[1.05] font-normal">
 		Asked a grown-up!

@@ -1,10 +1,13 @@
 <script lang="ts">
 	// The chore form: New chore (Add-Stop.dc.html) and Edit chore (Edit-Stop.dc.html).
-	// Temporary fix: no "Use my own photo" until #36.
+	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChildPicker from '#lib/components/ChildPicker.svelte';
 	import { grownupToday } from '#lib/grownup.svelte.ts';
 	import ChoreIcon from '#lib/components/ChoreIcon.svelte';
+	import PhotoField from '#lib/components/PhotoField.svelte';
+	import PhotoFlow from '#lib/components/PhotoFlow.svelte';
 	import Stepper from '#lib/components/Stepper.svelte';
+	import { PhotoDraft } from '#lib/photo-draft.svelte.ts';
 	import {
 		CHORE_ICONS,
 		CHORE_STARS,
@@ -29,15 +32,36 @@
 		submitLabel,
 		kids,
 		initial,
-		onsave
+		photo = null,
+		backHref,
+		backLabel = 'Chores',
+		photoProblem = false,
+		onsave,
+		onsaved,
+		onphotofailed
 	}: {
 		title: string;
 		submitLabel: string;
 		kids: Kid[];
 		initial: ChoreFields;
-		/** Save the chore; resolves false when it did not save. */
-		onsave: (chore: ChoreFields) => Promise<boolean>;
+		/** The address of the saved photo, if any. */
+		photo?: string | null;
+		backHref: string;
+		backLabel?: string;
+		/** A new chore saved earlier but its photo did not. */
+		photoProblem?: boolean;
+		/** Save the chore; resolves its id, or null when it did not save. */
+		onsave: (chore: ChoreFields) => Promise<number | null>;
+		/** Everything saved, including any photo. */
+		onsaved: (id: number, chore: ChoreFields) => unknown;
+		/** The chore saved but its photo did not. A new chore moves to its edit page. */
+		onphotofailed?: (id: number) => unknown;
 	} = $props();
+
+	const savedPhoto = () => photo;
+	const draft = new PhotoDraft(savedPhoto());
+	const startProblem = () => photoProblem;
+	let photoFailed = $state(startProblem());
 
 	// The form edits its own copy of the starting values.
 	const start = () => ({ ...initial, childIds: [...initial.childIds] });
@@ -89,19 +113,35 @@
 		if (!ready) return;
 		saving = true;
 		failed = false;
-		const ok = await onsave({
+		photoFailed = false;
+		const fields = {
 			...chore,
 			name: chore.name.trim(),
 			expectations: chore.expectations.trim(),
 			repeat: repeat!
-		}).catch(
-			() => false
-		);
+		};
+		const id = await onsave(fields).catch(() => null);
+		if (id === null) {
+			saving = false;
+			failed = true;
+			return;
+		}
+		const photoSaved = await draft.apply('chore', id).catch(() => false);
 		saving = false;
-		failed = !ok;
+		if (photoSaved) await onsaved(id, fields);
+		else {
+			photoFailed = true;
+			await onphotofailed?.(id);
+		}
 	}
 </script>
 
+{#if draft.screen}
+	<PhotoFlow kind="chore" {draft} name={chore.name} />
+{/if}
+
+<div class={draft.screen ? 'hidden' : 'flex flex-col gap-3.5'}>
+<BackHeader href={backHref} label={backLabel} />
 <h1 class="m-0 font-heading text-[30px] leading-[1.05] font-normal">{title}</h1>
 
 <form onsubmit={submit} class="flex flex-col gap-3.5">
@@ -133,6 +173,7 @@
 
 	<fieldset class="m-0 flex flex-col gap-1.5 border-0 p-0">
 		<legend class="mb-1.5 p-0 text-[14px] font-black text-muted">Picture</legend>
+		{#if draft.preview}<PhotoField {draft} />{/if}
 		<div class="grid grid-cols-6 gap-1.5">
 			{#each CHORE_ICONS as icon (icon.id)}
 				<label
@@ -153,6 +194,7 @@
 				</label>
 			{/each}
 		</div>
+		{#if !draft.preview}<PhotoField {draft} />{/if}
 	</fieldset>
 
 	<Stepper
@@ -270,6 +312,11 @@
 	{#if failed}
 		<p role="alert" class="m-0 text-[16px] font-black text-amber">{SAVE_FAILED}</p>
 	{/if}
+	{#if photoFailed}
+		<p role="alert" class="m-0 text-[16px] font-black text-amber">
+			The chore saved, but its photo didn’t. Try adding the photo again.
+		</p>
+	{/if}
 
 	<button
 		type="submit"
@@ -278,3 +325,4 @@
 		>{submitLabel}</button
 	>
 </form>
+</div>

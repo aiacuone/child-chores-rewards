@@ -1,17 +1,11 @@
 <script lang="ts">
-	// Edit a child (Child-Edit.dc.html). Temporary fix: Remove photo is a plain
-	// button until #35 designs it.
+	// Edit a child (Child-Edit.dc.html, Child-Edit-Photo.dc.html).
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import BackHeader from '#lib/components/BackHeader.svelte';
 	import ChildForm from '#lib/components/ChildForm.svelte';
-	import {
-		fetchChild,
-		removeChildPhoto,
-		saveChild,
-		type ChildDetail
-	} from '#lib/children-client.ts';
+	import { fetchChild, saveChild, type ChildDetail } from '#lib/children-client.ts';
 	import type { ColourId } from '#lib/colours.ts';
 
 	let child = $state<ChildDetail | null>(null);
@@ -21,12 +15,6 @@
 		child = await fetchChild(page.params.id);
 		missing = !child;
 	});
-
-	let photoProblem = $state('');
-	async function removePhoto(id: number) {
-		photoProblem = (await removeChildPhoto(id)) ?? '';
-		if (!photoProblem) child = await fetchChild(page.params.id);
-	}
 
 	async function save(id: number, fields: { name: string; colour: ColourId }) {
 		const message = await saveChild(id, fields);
@@ -72,20 +60,16 @@
 				<span class="min-w-0 flex-1">
 					<span class="block text-[16px] font-black">Rocket photo</span>
 					<span class="mt-0.5 block text-[13px] font-bold text-muted"
-						>{c.name} adds it · shared on all your devices</span
+						>{c.photo ? 'Photo added' : `${c.name} adds it`} · shared on all your devices</span
 					>
 				</span>
-				{#if c.photo}
-					<button
-						type="button"
-						onclick={() => removePhoto(c.id)}
-						class="min-h-11 flex-none rounded-full border-2 border-[#7A3A4A] px-3 text-[13px] font-black text-danger"
-						>Remove photo</button
-					>
-				{/if}
 			</div>
-			{#if photoProblem}
-				<p role="alert" class="m-0 text-[16px] font-black text-amber">{photoProblem}</p>
+			{#if c.photo}
+				<a
+					href="/grown-up/settings/children/{c.id}/remove-photo"
+					class="flex min-h-14 items-center justify-center rounded-[20px] border-2 border-[#7A3A4A] font-heading text-[19px] text-danger"
+					>Remove photo</a
+				>
 			{/if}
 			<a
 				href="/grown-up/settings/children/{c.id}/passcode"

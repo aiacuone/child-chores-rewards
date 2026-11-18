@@ -1,58 +1,40 @@
 <script lang="ts">
-	// Put your face in the window (My-Rocket, My-Rocket-Crop, My-Rocket-Done). The
-	// photo is cropped here and only the small square is sent (ADR 0011). The camera
-	// is the device's own, opened through the file picker.
-	import { onDestroy } from 'svelte';
+	// Put your face in the window (My-Rocket, My-Rocket-Crop, My-Rocket-Done,
+	// My-Rocket-Camera-Blocked). The camera is the device's own, opened through the
+	// file picker.
+	import { onDestroy, onMount } from 'svelte';
 	import BackArrow from '#lib/components/BackArrow.svelte';
+	import PhotoCropper from '#lib/components/PhotoCropper.svelte';
 	import Rocket from '#lib/components/Rocket.svelte';
 	import StarField from '#lib/components/StarField.svelte';
+	import { PHOTO_FAILED, watchCamera } from '#lib/camera.ts';
 
 	let { data } = $props();
 	const child = $derived(data.child);
 
-	const VIEW = 500;
-	const OUTPUT = 512;
-	const MOVE_KEY = 20;
-	const MAX_BYTES = 450 * 1024;
-	const FAILED = 'That photo didn’t work. Try another one.';
-
 	const firstPhoto = () => data.child.photo;
-	let step = $state<'choose' | 'crop' | 'done'>('choose');
+	let step = $state<'choose' | 'blocked' | 'crop' | 'done'>('choose');
 	let photo = $state(firstPhoto());
 	let message = $state('');
 	let saving = $state(false);
 	let picture = $state<ImageBitmap | null>(null);
-	let zoom = $state(1);
-	let x = $state(0);
-	let y = $state(0);
-	let canvas = $state<HTMLCanvasElement>();
+	let cameraBlocked = $state(false);
+	let cropper = $state<PhotoCropper>();
 	let cameraInput = $state<HTMLInputElement>();
 	let libraryInput = $state<HTMLInputElement>();
-	let dragFrom: { x: number; y: number } | null = null;
 
-	const scale = (z = zoom) =>
-		picture ? Math.max(VIEW / picture.width, VIEW / picture.height) * z : 1;
-
-	function place(nextX: number, nextY: number, s = scale()) {
-		if (!picture) return;
-		x = Math.min(0, Math.max(VIEW - picture.width * s, nextX));
-		y = Math.min(0, Math.max(VIEW - picture.height * s, nextY));
-	}
-
-	function setZoom(next: number) {
-		const before = scale();
-		const after = scale(next);
-		const middleX = (VIEW / 2 - x) / before;
-		const middleY = (VIEW / 2 - y) / before;
-		zoom = next;
-		place(VIEW / 2 - middleX * after, VIEW / 2 - middleY * after, after);
-	}
+	onMount(() => watchCamera((blocked) => (cameraBlocked = blocked)));
 
 	function forget() {
 		picture?.close();
 		picture = null;
 	}
 	onDestroy(forget);
+
+	function takePhoto() {
+		if (cameraBlocked) step = 'blocked';
+		else cameraInput?.click();
+	}
 
 	async function chosen(e: Event) {
 		const input = e.currentTarget as HTMLInputElement;
@@ -64,52 +46,10 @@
 			const bitmap = await createImageBitmap(file);
 			forget();
 			picture = bitmap;
-			zoom = 1;
-			const s = scale(1);
-			place((VIEW - bitmap.width * s) / 2, (VIEW - bitmap.height * s) / 2, s);
 			step = 'crop';
 		} catch {
-			message = FAILED;
+			message = PHOTO_FAILED;
 		}
-	}
-
-	$effect(() => {
-		const context = canvas?.getContext('2d');
-		if (!context || !picture) return;
-		const s = scale();
-		context.clearRect(0, 0, VIEW, VIEW);
-		context.drawImage(picture, x, y, picture.width * s, picture.height * s);
-	});
-
-	function drag(e: PointerEvent) {
-		if (!dragFrom || !canvas) return;
-		const ratio = VIEW / canvas.getBoundingClientRect().width;
-		place(x + (e.clientX - dragFrom.x) * ratio, y + (e.clientY - dragFrom.y) * ratio);
-		dragFrom = { x: e.clientX, y: e.clientY };
-	}
-
-	function arrowKey(e: KeyboardEvent) {
-		const moves: Record<string, [number, number]> = {
-			ArrowLeft: [MOVE_KEY, 0],
-			ArrowRight: [-MOVE_KEY, 0],
-			ArrowUp: [0, MOVE_KEY],
-			ArrowDown: [0, -MOVE_KEY]
-		};
-		const move = moves[e.key];
-		if (!move) return;
-		e.preventDefault();
-		place(x + move[0], y + move[1]);
-	}
-
-	function square(quality: number) {
-		const output = document.createElement('canvas');
-		output.width = output.height = OUTPUT;
-		const ratio = OUTPUT / VIEW;
-		const s = scale() * ratio;
-		output
-			.getContext('2d')!
-			.drawImage(picture!, x * ratio, y * ratio, picture!.width * s, picture!.height * s);
-		return new Promise<Blob | null>((done) => output.toBlob(done, 'image/jpeg', quality));
 	}
 
 	async function save() {
@@ -117,8 +57,7 @@
 		saving = true;
 		message = '';
 		try {
-			let blob = await square(0.85);
-			if (blob && blob.size > MAX_BYTES) blob = await square(0.6);
+			const blob = await cropper?.cropped();
 			if (!blob) throw new Error('no image');
 			const res = await fetch(`/api/rocket/${child.id}/photo`, {
 				method: 'PUT',
@@ -130,7 +69,7 @@
 			forget();
 			step = 'done';
 		} catch {
-			message = FAILED;
+			message = PHOTO_FAILED;
 			step = 'choose';
 			forget();
 		}
@@ -214,82 +153,34 @@
 				<p role="alert" class="m-0 text-center text-[16px] font-black text-amber">{message}</p>
 			{/if}
 			<div class="mt-2 flex flex-col gap-3">
-				<button type="button" class={PRIMARY} onclick={() => cameraInput?.click()}>
+				<button type="button" class={PRIMARY} onclick={takePhoto}>
 					{@render icon('camera')}Take a photo
 				</button>
 				<button type="button" class={SECOND} onclick={() => libraryInput?.click()}>
 					{@render icon('picture')}Pick a photo
 				</button>
 			</div>
-			<input
-				bind:this={cameraInput}
-				hidden
-				type="file"
-				accept="image/*"
-				capture="user"
-				aria-label="Take a photo"
-				onchange={chosen}
-			/>
-			<input
-				bind:this={libraryInput}
-				hidden
-				type="file"
-				accept="image/*"
-				aria-label="Pick a photo"
-				onchange={chosen}
-			/>
-		{:else if step === 'crop'}
-			<div
-				class="mx-auto size-[250px] overflow-hidden rounded-full border-[5px]"
-				style="border-color:{child.colour}"
-			>
-				<!-- svelte-ignore a11y_no_interactive_element_to_noninteractive_role, a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions: moved by dragging or with the arrow keys -->
-				<canvas
-					bind:this={canvas}
-					width={VIEW}
-					height={VIEW}
-					role="img"
-					tabindex="0"
-					aria-label="Your photo. Drag it, or use the arrow keys, to move it."
-					class="block size-full cursor-grab touch-none"
-					onpointerdown={(e) => {
-						dragFrom = { x: e.clientX, y: e.clientY };
-						e.currentTarget.setPointerCapture(e.pointerId);
-					}}
-					onpointermove={drag}
-					onpointerup={() => (dragFrom = null)}
-					onpointercancel={() => (dragFrom = null)}
-					onkeydown={arrowKey}
-				></canvas>
-			</div>
-			<div class="mt-1.5 flex items-center gap-3 text-muted">
-				<span class="flex-none">{@render icon('picture')}</span>
-				<input
-					type="range"
-					aria-label="Zoom"
-					min="1"
-					max="3"
-					step="0.01"
-					value={zoom}
-					oninput={(e) => setZoom(Number(e.currentTarget.value))}
-					class="h-11 min-w-0 flex-1 accent-hi"
-				/>
-				<svg
-					aria-hidden="true"
-					width="32"
-					height="32"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2.2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="flex-none"
-					><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="2" /><path
-						d="m21 17-5-5-9 8"
-					/></svg
+		{:else if step === 'blocked'}
+			<div class="relative mx-auto h-60 w-[131px]">
+				<Rocket colour={child.colour} rank={child.rank} {photo} height={240} />
+				<span
+					class="absolute top-[89px] left-[41px] flex size-12 items-center justify-center rounded-full border-[3px] border-amber bg-[rgba(5,8,24,.8)] text-amber"
 				>
+					{@render icon('camera')}
+				</span>
 			</div>
+			<h1 class={HEADING}>The camera is off</h1>
+			<p class={TEXT}>The camera is turned off for this app. A grown-up can turn it on. You can pick a photo now.</p>
+			<div class="mt-2 flex flex-col gap-3">
+				<button type="button" class={PRIMARY} onclick={() => libraryInput?.click()}>
+					{@render icon('picture')}Pick a photo
+				</button>
+				<a href="/" class={SECOND}>Back to Who’s flying</a>
+			</div>
+		{:else if step === 'crop'}
+			{#if picture}
+				<PhotoCropper bind:this={cropper} {picture} round colour={child.colour} />
+			{/if}
 			<h1 class="{HEADING} mt-1.5">Move and zoom</h1>
 			<p class={TEXT}>Drag your photo until your face fits the window.</p>
 			<div class="mt-2 flex flex-col gap-3">
@@ -316,5 +207,23 @@
 			<p class={TEXT}>Your face is in the window now.</p>
 			<a href="/" class="{PRIMARY} mt-2">Back to Who’s flying</a>
 		{/if}
+
+		<input
+			bind:this={cameraInput}
+			hidden
+			type="file"
+			accept="image/*"
+			capture="user"
+			aria-label="Take a photo"
+			onchange={chosen}
+		/>
+		<input
+			bind:this={libraryInput}
+			hidden
+			type="file"
+			accept="image/*"
+			aria-label="Pick a photo"
+			onchange={chosen}
+		/>
 	</div>
 </main>

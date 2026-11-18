@@ -93,6 +93,7 @@ describe('the rewards library', () => {
 			name: 'Trip to the pool',
 			cost: 250,
 			colour: 'blue',
+			photo: null,
 			childIds: [leo]
 		});
 		expect(removeReward(ours, id)).toBe(true);

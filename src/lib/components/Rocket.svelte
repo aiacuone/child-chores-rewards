@@ -26,6 +26,14 @@
 	} = $props();
 
 	const clipId = $props.id();
+	// An SVG image reports no state, so a plain one finds out whether the photo loads.
+	$effect(() => {
+		const src = photo;
+		if (!src) return;
+		const probe = new Image();
+		probe.onerror = () => (failed = src);
+		probe.src = src;
+	});
 	let failed = $state<string | null>(null);
 	const showPhoto = $derived(Boolean(photo) && height >= 40 && failed !== photo);
 

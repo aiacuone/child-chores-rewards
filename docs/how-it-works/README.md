@@ -26,7 +26,7 @@ How each part of the code fits together, for someone changing it. For rules see 
 | File | Covers |
 | --- | --- |
 | [children.md](children.md) | Adding, editing and removing children, and picture passcodes. |
-| [photos.md](photos.md) | Rocket photos, from upload to the window. |
+| [photos.md](photos.md) | Rocket, chore and reward photos, from upload to the screen. |
 | [trip.md](trip.md) | A child's trip, "I did it!" and Undo. |
 | [ranks.md](ranks.md) | The Ranks tab and star history. |
 
